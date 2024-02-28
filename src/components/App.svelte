@@ -3,7 +3,7 @@
 </script>
 
 <main>
-  <h1>Svelte template</h1>
+  <h1>Navigating the Dynamics of 10-Year Treasury Yield and Economic Indicators: An Interactive Exploration</h1>
 
   <p>Write your HTML here</p>
 </main>
