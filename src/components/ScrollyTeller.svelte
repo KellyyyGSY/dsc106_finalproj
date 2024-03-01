@@ -1,33 +1,7 @@
 <script>
   import Scroller from "@sveltejs/svelte-scroller";
-  import Map from "./Map.svelte";
-  import { geoMercator } from "d3-geo";
-  import Graph from "./Graph.svelte";
 
   let count, index, offset, progress;
-  let width, height;
-
-  let geoJsonToFit = {
-    type: "FeatureCollection",
-    features: [
-      {
-        type: "Feature",
-        geometry: {
-          type: "Point",
-          coordinates: [1, 0],
-        },
-      },
-      {
-        type: "Feature",
-        geometry: {
-          type: "Point",
-          coordinates: [0, 1],
-        },
-      },
-    ],
-  };
-
-  $: projection = geoMercator().fitSize([width, height], geoJsonToFit);
 </script>
 
 <Scroller
@@ -39,16 +13,9 @@
   bind:offset
   bind:progress
 >
-  
-<div
-    class="background"
-    slot="background"
-    bind:clientWidth={width}
-    bind:clientHeight={height}
-  >
-    <Map bind:geoJsonToFit {index} />
-    <Graph {index} {width} {height} {projection} />
+  <div class="background" slot="background">
 
+    <!-- uncomment to see the progress if needed
     <div class="progress-bars">
       <p>current section: <strong>{index + 1}/{count}</strong></p>
       <progress value={count ? (index + 1) / count : 0} />
@@ -59,18 +26,33 @@
       <p>total progress</p>
       <progress value={progress || 0} />
     </div>
+    -->
+
   </div>
+  
 
   <div class="foreground" slot="foreground">
-    <section>This is the first section.</section>
-    <section>This is the second section.</section>
-    <section>This is the third section.</section>
-    <section>This is the fourth section.</section>
+    <section>
+      <h1>Navigating the Dynamics of 10-Year Treasury Yield and Economic Indicators: <br>An Interactive Exploration</h1>
+      <p> Name: Kelly Gong, Andrew Guo, Yishan Cai </p>
+    </section>
+    <section>
+      <h2> some introduction of treasury bond </h2>
+      <h4> blablablabla </h4>
+    </section>
+    <section>
+      <h2> some introduction of GDP </h2>
+      <h4> blablablabla </h4>
+    </section>
+    <section>
+      <h2> some introduction of inflation </h2>
+      <h4> blablablabla </h4>
+    </section>
     <section>This is the fifth section.</section>
     <section>This is the sixth section.</section>
   </div>
-
 </Scroller>
+
 
 <style>
   .background {
@@ -81,28 +63,33 @@
   }
 
   .foreground {
-    width: 50%;
+    width: 60%;
     margin: 0 auto;
     height: auto;
     position: relative;
-    outline: red solid 3px;
+    /*outline: red solid 3px;*/
   }
 
   .progress-bars {
     position: absolute;
-    background: rgba(170, 51, 120, 0.2) /*  40% opaque */;
+    background: rgba(0, 51, 120, 0.2) /*  40% opaque */;
     visibility: visible;
   }
 
   section {
-    height: 80vh;
-    background-color: rgba(0, 0, 0, 0.2); /* 20% opaque */
-    /* color: white; */
+    height: 80vh;      /* height of each section */
+    /* background-color: rgba(0, 0, 0, 0.2); */
     outline: magenta solid 3px;
+
     text-align: center;
-    max-width: 750px; /* adjust at will */
-    color: black;
-    padding: 1em;
+    max-width: 100%; /* adjust at will */
+    color: black;    /* color of title */
+    padding: 5.5em;    /* the distance from top to the title*/
     margin: 0 0 2em 0;
+  }
+
+  h1 {
+    font-size: 3em; /* Adjust the font size here */
+    margin-bottom: 0.8em; /* Add margin below the title */
   }
 </style>
