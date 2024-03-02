@@ -1,242 +1,85 @@
 <script>
-  import { fly, draw } from "svelte/transition";
-  import { tweened } from "svelte/motion";
-  import { cubicOut, cubicInOut } from "svelte/easing";
-  import { cities } from "../data/cities";
-  import { troops } from "../data/troops";
+  import { onMount, afterUpdate } from 'svelte';
+  import * as d3 from 'd3';
+  import { scaleLinear, scaleTime } from 'd3-scale';
+  import { line, curveMonotoneX } from 'd3-shape';
 
-  export let index, width, height, projection;
-  
-  const tweenOptions = {
-    delay: 0,
-    duration: 1000,
-    easing: cubicOut,
-  };
+  let data;
+  let svg;
+  let lineGenerator;
 
-  const tweenedX = tweened(
-    cities.features.map((city) => projection(city.geometry.coordinates)[0]),
-    tweenOptions
-  );
+  onMount(async () => {
+    const res = await fetch('US10_Year_Bond_Yield_20-24.csv');
+    const csv = await res.text();
+    data = d3.csvParse(csv, d3.autoType);
+    
+    // Initialize the SVG element
+    svg = d3.select(".graph")
+      .attr("width", width)
+      .attr("height", height)
+      .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  const tweenedY = tweened(
-    cities.features.map((city) => projection(city.geometry.coordinates)[1]),
-    tweenOptions
-  );
+    // Define the scales and line generator
+    const x = scaleTime()
+      .domain(d3.extent(data, d => new Date(d.Date)))
+      .range([0, width]);
+      
+    const y = scaleLinear()
+      .domain([0, d3.max(data, d => d.Price)])
+      .range([height, 0]);
 
-  $: tweenedData = cities.features.map((city, i) => ({
-    x: $tweenedX[i],
-    y: $tweenedY[i],
-    properties: city.properties,
-  }));
+    lineGenerator = line()
+      .x(d => x(new Date(d.Date)))
+      .y(d => y(d.Price))
+      .curve(curveMonotoneX);
 
-  $: {
-    if (index === 1) {
-      tweenedX.set(cities.features.map((city) => width / 2));
-      tweenedY.set(cities.features.map((city, i) => height / 2 + i * 20));
+    // Draw the line
+    svg.append("path")
+      .datum(data)
+      .attr("class", "line")
+      .attr("fill", "none")
+      .attr("stroke", "steelblue")
+      .attr("stroke-width", 1.5)
+      .attr("d", lineGenerator(data));
+
+    // Animate the line
+    const totalLength = svg.select('.line').node().getTotalLength();
+    svg.select('.line')
+      .attr("stroke-dasharray", totalLength + " " + totalLength)
+      .attr("stroke-dashoffset", totalLength)
+      .transition()
+      .duration(2000)
+      .ease(d3.easeLinear)
+      .attr("stroke-dashoffset", 0);
+  });
+
+  afterUpdate(() => {
+    // Update the line on window resize
+    if (svg) {
+      const x = scaleTime()
+        .domain(d3.extent(data, d => new Date(d.Date)))
+        .range([0, width]);
+        
+      const y = scaleLinear()
+        .domain([0, d3.max(data, d => d.Price)])
+        .range([height, 0]);
+
+      const updatedLine = lineGenerator
+        .x(d => x(new Date(d.Date)))
+        .y(d => y(d.Price));
+
+      svg.select('.line')
+        .attr("d", updatedLine(data));
     }
-
-    if (index > 1) {
-      tweenedX.set(
-        cities.features.map((city) => projection(city.geometry.coordinates)[0])
-      );
-      tweenedY.set(
-        cities.features.map((city) => projection(city.geometry.coordinates)[1])
-      );
-    }
-  }
-
-  // Define your filter condition
-  const filter_troopsAttack1 = (feature) => {
-    return (
-      feature.properties.direction === "A" && feature.properties.group === 1
-    );
-  };
-
-  // Filter the features
-  const troopsAttack1 = troops.features.filter(filter_troopsAttack1);
-
-  // Create the string of coordinates
-  $: pointsStringA1 = troopsAttack1
-    .map((feature) => {
-      const transformedCoordinates = projection(feature.geometry.coordinates);
-      return transformedCoordinates.join(",");
-    })
-    .join(" ");
-
-  // Define filter conditions for groups 2 and 3
-  const filter_troopsAttack2 = (feature) => feature.properties.direction === "A" && feature.properties.group === 2;
-  const filter_troopsAttack3 = (feature) => feature.properties.direction === "A" && feature.properties.group === 3;
-
-  // Filter features for groups 2 and 3
-  const troopsAttack2 = troops.features.filter(filter_troopsAttack2);
-  const troopsAttack3 = troops.features.filter(filter_troopsAttack3);
-
-  // Create strings of coordinates for groups 2 and 3
-  $: pointsStringA2 = troopsAttack2
-    .map((feature) => projection(feature.geometry.coordinates).join(","))
-    .join(" ");
-
-  $: pointsStringA3 = troopsAttack3
-    .map((feature) => projection(feature.geometry.coordinates).join(","))
-    .join(" ");
-
-  // Define filter conditions for "Retreat" groups 1, 2, and 3
-  const filter_troopsRetreat1 = (feature) => feature.properties.direction === "R" && feature.properties.group === 1;
-  const filter_troopsRetreat2 = (feature) => feature.properties.direction === "R" && feature.properties.group === 2;
-  const filter_troopsRetreat3 = (feature) => feature.properties.direction === "R" && feature.properties.group === 3;
-
-  // Filter features for "Retreat" groups
-  const troopsRetreat1 = troops.features.filter(filter_troopsRetreat1);
-  const troopsRetreat2 = troops.features.filter(filter_troopsRetreat2);
-  const troopsRetreat3 = troops.features.filter(filter_troopsRetreat3);
-
-  // Create strings of coordinates for "Retreat" groups
-  $: pointsStringR1 = troopsRetreat1
-    .map((feature) => projection(feature.geometry.coordinates).join(","))
-    .join(" ");
-
-  $: pointsStringR2 = troopsRetreat2
-    .map((feature) => projection(feature.geometry.coordinates).join(","))
-    .join(" ");
-
-  $: pointsStringR3 = troopsRetreat3
-    .map((feature) => projection(feature.geometry.coordinates).join(","))
-    .join(" ");
-
-  let strokeWidth = tweened(1, { duration: 5000, easing: cubicOut });
-
-  // Reactive statement to update stroke-width when condition changes
-  $: {
-    if (index > 4) {
-      strokeWidth.set(10); // Set stroke-width to 10 when condition is true
-    }
-
-    if (index <= 4) {
-      strokeWidth.set(0); // Set stroke-width to 1 when condition is false
-    }
-  }
+  });
 </script>
 
-<svg class="graph">
-  {#if index > 0}
-    {#if index > 2}
-      <polyline points={pointsStringA1} fill="none" stroke="#FFCCBC" stroke-width="3" transition:draw={{ duration: 5000, easing: cubicInOut }} />
-      <polyline points={pointsStringA2} fill="none" stroke="#FFCCBC" stroke-width="3" transition:draw={{ duration: 5000, easing: cubicInOut }} />
-      <polyline points={pointsStringA3} fill="none" stroke="#FFCCBC" stroke-width="3" transition:draw={{ duration: 5000, easing: cubicInOut }} />
-    {/if}
-    
-    {#if index > 3}
-      <polyline points={pointsStringR1} fill="none" stroke="#000000" stroke-width="3" transition:draw={{ duration: 5000, easing: cubicInOut }} />
-      <polyline points={pointsStringR2} fill="none" stroke="#000000" stroke-width="3" transition:draw={{ duration: 5000, easing: cubicInOut }} />
-      <polyline points={pointsStringR3} fill="none" stroke="#000000" stroke-width="3" transition:draw={{ duration: 5000, easing: cubicInOut }} />
-    {/if}
-    
-    {#if index > 3}
-      {#each troopsAttack1 as troop, i}
-        {#if i > 0}
-          <line
-            x1={projection(troopsAttack1[i - 1].geometry.coordinates)[0]}
-            y1={projection(troopsAttack1[i - 1].geometry.coordinates)[1]}
-            x2={projection(troopsAttack1[i].geometry.coordinates)[0]}
-            y2={projection(troopsAttack1[i].geometry.coordinates)[1]}
-            stroke="#FFCCBC"
-            stroke-width={$strokeWidth *
-              (troopsAttack1[i].properties.survivors / 50000)}
-          />
-        {/if}
-      {/each}
-
-      {#each troopsAttack2 as troop, i}
-        {#if i > 0}
-          <line
-            x1={projection(troopsAttack2[i - 1].geometry.coordinates)[0]}
-            y1={projection(troopsAttack2[i - 1].geometry.coordinates)[1]}
-            x2={projection(troopsAttack2[i].geometry.coordinates)[0]}
-            y2={projection(troopsAttack2[i].geometry.coordinates)[1]}
-            stroke="#FFCCBC"
-            stroke-width={$strokeWidth *
-              (troopsAttack2[i].properties.survivors / 50000)}
-          />
-        {/if}
-      {/each}
-
-      {#each troopsAttack3 as troop, i}
-        {#if i > 0}
-          <line
-            x1={projection(troopsAttack3[i - 1].geometry.coordinates)[0]}
-            y1={projection(troopsAttack3[i - 1].geometry.coordinates)[1]}
-            x2={projection(troopsAttack3[i].geometry.coordinates)[0]}
-            y2={projection(troopsAttack3[i].geometry.coordinates)[1]}
-            stroke="#FFCCBC"
-            stroke-width={$strokeWidth *
-              (troopsAttack3[i].properties.survivors / 50000)}
-          />
-        {/if}
-      {/each}
-    {/if}
-
-    {#each tweenedData as city, i}
-      {#if city.x && city.y}
-        <text
-          x={city.x}
-          y={city.y}
-          id={city.properties.name}
-          in:fly={{ x: -300, duration: 200 * i }}
-          out:fly={{ x: -300, duration: 200 * i }}
-          >{city.properties.city}
-        </text>
-      {/if}
-    {/each}
-
-    {#each troopsRetreat1 as troop, i}
-      {#if i > 0}
-        <line
-          x1={projection(troopsRetreat1[i - 1].geometry.coordinates)[0]}
-          y1={projection(troopsRetreat1[i - 1].geometry.coordinates)[1]}
-          x2={projection(troopsRetreat1[i].geometry.coordinates)[0]}
-          y2={projection(troopsRetreat1[i].geometry.coordinates)[1]}
-          stroke="#000000"
-          stroke-width={$strokeWidth *
-            (troopsRetreat1[i].properties.survivors / 50000)}
-        />
-      {/if}
-    {/each}
-
-    {#each troopsRetreat2 as troop, i}
-      {#if i > 0}
-        <line
-          x1={projection(troopsRetreat2[i - 1].geometry.coordinates)[0]}
-          y1={projection(troopsRetreat2[i - 1].geometry.coordinates)[1]}
-          x2={projection(troopsRetreat2[i].geometry.coordinates)[0]}
-          y2={projection(troopsRetreat2[i].geometry.coordinates)[1]}
-          stroke="#000000"
-          stroke-width={$strokeWidth *
-            (troopsRetreat2[i].properties.survivors / 50000)}
-        />
-      {/if}
-    {/each}
-
-    {#each troopsRetreat3 as troop, i}
-      {#if i > 0}
-        <line
-          x1={projection(troopsRetreat3[i - 1].geometry.coordinates)[0]}
-          y1={projection(troopsRetreat3[i - 1].geometry.coordinates)[1]}
-          x2={projection(troopsRetreat3[i].geometry.coordinates)[0]}
-          y2={projection(troopsRetreat3[i].geometry.coordinates)[1]}
-          stroke="#000000"
-          stroke-width={$strokeWidth *
-            (troopsRetreat3[i].properties.survivors / 50000)}
-        />
-      {/if}
-    {/each}
-  {/if}
-</svg>
-
 <style>
-    .graph {
-      width: 100%;
-      height: 100vh; /* check problem when setting width */
-      position: absolute;
-      outline: red solid 7px;
-    }
-  </style>
+  .graph {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    outline: red solid 7px;
+  }
+</style>

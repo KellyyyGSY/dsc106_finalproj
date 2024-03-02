@@ -5,6 +5,7 @@
   import { line, curveMonotoneX } from 'd3-shape';
   import { axisBottom, axisLeft } from 'd3-axis';
 
+  import Graph from "./Graph.svelte";
   import Scroller from "@sveltejs/svelte-scroller";
   let count, index, offset, progress;
 
@@ -19,7 +20,7 @@
 
 
   function drawLinePlot() {
-    const margin = { top: 20, right: 120, bottom: 80, left: 80 };
+    const margin = { top: 50, right: 150, bottom: 80, left: 80 };
     const width = 1000 - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
@@ -42,11 +43,27 @@
     const yAxis = axisLeft(y);
 
     svg.append("g")
+      .attr("class", "x-axis")
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis);
 
     svg.append("g")
+      .attr("class", "y-axis")
       .call(yAxis);
+    
+    svg.selectAll(".x-axis line")
+      .attr("stroke", "#ccc");
+    svg.selectAll(".y-axis line")
+      .attr("stroke", "#ccc");
+
+    svg.append("g")
+      .attr("class", "grid")
+      .call(d3.axisLeft(y)
+          .tickSize(-width)
+          .tickFormat("")
+      )
+      .selectAll(".tick line")
+      .attr("stroke", "#ccc");
 
     const lineGenerator = line()
       .x(d => x(new Date(d.Date)))
@@ -73,11 +90,20 @@
     svg.append("text")
       .attr("class", "y label")
       .attr("text-anchor", "end")
-      .attr("x", -margin.left - 45)
+      .attr("x", -margin.left - 65)
       .attr("y", -margin.left + 20) // Adjusted positioning
       .attr("dy", ".75em")
       .attr("transform", "rotate(-90)")
       .text("Price");
+    
+    // Add graph title
+    svg.append("text")
+        .attr("class", "title")
+        .attr("text-anchor", "middle")
+        .attr("x", width -665)
+        .attr("y", -margin.top / 2) // Adjusted positioning
+        .text("United States 10-Year Bond Yield");
+
 
     // Add data points
     svg.selectAll(".dot")
@@ -136,6 +162,7 @@
   bind:progress
 >
   <div class="background" slot="background">
+    <Graph width={500} height={200} />
   </div>
   
   <div class="foreground" slot="foreground">
@@ -145,7 +172,13 @@
     </section>
     <section>
       <h2> some introduction of treasury bond </h2>
-      <h4> blablablabla </h4>
+      <h4> The U.S. 10-Year Bond is a debt obligation note by The United States Treasury, 
+      that has the eventual maturity of 10 years. The yield on a Treasury bill represents 
+      the return an investor will receive by holding the bond to maturity, 
+      and should be monitored closely as an indicator of the government debt situation. 
+      Investing resources into a 10 year treasury note is often considered favorable 
+      due to federal government securities being exempt from state and local income tax. 
+      quote from webpage!!!</h4>
       <div id="line-plot"></div>
     </section>
     <section>
@@ -179,9 +212,9 @@
   }
 
   section {
-    height: 80vh;      /* height of each section */
+    height: 90vh;      /* height of each section */
     /* background-color: rgba(0, 0, 0, 0.2); */
-    /* outline: magenta solid 3px; */
+    outline: magenta solid 3px;
 
     text-align: center;
     max-width: 100%; /* adjust at will */
