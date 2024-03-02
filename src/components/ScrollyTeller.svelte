@@ -11,13 +11,23 @@
   let count, index, offset, progress;
   let width, height;
 
-  let data;
+  let data, gdpData;
   onMount(async () => {
     const res = await fetch('US10_Year_Bond_Yield_20-24.csv');
     const csv = await res.text();
     data = d3.csvParse(csv, d3.autoType);
 
+    // Fetch and parse the GDP data
+    const gdpRes = await fetch('Quarterly GDP.csv');
+    const gdpCsv = await gdpRes.text();
+    gdpData = d3.csvParse(gdpCsv, d => ({
+      date: d3.timeParse("%YQ%q")(d.Quarterly),
+      gdpCurrent: +d["GDP in billions of current dollars"],
+      gdpChained: +d["GDP in billions of chained 2017 dollars"]
+    }));
+
     drawLinePlot();
+    drawGDPLinePlot();
   });
 
   function drawLinePlot() {
@@ -157,6 +167,169 @@
     });
   }
 
+
+  function drawGDPLinePlot() {
+    const margin = { top: 50, right: 30, bottom: 30, left: 60 };
+    const svgWidth = 1000;
+    const svgHeight = 500;
+    const plotWidth = svgWidth - margin.left - margin.right;
+    const plotHeight = svgHeight - margin.top - margin.bottom;
+
+    // Define the SVG container
+    const svg = d3.select("#gdp-line-plot")
+      .append("svg")
+      .attr("width", svgWidth)
+      .attr("height", svgHeight)
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Assuming your date parsing has been done correctly when loading the data
+    const xScale = d3.scaleTime()
+      .domain(d3.extent(gdpData, d => d.date))
+      .range([0, plotWidth]);
+
+    const yScale = d3.scaleLinear()
+      .domain([0, d3.max(gdpData, d => Math.max(d.gdpCurrent, d.gdpChained))])
+      .range([plotHeight, 0]);
+
+    // Define axes
+    const xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat("%Y"));
+    const yAxis = d3.axisLeft(yScale);
+
+    // Append axes to the SVG
+    svg.append("g")
+      .attr("transform", `translate(0,${plotHeight})`)
+      .call(xAxis);
+
+    svg.append("g")
+      .call(yAxis);
+
+    svg.append("g")
+      .attr("class", "grid")
+      .call(d3.axisLeft(yScale)
+          .tickSize(-plotWidth)
+          .tickFormat("")
+      )
+      .selectAll(".tick line")
+      .attr("stroke", "#ccc");
+
+    svg.append("g")
+      .attr("class", "grid")
+      .attr("transform", `translate(0,${plotHeight})`)
+      .call(d3.axisBottom(xScale)
+          .tickSize(-plotHeight)
+          .tickFormat("")
+      )
+      .selectAll(".tick line")
+      .attr("stroke", "#ccc");
+
+    // Area generator for GDP in current dollars
+    const areaCurrent = d3.area()
+      .x(d => xScale(d.date))
+      .y0(plotHeight)
+      .y1(d => yScale(d.gdpCurrent))
+      .curve(d3.curveMonotoneX);
+
+    // Area generator for GDP in chained 2017 dollars
+    const areaChained = d3.area()
+      .x(d => xScale(d.date))
+      .y0(plotHeight)
+      .y1(d => yScale(d.gdpChained))
+      .curve(d3.curveMonotoneX);
+
+    // Append the area for GDP in current dollars
+    svg.append("path")
+      .datum(gdpData)
+      .attr("fill", "blue")
+      .attr("opacity", 0.1)
+      .attr("d", areaCurrent);
+
+    // Append the area for GDP in chained 2017 dollars
+    svg.append("path")
+      .datum(gdpData)
+      .attr("fill", "green")
+      .attr("opacity", 0.1)
+      .attr("d", areaChained);
+
+    // Line generator for GDP in current dollars
+    const lineCurrent = d3.line()
+      .x(d => xScale(d.date))
+      .y(d => yScale(d.gdpCurrent))
+      .curve(d3.curveMonotoneX);
+
+    // Line generator for GDP in chained 2017 dollars
+    const lineChained = d3.line()
+      .x(d => xScale(d.date))
+      .y(d => yScale(d.gdpChained))
+      .curve(d3.curveMonotoneX);
+
+    // Append the path for GDP in current dollars
+    svg.append("path")
+      .datum(gdpData)
+      .attr("fill", "none")
+      .attr("stroke", "blue")
+      .attr("stroke-width", 2)
+      .attr("d", lineCurrent);
+
+    // Append the path for GDP in chained 2017 dollars
+    svg.append("path")
+      .datum(gdpData)
+      .attr("fill", "none")
+      .attr("stroke", "green")
+      .attr("stroke-width", 2)
+      .attr("d", lineChained);
+
+    // Add circles for GDP in current dollars
+    svg.selectAll(".dot-current")
+      .data(gdpData)
+      .enter().append("circle")
+      .attr("class", "dot-current")
+      .attr("cx", d => xScale(d.date))
+      .attr("cy", d => yScale(d.gdpCurrent))
+      .attr("r", 3)
+      .style("fill", "blue")
+      .style("opacity", 0.5)
+      .on("mouseover", (event, d) => displayTooltip(event, d, "Current Dollars"))
+      .on("mouseout", () => tooltip.style("display", "none"));
+
+    // Add circles for GDP in chained 2017 dollars
+    svg.selectAll(".dot-chained")
+      .data(gdpData)
+      .enter().append("circle")
+      .attr("class", "dot-chained")
+      .attr("cx", d => xScale(d.date))
+      .attr("cy", d => yScale(d.gdpChained))
+      .attr("r", 3)
+      .style("fill", "green")
+      .style("opacity", 0.5)
+      .on("mouseover", (event, d) => displayTooltip(event, d, "Chained 2017 Dollars"))
+      .on("mouseout", () => tooltip.style("display", "none"));
+
+    // Tooltip setup...
+    const tooltip = d3.select("body").append("div")
+      .attr("class", "tooltip")
+      .style("position", "absolute")
+      .style("background-color", "white")
+      .style("opacity", 0.9)
+      .style("border", "1px solid black")
+      .style("border-radius", "5px")
+      .style("padding", "10px")
+      .style("display", "none");
+
+    function displayTooltip(event, d, type) {
+      tooltip
+        .html(`Date: ${d3.timeFormat("%Y Q%q")(d.date)}<br/>GDP (${type}): $${type === "Current Dollars" ? d.gdpCurrent : d.gdpChained} Billion`)
+        .style("left", `${event.pageX + 15}px`)
+        .style("top", `${event.pageY - 28}px`)
+        .style("display", "block");
+  }
+
+    // Hide the tooltip when clicking anywhere on the page outside the data points
+    d3.select("body").on("click", function() {
+      tooltip.style("display", "none");
+    }, true); // True for capturing phase
+  }
+
 </script>
 
 <Scroller
@@ -202,23 +375,20 @@
       <h2> continue on treasury bond </h2>
       <div id="line-plot"></div>
     </section>
+
     <section>
-      <h2> some introduction of GDP </h2>
-      <h4> blablablabla </h4>
+      <h2> What is GDP? </h2>
+      <p> Gross Domestic Product (GDP) is a crucial economic indicator that measures the total value of all goods and services produced within a country over a specific period, typically a quarter or a year. It is used as a comprehensive gauge of a country's overall economic health, reflecting the size and growth rate of its economy. GDP can be calculated using three approaches: the production (or output or value added) approach, the income approach, and the expenditure approach, each offering a different perspective but theoretically arriving at the same total. </p>
+      <p> In the context of this project, GDP serves as a fundamental economic indicator that can significantly influence the dynamics of the 10-Year Treasury Yield. Changes in GDP growth rates can lead to adjustments in monetary policy, which in turn can affect interest rates and thus the Treasury yields. A strong and growing GDP may lead to higher yields, as investors demand more return in a booming economy, whereas a weak or contracting GDP can lead to lower yields, reflecting a move towards safer investments and potential monetary easing by the central bank to stimulate growth. </p>
     </section>
     <section>
-      <h2> some introduction of inflation </h2>
-      <h4> Inflation, measured by the Consumer Price Index (CPI), 
-      reflects the fluctuation in prices of goods and services commonly 
-      bought by specific household groups. Inflation is measured 
-      in terms of the annual growth rate and in index. 
-      This includes breakdowns for food, energy, and overall excluding 
-      food and energy, capturing the impact on living standards. <br><br>
-      The CPI is derived from proportional changes in prices 
-      of a fixed basket of goods and services used or paid for 
-      by the reference population. Each component is a weighted average 
-      of numerous elementary aggregate indices, derived from price samples 
-      collected regionally. </h4>
+      <h2>Quarterly GDP</h2>
+      <div id="gdp-line-plot"></div> <!-- Container for the GDP line plot -->
+    </section>
+    <section>
+      <h2>What is Inflation?</h2>
+      <p>Inflation is a key economic metric that denotes the rate at which the general level of prices for goods and services is rising, and subsequently, how purchasing power is falling. Central banks attempt to limit inflation, and avoid deflation, in order to keep the economy running smoothly. Inflation can be measured through various indices, the most common being the Consumer Price Index (CPI) and the Wholesale Price Index (WPI). CPI measures the average price change over time of a basket of goods and services that a typical household might purchase, while WPI measures the price change of goods sold and traded in bulk by wholesale businesses to other businesses.</p>
+      <p>In the context of this project, understanding inflation is vital as it directly impacts the dynamics of the 10-Year Treasury Yield. Inflation erodes the real return on investments, including those in government securities such as Treasury bonds. As inflation expectations rise, investors may demand higher yields to compensate for the anticipated decrease in the purchasing power of their future interest payments. Conversely, low inflation rates may lead to lower yields, as the real return on investments becomes more stable, making government securities more attractive. Central banks may adjust monetary policy in response to inflation levels to stabilize the economy, influencing interest rates and thus impacting Treasury yields.</p>
     </section>
     <section>This is the fifth section.</section>
     <section>This is the sixth section.</section>
