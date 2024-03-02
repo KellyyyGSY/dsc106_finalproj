@@ -174,6 +174,12 @@
     <section>
       <h1>Navigating the Dynamics of 10-Year Treasury Yield and Economic Indicators: <br>An Interactive Exploration</h1>
       <p> Name: Kelly Gong, Andrew Guo, Yishan Cai </p>
+      <a href="https://github.com/KellyyyGSY/dsc106_finalproj/blob/main/README.md"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="center-link">
+        Here is a detailed write-up for the project.
+      </a>
     </section>
     <section>
       <h2> some introduction of treasury bond </h2>
