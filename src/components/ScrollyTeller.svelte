@@ -101,9 +101,10 @@
     svg.append("text")
         .attr("class", "title")
         .attr("text-anchor", "middle")
-        .attr("x", width -665)
+        .attr("x", width -650)
         .attr("y", -margin.top / 2) // Adjusted positioning
-        .text("United States 10-Year Bond Yield");
+        .text("United States 10-Year Bond Yield")
+        .style("font-size", "18px");
 
     // Add data points
     svg.selectAll(".dot")
@@ -113,12 +114,17 @@
       .attr("cx", d => x(new Date(d.Date)))
       .attr("cy", d => y(d.Price))
       .attr("r", 4)
-      .style("fill", "steelblue")
+      .style("fill", "white")
+      .style("opacity", 0.0)
       .on("mouseover", (event, d) => {
         tooltip.style("display", null);
         tooltip.attr("transform", `translate(${x(new Date(d.Date))},${y(d.Price)})`);
         tooltipText.text(`Date: ${d.Date}`);
         tooltipText.append("tspan").attr("x", 10).attr("dy", "1.2em").text(`Price: ${d.Price}`);
+        tooltipText.append("tspan").attr("x", 10).attr("dy", "1.2em").text(`Open: ${d.Open}`);
+        tooltipText.append("tspan").attr("x", 10).attr("dy", "1.2em").text(`High: ${d.High}`);
+        tooltipText.append("tspan").attr("x", 10).attr("dy", "1.2em").text(`Low: ${d.Low}`);
+        tooltipText.append("tspan").attr("x", 10).attr("dy", "1.2em").text(`Change%: ${d.ChangePercentage}`);
       })
       .on("mouseout", () => {
         tooltip.style("display", "none");
@@ -131,10 +137,11 @@
       .style("display", "none");
 
     tooltip.append("rect")
-      .attr("width", 130)
-      .attr("height", 50)
+      .attr("width", 150)
+      .attr("height", 125)
       .attr("fill", "white")
       .style("opacity", 0.9)
+      .attr("stroke", "steelblue")
       .attr("rx", 5) // rounded corners
       .attr("ry", 5);
 
@@ -189,7 +196,7 @@
       and should be monitored closely as an indicator of the government debt situation. 
       Investing resources into a 10 year treasury note is often considered favorable 
       due to federal government securities being exempt from state and local income tax. 
-      quote from webpage!!!</h4>
+      </h4>
     </section>
     <section>
       <h2> continue on treasury bond </h2>
@@ -201,7 +208,17 @@
     </section>
     <section>
       <h2> some introduction of inflation </h2>
-      <h4> blablablabla </h4>
+      <h4> Inflation, measured by the Consumer Price Index (CPI), 
+      reflects the fluctuation in prices of goods and services commonly 
+      bought by specific household groups. Inflation is measured 
+      in terms of the annual growth rate and in index. 
+      This includes breakdowns for food, energy, and overall excluding 
+      food and energy, capturing the impact on living standards. <br><br>
+      The CPI is derived from proportional changes in prices 
+      of a fixed basket of goods and services used or paid for 
+      by the reference population. Each component is a weighted average 
+      of numerous elementary aggregate indices, derived from price samples 
+      collected regionally. </h4>
     </section>
     <section>This is the fifth section.</section>
     <section>This is the sixth section.</section>
