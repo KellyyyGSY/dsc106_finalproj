@@ -1,85 +1,70 @@
 <script>
-  import { onMount, afterUpdate } from 'svelte';
+  import { onMount } from 'svelte';
   import * as d3 from 'd3';
   import { scaleLinear, scaleTime } from 'd3-scale';
   import { line, curveMonotoneX } from 'd3-shape';
 
+  export let index, width, height;
+
   let data;
-  let svg;
-  let lineGenerator;
 
   onMount(async () => {
     const res = await fetch('US10_Year_Bond_Yield_20-24.csv');
     const csv = await res.text();
     data = d3.csvParse(csv, d3.autoType);
-    
-    // Initialize the SVG element
-    svg = d3.select(".graph")
-      .attr("width", width)
-      .attr("height", height)
-      .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  });
 
-    // Define the scales and line generator
+  function drawAnimatedLine() {
+    const margin = { top: 80, right: 0, bottom: 0, left: 0 };
+    const svgWidth = 1350 - margin.left - margin.right;
+    const svgHeight = 550;
+
+    const svg = d3.select('.graph')
+      .append('svg')
+      .attr('width', svgWidth + margin.left + margin.right)
+      .attr('height', svgHeight + margin.top + margin.bottom)
+      .append('g')
+      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
     const x = scaleTime()
       .domain(d3.extent(data, d => new Date(d.Date)))
-      .range([0, width]);
+      .range([0, svgWidth]);
       
     const y = scaleLinear()
       .domain([0, d3.max(data, d => d.Price)])
-      .range([height, 0]);
+      .range([svgHeight, 0]);
 
-    lineGenerator = line()
+    const lineGenerator = line()
       .x(d => x(new Date(d.Date)))
       .y(d => y(d.Price))
       .curve(curveMonotoneX);
 
-    // Draw the line
-    svg.append("path")
+    // Append a 'path' element to the SVG
+    const path = svg.append('path')
       .datum(data)
-      .attr("class", "line")
-      .attr("fill", "none")
-      .attr("stroke", "steelblue")
-      .attr("stroke-width", 1.5)
-      .attr("d", lineGenerator(data));
+      .attr('fill', 'none')
+      .attr('stroke', '#ccc')
+      .attr('stroke-width', 1.5)
+      .attr('d', lineGenerator(data)); // Set initial path data to start position
 
-    // Animate the line
-    const totalLength = svg.select('.line').node().getTotalLength();
-    svg.select('.line')
-      .attr("stroke-dasharray", totalLength + " " + totalLength)
-      .attr("stroke-dashoffset", totalLength)
-      .transition()
-      .duration(2000)
-      .ease(d3.easeLinear)
-      .attr("stroke-dashoffset", 0);
-  });
+    // Get the total length of the path
+    const totalLength = path.node().getTotalLength();
 
-  afterUpdate(() => {
-    // Update the line on window resize
-    if (svg) {
-      const x = scaleTime()
-        .domain(d3.extent(data, d => new Date(d.Date)))
-        .range([0, width]);
-        
-      const y = scaleLinear()
-        .domain([0, d3.max(data, d => d.Price)])
-        .range([height, 0]);
+    // Transition the path to its initial position
+    path.attr('stroke-dasharray', totalLength + ',0');
 
-      const updatedLine = lineGenerator
-        .x(d => x(new Date(d.Date)))
-        .y(d => y(d.Price));
-
-      svg.select('.line')
-        .attr("d", updatedLine(data));
-    }
-  });
+    // Transition the path to its final position
+    path.transition()
+      .duration(6000) // Adjust duration as needed
+      .attr('stroke-dasharray', '0,' + totalLength);
+  }
 </script>
 
+<svg class="graph" width={width} height={height}>
+  {#if index === 1} <!-- it's the 2rd section now-->
+    {drawAnimatedLine()}
+  {/if}
+</svg>
+
 <style>
-  .graph {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    outline: red solid 7px;
-  }
 </style>

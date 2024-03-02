@@ -7,7 +7,9 @@
 
   import Graph from "./Graph.svelte";
   import Scroller from "@sveltejs/svelte-scroller";
+
   let count, index, offset, progress;
+  let width, height;
 
   let data;
   onMount(async () => {
@@ -17,7 +19,6 @@
 
     drawLinePlot();
   });
-
 
   function drawLinePlot() {
     const margin = { top: 50, right: 150, bottom: 80, left: 80 };
@@ -104,7 +105,6 @@
         .attr("y", -margin.top / 2) // Adjusted positioning
         .text("United States 10-Year Bond Yield");
 
-
     // Add data points
     svg.selectAll(".dot")
       .data(data)
@@ -161,8 +161,13 @@
   bind:offset
   bind:progress
 >
-  <div class="background" slot="background">
-    <Graph width={500} height={200} />
+  <div
+    class="background"
+    slot="background"
+    bind:clientWidth={width}
+    bind:clientHeight={height}
+  >
+    <Graph {index} {width} {height}/>
   </div>
   
   <div class="foreground" slot="foreground">
@@ -179,6 +184,9 @@
       Investing resources into a 10 year treasury note is often considered favorable 
       due to federal government securities being exempt from state and local income tax. 
       quote from webpage!!!</h4>
+    </section>
+    <section>
+      <h2> continue on treasury bond </h2>
       <div id="line-plot"></div>
     </section>
     <section>
@@ -214,7 +222,7 @@
   section {
     height: 90vh;      /* height of each section */
     /* background-color: rgba(0, 0, 0, 0.2); */
-    outline: magenta solid 3px;
+    /* outline: magenta solid 3px; */
 
     text-align: center;
     max-width: 100%; /* adjust at will */
