@@ -4,18 +4,35 @@
   import { scaleLinear, scaleTime } from 'd3-scale';
   import { line, curveMonotoneX } from 'd3-shape';
   import { axisBottom, axisLeft } from 'd3-axis';
-
+  import { gsap } from "gsap";
   import Graph from "./Graph.svelte";
   import Scroller from "@sveltejs/svelte-scroller";
 
   let count, index, offset, progress;
   let width, height;
-
   let data, gdpData;
+  const timeline = gsap.timeline({defaults: {duration: 2, opacity: 0}});
+
   onMount(async () => {
     const res = await fetch('US10_Year_Bond_Yield_20-24.csv');
     const csv = await res.text();
     data = d3.csvParse(csv, d3.autoType);
+    timeline.to(".text-reveal span", {
+                    opacity: 1,
+                    duration: 0.2,
+                    stagger: 0.05,
+                    ease: "power1.inOut"})
+            .to(".title span", {
+                    opacity: 1,
+                    duration: 0.1,
+                    stagger: 0.05,
+                    ease: "power1.inOut"})
+            .to(".author span", {
+                    opacity: 1,
+                    duration: 0.3,
+                    stagger: 0.05,
+                    ease: "power1.inOut"}, "<0.5") 
+            .from(".center-link", {opacity: 0}); 
 
     // Fetch and parse the GDP data
     const gdpRes = await fetch('Quarterly GDP.csv');
@@ -29,6 +46,8 @@
     drawLinePlot();
     drawGDPLinePlot();
   });
+
+
 
   function drawLinePlot() {
     const margin = { top: 50, right: 150, bottom: 80, left: 80 };
@@ -331,7 +350,6 @@
   }
 
 </script>
-
 <Scroller
   top={0.0}
   bottom={1}
@@ -351,14 +369,25 @@
   </div>
   
   <div class="foreground" slot="foreground">
-    <section>
-      <h1>Navigating the Dynamics of 10-Year Treasury Yield and Economic Indicators: <br>An Interactive Exploration</h1>
-      <p> Name: Kelly Gong, Andrew Guo, Yishan Cai </p>
+    <section id="custom-background-section">
+      <h1 class="text-reveal">
+        {#each "Navigating the Dynamics of 10-Year Treasury Yield and Economic Indicators:".split('').map((char) => char === ' ' ? '\u00A0' : char) as letter}
+        <span>{letter}</span>
+        {/each}
+        {#each "An Interactive Exploration".split('').map((char) => char === ' ' ? '\u00A0' : char) as letter}
+        <span>{letter}</span>
+        {/each}
+      </h1>
+      <p class = 'author'> 
+        {#each "Kelly Gong, Andrew Guo, Yishan Cai".split('').map((char) => char === ' ' ? '\u00A0' : char) as letter}
+        <span>{letter}</span>
+        {/each}
+        </p><br>
       <a href="https://github.com/KellyyyGSY/dsc106_finalproj/blob/main/README.md"
         target="_blank"
         rel="noopener noreferrer"
         class="center-link">
-        Here is a detailed write-up for the project.
+        Project Write-up
       </a>
     </section>
     <section>
@@ -401,7 +430,6 @@
     width: 100%;
     height: 100vh;
     position: relative;
-    outline: green solid 3px;
   }
 
   .foreground {
@@ -413,15 +441,13 @@
   }
 
   section {
-    height: 90vh;      /* height of each section */
+    height: 100vh;      /* height of each section */
     /* background-color: rgba(0, 0, 0, 0.2); */
     /* outline: magenta solid 3px; */
-
     text-align: center;
     max-width: 100%; /* adjust at will */
     color: black;    /* color of title */
     padding: 5.5em;    /* the distance from top to the title*/
-    margin: 0 0 2em 0;
   }
 
   h1 {
@@ -429,4 +455,65 @@
     margin-bottom: 0.8em; /* Add margin below the title */
   }
 
+  .text-reveal{
+    background-color: rgba(255, 255, 255, 0.7); /* Adjust the opacity as needed */
+    display: inline-block; /* Or as per your layout needs */
+    padding: 10px; /* Adds some space around the text */
+  }
+
+  .author{
+    font-size: 1.2em;
+    background-color: rgba(255, 255, 255, 0.7); /* Adjust the opacity as needed */
+    display: inline-block; /* Or as per your layout needs */
+    padding: 10px; /* Adds some space around the text */
+  }
+
+  .author span{
+    opacity: 0;
+    display: inline-block;
+  }
+
+  .text-reveal span {
+    opacity: 0;
+    display: inline-block;
+  }
+
+  .title{
+    background-color: rgba(255, 255, 255, 0.7); /* Adjust the opacity as needed */
+    display: inline-block; /* Or as per your layout needs */
+    padding: 10px; /* Adds some space around the text */
+  }
+
+  .center-link{
+    background-color: rgba(255, 255, 255, 0.7); /* Adjust the opacity as needed */
+    display: inline-block; /* Or as per your layout needs */
+    padding: 10px; /* Adds some space around the text */
+  }
+
+  .title span {
+    opacity: 0;
+    display: inline-block;
+  }
+
+  #custom-background-section {
+  animation: switchBackground 20s infinite; /* Adjust time as necessary */
+  background-size: cover; /* Cover the entire section */
+  background-position: center; /* Center the background image */
+  height: 650px; /* Or the height you desire */
+}
+
+  @keyframes switchBackground {
+              0%,25% {
+                  background-image: url('pic0.jpeg');
+              }
+              25%,50% {
+                  background-image: url('pic1.jpeg');
+              }
+              50%,75% {
+                  background-image: url('pic2.jpeg');
+              }
+              100%,0% {
+                  background-image: url('pic3.jpeg');
+              }
+          }
 </style>
