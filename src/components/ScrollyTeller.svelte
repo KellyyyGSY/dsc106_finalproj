@@ -17,11 +17,7 @@
     const res = await fetch('US10_Year_Bond_Yield_20-24.csv');
     const csv = await res.text();
     data = d3.csvParse(csv, d3.autoType);
-    timeline.to(".text-reveal span", {
-                    opacity: 1,
-                    duration: 0.2,
-                    stagger: 0.05,
-                    ease: "power1.inOut"})
+    timeline.from(".text-reveal", {opacity: 0})
             .to(".title span", {
                     opacity: 1,
                     duration: 0.1,
@@ -29,10 +25,10 @@
                     ease: "power1.inOut"})
             .to(".author span", {
                     opacity: 1,
-                    duration: 0.3,
+                    duration: 0.1,
                     stagger: 0.05,
-                    ease: "power1.inOut"}, "<0.5") 
-            .from(".center-link", {opacity: 0}); 
+                    ease: "power1.inOut"}, "<.5") 
+            .from(".center-link", {duration: 1, opacity: 0}); 
 
     // Fetch and parse the GDP data
     const gdpRes = await fetch('Quarterly GDP.csv');
@@ -371,12 +367,12 @@
   <div class="foreground" slot="foreground">
     <section id="custom-background-section">
       <h1 class="text-reveal">
-        {#each "Navigating the Dynamics of 10-Year Treasury Yield and Economic Indicators:".split('').map((char) => char === ' ' ? '\u00A0' : char) as letter}
-        <span>{letter}</span>
-        {/each}
+        Navigating the Dynamics of 10-Year Treasury Yield and Economic Indicators:
+      <div class="title">
         {#each "An Interactive Exploration".split('').map((char) => char === ' ' ? '\u00A0' : char) as letter}
         <span>{letter}</span>
         {/each}
+      </div>
       </h1>
       <p class = 'author'> 
         {#each "Kelly Gong, Andrew Guo, Yishan Cai".split('').map((char) => char === ' ' ? '\u00A0' : char) as letter}
@@ -476,12 +472,6 @@
   .text-reveal span {
     opacity: 0;
     display: inline-block;
-  }
-
-  .title{
-    background-color: rgba(255, 255, 255, 0.7); /* Adjust the opacity as needed */
-    display: inline-block; /* Or as per your layout needs */
-    padding: 10px; /* Adds some space around the text */
   }
 
   .center-link{
