@@ -494,16 +494,16 @@
 
   @keyframes switchBackground {
               0%,25% {
-                  background-image: url('pic0.jpeg');
+                  background-image: url('/dsc106_finalproj/static/pic0.jpeg');
               }
               25%,50% {
-                  background-image: url('pic1.jpeg');
+                  background-image: url('/dsc106_finalproj/static/pic1.jpeg');
               }
               50%,75% {
-                  background-image: url('pic2.jpeg');
+                  background-image: url('/dsc106_finalproj/static/pic2.jpeg');
               }
               100%,0% {
-                  background-image: url('pic3.jpeg');
+                  background-image: url('/dsc106_finalproj/static/pic3.jpeg');
               }
           }
 </style>
