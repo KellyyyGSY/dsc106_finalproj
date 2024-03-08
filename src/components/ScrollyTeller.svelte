@@ -20,7 +20,7 @@
     timeline.from(".text-reveal", {opacity: 0})
             .to(".title span", {
                     opacity: 1,
-                    duration: 0.1,
+                    duration: 0.2,
                     stagger: 0.05,
                     ease: "power1.inOut"})
             .to(".author span", {
@@ -486,24 +486,24 @@
   }
 
   #custom-background-section {
-  animation: switchBackground 20s infinite; /* Adjust time as necessary */
-  background-size: cover; /* Cover the entire section */
-  background-position: center; /* Center the background image */
-  height: 650px; /* Or the height you desire */
+  animation: switchBackground 20s infinite;
+  background-size: cover; 
+  background-position: center; 
+  height: 650px; 
 }
 
   @keyframes switchBackground {
               0%,25% {
-                  background-image: url('../pic0.jpeg');
+                  background-image: url('./pic0.jpeg');
               }
               25%,50% {
-                  background-image: url('../pic1.jpeg');
+                  background-image: url('./pic1.jpeg');
               }
               50%,75% {
-                  background-image: url('../pic2.jpeg');
+                  background-image: url('./pic2.jpeg');
               }
               100%,0% {
-                  background-image: url('../pic3.jpeg');
+                  background-image: url('./pic3.jpeg');
               }
           }
 </style>
