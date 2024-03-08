@@ -494,16 +494,16 @@
 
   @keyframes switchBackground {
               0%,25% {
-                  background-image: url('pic0.jpeg');
+                  background-image: url("https://storage.cloud.google.com/pic0_dsc106/pic0.jpeg");
               }
               25%,50% {
-                  background-image: url('pic1.jpeg');
+                  background-image: url("https://storage.cloud.google.com/pic0_dsc106/pic1.jpeg");
               }
               50%,75% {
-                  background-image: url('pic2.jpeg');
+                  background-image: url('https://storage.cloud.google.com/pic0_dsc106/pic2.jpeg');
               }
               100%,0% {
-                  background-image: url('pic3.jpeg');
+                  background-image: url('https://storage.cloud.google.com/pic0_dsc106/pic3.jpeg');
               }
           }
 </style>
