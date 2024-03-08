@@ -486,20 +486,20 @@
   }
 
   #custom-background-section {
-  animation: switchBackground 20s infinite;
+  animation: switchBackground 25s infinite;
   background-size: cover; 
   background-position: center; 
   height: 650px; 
 }
 
   @keyframes switchBackground {
-              0%,25% {
+              0%, 15% {
                   background-image: url("https://storage.googleapis.com/pic0_dsc106/pic0.jpeg");
               }
-              25%,50% {
+              45%,55% {
                   background-image: url("https://storage.googleapis.com/pic0_dsc106/pic1.jpeg");
               }
-              50%,75% {
+              55%,75% {
                   background-image: url('https://storage.googleapis.com/pic0_dsc106/pic2.jpeg');
               }
               100%,0% {
