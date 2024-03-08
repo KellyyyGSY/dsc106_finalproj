@@ -497,13 +497,13 @@
                   background-image: url('pic0.jpeg');
               }
               25%,50% {
-                  background-image: url('pic0.jpeg');
+                  background-image: url('pic1.jpeg');
               }
               50%,75% {
-                  background-image: url('pic0.jpeg');
+                  background-image: url('pic2.jpeg');
               }
               100%,0% {
-                  background-image: url('pic0.jpeg');
+                  background-image: url('pic3.jpeg');
               }
           }
 </style>
