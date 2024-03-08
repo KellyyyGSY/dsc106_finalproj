@@ -4,14 +4,16 @@
   import { scaleLinear, scaleTime } from 'd3-scale';
   import { line, curveMonotoneX } from 'd3-shape';
   import { axisBottom, axisLeft } from 'd3-axis';
-  import { gsap } from "gsap";
+  import { gsap } from "gsap/dist/gsap";
   import Graph from "./Graph.svelte";
   import Scroller from "@sveltejs/svelte-scroller";
+  import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 
   let count, index, offset, progress;
   let width, height;
   let data, gdpData;
   const timeline = gsap.timeline({defaults: {duration: 2, opacity: 0}});
+  gsap.registerPlugin(ScrollTrigger);
 
   onMount(async () => {
     const res = await fetch('US10_Year_Bond_Yield_20-24.csv');
@@ -29,6 +31,19 @@
                     stagger: 0.05,
                     ease: "power1.inOut"}, "<.5") 
             .from(".center-link", {duration: 1, opacity: 0}); 
+    
+      gsap.utils.toArray('.section').forEach(section => {
+        gsap.from(section, {
+          opacity: 0,
+          y: 100,
+          duration: 1,
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 75%', // Start the animation when the top of the section hits the middle of the viewport
+            toggleActions: 'play none none reverse', // Defines how the animation behaves on scroll
+                },
+              });
+            });
 
     // Fetch and parse the GDP data
     const gdpRes = await fetch('Quarterly GDP.csv');
@@ -363,7 +378,8 @@
   >
     <Graph {index} {width} {height}/>
   </div>
-  
+
+  <script src="https://unpkg.com/scrollreveal"></script>
   <div class="foreground" slot="foreground">
     <section id="custom-background-section">
       <h1 class="text-reveal">
@@ -429,7 +445,7 @@
   }
 
   .foreground {
-    width: 80%;
+    width: 100%;
     margin: 0 auto;
     height: auto;
     position: relative;
@@ -467,6 +483,8 @@
   .author span{
     opacity: 0;
     display: inline-block;
+    font-style: italic;
+    padding: .5px
   }
 
   .text-reveal span {
@@ -478,18 +496,23 @@
     background-color: rgba(255, 255, 255, 0.7); /* Adjust the opacity as needed */
     display: inline-block; /* Or as per your layout needs */
     padding: 10px; /* Adds some space around the text */
+    font-style: italic;
+    font-size:large;
   }
 
   .title span {
     opacity: 0;
     display: inline-block;
+    color: rgb(60, 133, 212);
+    text-shadow: 0 0 5px white;
+    font-style: italic;
   }
 
   #custom-background-section {
-  animation: switchBackground 25s infinite;
+  animation: switchBackground 30s infinite;
   background-size: cover; 
   background-position: center; 
-  height: 650px; 
+  height: 700px; 
 }
 
   @keyframes switchBackground {
