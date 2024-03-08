@@ -418,41 +418,64 @@
         Project Write-up
       </a>
     </section>
-    <section id = "first">
+
+    <section id = "hook">
+      <p>In a world where the pulse of the economy is often gauged by the fluctuation of numbers and rates, the dynamics of the 10-Year Treasury Yield stand out as a critical barometer of economic health and investor sentiment.</p>
+
+      <h3>But what if the seemingly arcane interplay between treasury yields, GDP growth, and inflation rates could unlock the secrets to predicting economic trends and crafting savvy investment strategies?</h3>
+
+      <p>Join us on a journey that transforms complex economic data into a captivating narrative, where each data point and trend line tells a story of opportunity, risk, and the relentless quest for financial wisdom.</p>
+
+    </section>
+
+    <section id = "bond">
       <h2> Treasury Bond </h2>
-      <h4>The U.S. 10-Year Bond is a debt obligation note by The United States Treasury, 
+      <p>The U.S. 10-Year Bond is a debt obligation note by The United States Treasury, 
       that has the eventual maturity of 10 years. The yield on a Treasury bill represents 
       the return an investor will receive by holding the bond to maturity, 
       and should be monitored closely as an indicator of the government debt situation. 
       Investing resources into a 10 year treasury note is often considered favorable 
       due to federal government securities being exempt from state and local income tax. 
-      </h4>
+      </p>
     </section>
-    <section id = "second">
+
+    <section id = "bondviz">
       <h2> continue on treasury bond </h2>
       <div id="line-plot"></div>
     </section>
-    <section id = "third">
+
+    <section id = "gdp">
       <h2> What is GDP? </h2>
       <p> Gross Domestic Product (GDP) is a crucial economic indicator that measures the total value of all goods and services produced within a country over a specific period, typically a quarter or a year. It is used as a comprehensive gauge of a country's overall economic health, reflecting the size and growth rate of its economy. GDP can be calculated using three approaches: the production (or output or value added) approach, the income approach, and the expenditure approach, each offering a different perspective but theoretically arriving at the same total. </p>
       <p> In the context of this project, GDP serves as a fundamental economic indicator that can significantly influence the dynamics of the 10-Year Treasury Yield. Changes in GDP growth rates can lead to adjustments in monetary policy, which in turn can affect interest rates and thus the Treasury yields. A strong and growing GDP may lead to higher yields, as investors demand more return in a booming economy, whereas a weak or contracting GDP can lead to lower yields, reflecting a move towards safer investments and potential monetary easing by the central bank to stimulate growth. </p>
     </section>
-    <section>
+
+    <section id = "gdpviz">
       <h2>Quarterly GDP</h2>
       <div id="gdp-line-plot"></div> <!-- Container for the GDP line plot -->
     </section>
-    <section>
+
+    <section id = "inflation">
       <h2>What is Inflation?</h2>
       <p>Inflation is a key economic metric that denotes the rate at which the general level of prices for goods and services is rising, and subsequently, how purchasing power is falling. Central banks attempt to limit inflation, and avoid deflation, in order to keep the economy running smoothly. Inflation can be measured through various indices, the most common being the Consumer Price Index (CPI) and the Wholesale Price Index (WPI). CPI measures the average price change over time of a basket of goods and services that a typical household might purchase, while WPI measures the price change of goods sold and traded in bulk by wholesale businesses to other businesses.</p>
       <p>In the context of this project, understanding inflation is vital as it directly impacts the dynamics of the 10-Year Treasury Yield. Inflation erodes the real return on investments, including those in government securities such as Treasury bonds. As inflation expectations rise, investors may demand higher yields to compensate for the anticipated decrease in the purchasing power of their future interest payments. Conversely, low inflation rates may lead to lower yields, as the real return on investments becomes more stable, making government securities more attractive. Central banks may adjust monetary policy in response to inflation levels to stabilize the economy, influencing interest rates and thus impacting Treasury yields.</p>
     </section>
-    <section>This is the fifth section.</section>
-    <section>This is the sixth section.</section>
+
+    <section id = "inflationviz">
+      This is the fifth section.
+    </section>
+
   </div>
 </Scroller>
 
 
 <style>
+
+  :global(body) {
+    color: white;
+    background-color: black;
+  }
+
   .background {
     width: 100%;
     height: 100vh;
@@ -473,46 +496,59 @@
     /* outline: magenta solid 3px; */
     text-align: center;
     max-width: 100%; /* adjust at will */
-    color: black;    /* color of title */
+    color: white;    /* color of title */
     padding: 5.5em;    /* the distance from top to the title*/
     opacity: 0;
     transition: opacity 0.1s ease-in-out;
   }
 
   h1 {
+    font-family: "Gill Sans", sans-serif;
     font-size: 3em; /* Adjust the font size here */
     margin-bottom: 0.8em; /* Add margin below the title */
   }
 
   h2 {
+    font-family: "Gill Sans", sans-serif;
     font-size: 2.2em; /* Adjust the font size here */
     margin-bottom: 0.8em; /* Add margin below the title */
-    background-color: rgba(255, 255, 255, 0.7); /* Adjust the opacity as needed */
+    /* background-color: rgba(255, 255, 255, 0.7); Adjust the opacity as needed */
     display: inline-block; /* Or as per your layout needs */
     padding: 10px; /* Adds some space around the text */
   }
 
-  h4{
+  h3 {
+    font-family: "Gill Sans", sans-serif;
+    font-size: 1.7em; /* Adjust the font size here */
+    /* background-color: rgba(255, 255, 255, 0.7); Adjust the opacity as needed */
+    display: inline-block; /* Or as per your layout needs */
+    padding: 10px; /* Adds some space around the text */
+  }
+
+  p{
+    font-family: "Gill Sans", sans-serif;
     font-size: 1.5em; /* Adjust the font size here */
-    background-color: rgba(255, 255, 255, 0.7); /* Adjust the opacity as needed */
+    /* background-color: rgba(255, 255, 255, 0.7); Adjust the opacity as needed */
     display: inline-block; /* Or as per your layout needs */
     padding: 10px; /* Adds some space around the text */
   }
 
   .text-reveal{
-    background-color: rgba(255, 255, 255, 0.7); /* Adjust the opacity as needed */
+    /* background-color: rgba(255, 255, 255, 0.7); Adjust the opacity as needed */
     display: inline-block; /* Or as per your layout needs */
     padding: 10px; /* Adds some space around the text */
   }
 
   .author{
+    font-family: "Gill Sans", sans-serif;
     font-size: 1.2em;
-    background-color: rgba(255, 255, 255, 0.7); /* Adjust the opacity as needed */
+    /* background-color: rgba(255, 255, 255, 0.7); Adjust the opacity as needed */
     display: inline-block; /* Or as per your layout needs */
     padding: 10px; /* Adds some space around the text */
   }
 
   .author span{
+    font-family: "Gill Sans", sans-serif;
     opacity: 0;
     display: inline-block;
     font-style: italic;
@@ -525,6 +561,7 @@
   }
 
   .center-link{
+    font-family: "Gill Sans", sans-serif;
     background-color: rgba(255, 255, 255, 0.7); /* Adjust the opacity as needed */
     display: inline-block; /* Or as per your layout needs */
     padding: 10px; /* Adds some space around the text */
@@ -533,44 +570,70 @@
   }
 
   .title span {
+    font-family: "Gill Sans", sans-serif;
     opacity: 0;
     display: inline-block;
-    color: rgb(60, 133, 212);
-    text-shadow: 0 0 5px white;
+    color: #F2F2F0;
+    text-shadow: 0 0 5px #262626;
     font-style: italic;
-  }
-
-  #first {
-  background-image: url("https://storage.googleapis.com/pic0_dsc106/pic0.jpeg");
-  background-size: cover; /* Cover the entire section */
-  background-position: center; /* Center the background image */
-  height: 700px; /* Adjust based on your needs */
-  }
-
-
-  #second{
-    background-color: yellow;
+    font-size: 35px;
   }
 
   #custom-background-section {
-  animation: switchBackground 30s infinite;
-  background-size: cover; 
-  background-position: center; 
-  height: 700px; 
-}
+      position: relative; /* Needed for the absolute positioning of the pseudo-element */
+      height: 700px; /* Adjust based on your needs */
+      overflow: hidden; /* Ensures the pseudo-element doesn't extend outside this container */
+  }
 
-  @keyframes switchBackground {
-              0%, 15% {
-                  background-image: url("https://storage.googleapis.com/pic0_dsc106/pic0.jpeg");
-              }
-              45%,55% {
-                  background-image: url("https://storage.googleapis.com/pic0_dsc106/pic1.jpeg");
-              }
-              55%,75% {
-                  background-image: url('https://storage.googleapis.com/pic0_dsc106/pic2.jpeg');
-              }
-              100%,0% {
-                  background-image: url('https://storage.googleapis.com/pic0_dsc106/pic3.jpeg');
-              }
-          }
+  #custom-background-section::before {
+      content: ''; /* Necessary for the pseudo-element to be generated */
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url("https://storage.googleapis.com/pic0_dsc106/pic0.jpeg");
+      background-size: cover; /* Cover the entire section */
+      background-position: center; /* Center the background image */
+      opacity: 0.5; /* Adjust opacity as needed */
+      z-index: -1; /* Ensures the background is behind the content */
+  }
+
+  /* Make sure the content inside #custom-background-section has a higher z-index if needed */
+  #custom-background-section > * {
+      position: relative;
+      z-index: 1;
+  }
+
+  /* Fade-in animation for the entire section */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  #hook {
+    animation: fadeIn 2s ease-out;
+  }
+
+  /* Up-and-down bobbing animation for the h3 tag */
+  @keyframes bobbing {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  #hook h3 {
+    animation: bobbing 3s ease-in-out infinite;
+  }
+
+
 </style>
