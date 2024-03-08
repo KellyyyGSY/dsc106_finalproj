@@ -490,7 +490,13 @@
     <section> </section>
 
     <section id = "inflationviz">
-      This is the fifth section.
+      <h2>Visualize Inflation</h2>
+    </section>
+
+    <section> </section>
+
+    <section id = "rela"> 
+      <h2> Interconnections </h2>
     </section>
 
   </div>
