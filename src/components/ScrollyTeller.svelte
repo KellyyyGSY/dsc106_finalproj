@@ -28,22 +28,38 @@
             .to(".author span", {
                     opacity: 1,
                     duration: 0.1,
-                    stagger: 0.05,
+                    stagger: 0.04,
                     ease: "power1.inOut"}, "<.5") 
-            .from(".center-link", {duration: 1, opacity: 0}); 
+            .from(".center-link", {duration: 1.5, opacity: 0}, "<1"); 
     
-      gsap.utils.toArray('.section').forEach(section => {
-        gsap.from(section, {
-          opacity: 0,
-          y: 100,
-          duration: 1,
-          scrollTrigger: {
-            trigger: section,
-            start: 'top 75%', // Start the animation when the top of the section hits the middle of the viewport
-            toggleActions: 'play none none reverse', // Defines how the animation behaves on scroll
-                },
-              });
-            });
+    gsap.utils.toArray('section').forEach((section, index, sections) => {
+      const prevSection = sections[index - 1];
+      const nextSection = sections[index + 1];
+
+      ScrollTrigger.create({
+        trigger: section,
+        start:"top 1px",
+        end: "bottom 20%",
+        pinSpacing: false,
+        pin: true,
+        onEnter: () => gsap.to(section, { autoAlpha: 1 }), // Fade in the current section
+        onLeaveBack: () => gsap.to(section, { autoAlpha: 0 }), // Fade out the current section when scrolling back
+        markers: true,
+      });
+    });
+
+    window.scrollTo(10, 10);
+
+    // gsap.to("#first",{
+    //   ScrollTrigger:{
+    //     trigger: "#first",
+    //     start: "top 40%",
+    //     toggleActions: "restart pause reverse pause"
+    //   }
+    //   opacity:1,
+
+
+    // });
 
     // Fetch and parse the GDP data
     const gdpRes = await fetch('Quarterly GDP.csv');
@@ -402,9 +418,9 @@
         Project Write-up
       </a>
     </section>
-    <section>
-      <h2> some introduction of treasury bond </h2>
-      <h4> The U.S. 10-Year Bond is a debt obligation note by The United States Treasury, 
+    <section id = "first">
+      <h2> Treasury Bond </h2>
+      <h4>The U.S. 10-Year Bond is a debt obligation note by The United States Treasury, 
       that has the eventual maturity of 10 years. The yield on a Treasury bill represents 
       the return an investor will receive by holding the bond to maturity, 
       and should be monitored closely as an indicator of the government debt situation. 
@@ -412,12 +428,11 @@
       due to federal government securities being exempt from state and local income tax. 
       </h4>
     </section>
-    <section>
+    <section id = "second">
       <h2> continue on treasury bond </h2>
       <div id="line-plot"></div>
     </section>
-
-    <section>
+    <section id = "third">
       <h2> What is GDP? </h2>
       <p> Gross Domestic Product (GDP) is a crucial economic indicator that measures the total value of all goods and services produced within a country over a specific period, typically a quarter or a year. It is used as a comprehensive gauge of a country's overall economic health, reflecting the size and growth rate of its economy. GDP can be calculated using three approaches: the production (or output or value added) approach, the income approach, and the expenditure approach, each offering a different perspective but theoretically arriving at the same total. </p>
       <p> In the context of this project, GDP serves as a fundamental economic indicator that can significantly influence the dynamics of the 10-Year Treasury Yield. Changes in GDP growth rates can lead to adjustments in monetary policy, which in turn can affect interest rates and thus the Treasury yields. A strong and growing GDP may lead to higher yields, as investors demand more return in a booming economy, whereas a weak or contracting GDP can lead to lower yields, reflecting a move towards safer investments and potential monetary easing by the central bank to stimulate growth. </p>
@@ -460,11 +475,28 @@
     max-width: 100%; /* adjust at will */
     color: black;    /* color of title */
     padding: 5.5em;    /* the distance from top to the title*/
+    opacity: 0;
+    transition: opacity 0.1s ease-in-out;
   }
 
   h1 {
     font-size: 3em; /* Adjust the font size here */
     margin-bottom: 0.8em; /* Add margin below the title */
+  }
+
+  h2 {
+    font-size: 2.2em; /* Adjust the font size here */
+    margin-bottom: 0.8em; /* Add margin below the title */
+    background-color: rgba(255, 255, 255, 0.7); /* Adjust the opacity as needed */
+    display: inline-block; /* Or as per your layout needs */
+    padding: 10px; /* Adds some space around the text */
+  }
+
+  h4{
+    font-size: 1.5em; /* Adjust the font size here */
+    background-color: rgba(255, 255, 255, 0.7); /* Adjust the opacity as needed */
+    display: inline-block; /* Or as per your layout needs */
+    padding: 10px; /* Adds some space around the text */
   }
 
   .text-reveal{
@@ -506,6 +538,18 @@
     color: rgb(60, 133, 212);
     text-shadow: 0 0 5px white;
     font-style: italic;
+  }
+
+  #first {
+  background-image: url("https://storage.googleapis.com/pic0_dsc106/pic0.jpeg");
+  background-size: cover; /* Cover the entire section */
+  background-position: center; /* Center the background image */
+  height: 700px; /* Adjust based on your needs */
+  }
+
+
+  #second{
+    background-color: yellow;
   }
 
   #custom-background-section {
