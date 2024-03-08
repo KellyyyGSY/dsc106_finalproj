@@ -494,16 +494,16 @@
 
   @keyframes switchBackground {
               0%,25% {
-                  background-image: url('./assets/pic0.jpeg');
+                  background-image: url('./pic0.jpeg');
               }
               25%,50% {
-                  background-image: url('./assets/pic0.jpeg');
+                  background-image: url('./pic0.jpeg');
               }
               50%,75% {
-                  background-image: url('./assets/pic0.jpeg');
+                  background-image: url('./pic0.jpeg');
               }
               100%,0% {
-                  background-image: url('./assets/pic0.jpeg');
+                  background-image: url('./pic0.jpeg');
               }
           }
 </style>
