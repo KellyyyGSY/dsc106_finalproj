@@ -355,7 +355,7 @@
     const tooltip = d3.select("body").append("div")
       .attr("class", "tooltip")
       .style("position", "absolute")
-      .style("background-color", "white")
+      .style("background-color", "#262626")
       .style("opacity", 0.9)
       .style("border", "1px solid black")
       .style("border-radius", "5px")
@@ -420,13 +420,28 @@
     </section>
 
     <section id = "hook">
-      <p>In a world where the pulse of the economy is often gauged by the fluctuation of numbers and rates, the dynamics of the 10-Year Treasury Yield stand out as a critical barometer of economic health and investor sentiment.</p>
+      <p class="style1">In a world where the pulse of the economy is often gauged by the fluctuation of numbers and rates, the dynamics of the 10-Year Treasury Yield stand out as a critical barometer of economic health and investor sentiment.</p>
 
       <h3>But what if the seemingly arcane interplay between treasury yields, GDP growth, and inflation rates could unlock the secrets to predicting economic trends and crafting savvy investment strategies?</h3>
 
-      <p>Join us on a journey that transforms complex economic data into a captivating narrative, where each data point and trend line tells a story of opportunity, risk, and the relentless quest for financial wisdom.</p>
+      <p class="style1">Join us on a journey that transforms complex economic data into a captivating narrative, where each data point and trend line tells a story of opportunity, risk, and the relentless quest for financial wisdom.</p>
 
     </section>
+
+    <section></section>
+
+    <section id="content">
+      <h2>Contents</h2>
+      <ul>
+        <li><a href="#bond" style="color: #A6A498;">Understanding Treasury Bonds</a> - Explore the basics and significance of Treasury Bonds in the financial market.</li>
+        <li><a href="#gdp" style="color: #A6A498;">Gross Domestic Product (GDP)</a> - Dive into GDP growth factors and its role as an economic health indicator.</li>
+        <li><a href="#inflation" style="color: #A6A498;">Inflation Dynamics</a> - Unpack the causes and effects of inflation on the economy and purchasing power.</li>
+        <li><a href="#rela" style="color: #A6A498;">Interconnections</a> - Interactive visualizations showing how Treasury Bonds, GDP, and Inflation are interconnected.</li>
+      </ul>
+      <p class="style2"> By simplifying complex economic interactions into an intuitive and interactive format, the concept of treasury yield becomes more accessible to a broader audience. Unlike traditional explanations that rely heavily on textual descriptions and static charts, the interactive elements below allow users to explore and understand the dynamic relationship between the 10-Year Treasury Yield, GDP growth, and inflation rates on their own terms. This hands-on approach not only enhances comprehension but also engages users in a more meaningful exploration of economic principles. </p>
+    </section>
+    
+    <section> </section>
 
     <section id = "bond">
       <h2> Treasury Bond </h2>
@@ -437,29 +452,42 @@
       Investing resources into a 10 year treasury note is often considered favorable 
       due to federal government securities being exempt from state and local income tax. 
       </p>
+      <li><a href="#content" style="color: #A6A498;">Back to Contents</a>
     </section>
+
+    <section> </section>
 
     <section id = "bondviz">
       <h2> continue on treasury bond </h2>
       <div id="line-plot"></div>
     </section>
 
+    <section> </section>
+
     <section id = "gdp">
       <h2> What is GDP? </h2>
       <p> Gross Domestic Product (GDP) is a crucial economic indicator that measures the total value of all goods and services produced within a country over a specific period, typically a quarter or a year. It is used as a comprehensive gauge of a country's overall economic health, reflecting the size and growth rate of its economy. GDP can be calculated using three approaches: the production (or output or value added) approach, the income approach, and the expenditure approach, each offering a different perspective but theoretically arriving at the same total. </p>
       <p> In the context of this project, GDP serves as a fundamental economic indicator that can significantly influence the dynamics of the 10-Year Treasury Yield. Changes in GDP growth rates can lead to adjustments in monetary policy, which in turn can affect interest rates and thus the Treasury yields. A strong and growing GDP may lead to higher yields, as investors demand more return in a booming economy, whereas a weak or contracting GDP can lead to lower yields, reflecting a move towards safer investments and potential monetary easing by the central bank to stimulate growth. </p>
+      <li><a href="#content" style="color: #A6A498;">Back to Contents</a>
     </section>
+
+    <section> </section>
 
     <section id = "gdpviz">
       <h2>Quarterly GDP</h2>
       <div id="gdp-line-plot"></div> <!-- Container for the GDP line plot -->
     </section>
 
+    <section> </section>
+
     <section id = "inflation">
       <h2>What is Inflation?</h2>
       <p>Inflation is a key economic metric that denotes the rate at which the general level of prices for goods and services is rising, and subsequently, how purchasing power is falling. Central banks attempt to limit inflation, and avoid deflation, in order to keep the economy running smoothly. Inflation can be measured through various indices, the most common being the Consumer Price Index (CPI) and the Wholesale Price Index (WPI). CPI measures the average price change over time of a basket of goods and services that a typical household might purchase, while WPI measures the price change of goods sold and traded in bulk by wholesale businesses to other businesses.</p>
       <p>In the context of this project, understanding inflation is vital as it directly impacts the dynamics of the 10-Year Treasury Yield. Inflation erodes the real return on investments, including those in government securities such as Treasury bonds. As inflation expectations rise, investors may demand higher yields to compensate for the anticipated decrease in the purchasing power of their future interest payments. Conversely, low inflation rates may lead to lower yields, as the real return on investments becomes more stable, making government securities more attractive. Central banks may adjust monetary policy in response to inflation levels to stabilize the economy, influencing interest rates and thus impacting Treasury yields.</p>
+      <li><a href="#content" style="color: #A6A498;">Back to Contents</a>
     </section>
+
+    <section> </section>
 
     <section id = "inflationviz">
       This is the fifth section.
@@ -525,7 +553,28 @@
     padding: 10px; /* Adds some space around the text */
   }
 
-  p{
+  p.style1{
+    font-family: "Gill Sans", sans-serif;
+    font-size: 1.5em; /* Adjust the font size here */
+    /* background-color: rgba(255, 255, 255, 0.7); Adjust the opacity as needed */
+    display: inline-block; /* Or as per your layout needs */
+    padding: 10px; /* Adds some space around the text */
+  }
+
+  p.style2{
+    font-family: "Gill Sans", sans-serif;
+    font-size: 1em; /* Adjust the font size here */
+    /* background-color: rgba(255, 255, 255, 0.7); Adjust the opacity as needed */
+    display: inline-block; /* Or as per your layout needs */
+    margin-top: 80px; 
+    padding-left: 80px;
+    padding-right: 80px;
+    font-weight: normal;
+    color: #F2F2F0;
+    text-align: left;
+  }
+
+  li {
     font-family: "Gill Sans", sans-serif;
     font-size: 1.5em; /* Adjust the font size here */
     /* background-color: rgba(255, 255, 255, 0.7); Adjust the opacity as needed */
