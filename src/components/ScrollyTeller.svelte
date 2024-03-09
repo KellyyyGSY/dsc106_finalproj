@@ -61,56 +61,54 @@
 
 
     gsap.from("#zero-title", {
-    opacity: 0, // Start from invisible
-    y: 20, // Start 20px lower than the final position
-    duration: 1, // Animation duration of 1 second
-    scrollTrigger: {
-      trigger: "#zero-title",
-      start: 'top 50%', 
-      end: 'top 20%', 
-      toggleActions: 'play none none reverse', // Play the animation on scroll down and reverse on scroll up
-    },
-  });
+      opacity: 0, // Start from invisible
+      y: 20, // Start 20px lower than the final position
+      duration: 1, // Animation duration of 1 second
+      scrollTrigger: {
+        trigger: "#zero-title",
+        start: 'top 50%', 
+        end: 'top 20%', 
+        toggleActions: 'play none none reverse', // Play the animation on scroll down and reverse on scroll up
+      },
+    });
 
-  gsap.from("#hook1", {
-    opacity: 0, // Start from invisible
-    y: 20, // Start 20px lower than the final position
-    duration: 3, // Animation duration of 1 second
-    scrollTrigger: {
-      trigger: "#hook1",
-      start: 'top 50%', 
-      end: 'top 20%', 
-      toggleActions: 'play none none reverse', // Play the animation on scroll down and reverse on scroll up
-    },
-  });
+    gsap.from("#hook1", {
+      opacity: 0, // Start from invisible
+      y: 20, // Start 20px lower than the final position
+      duration: 3, // Animation duration of 1 second
+      scrollTrigger: {
+        trigger: "#hook1",
+        start: 'top 50%', 
+        end: 'top 20%', 
+        toggleActions: 'play none none reverse', // Play the animation on scroll down and reverse on scroll up
+      },
+    });
 
-  gsap.from("#hook2", {
-    opacity: 0, // Start from invisible
-    duration: 3, // Animation duration of 1 second
-    delay:2,
-    scrollTrigger: {
-      trigger: "#hook1",
-      start: 'top 50%', 
-      end: 'top 20%', 
-      toggleActions: 'play none none reverse', // Play the animation on scroll down and reverse on scroll up
-    },
-  });
+    gsap.from("#hook2", {
+      opacity: 0, // Start from invisible
+      duration: 3, // Animation duration of 1 second
+      delay:2,
+      scrollTrigger: {
+        trigger: "#hook1",
+        start: 'top 50%', 
+        end: 'top 20%', 
+        toggleActions: 'play none none reverse', // Play the animation on scroll down and reverse on scroll up
+      },
+    });
 
-  gsap.from("#hook3 span", {
-    opacity: 0, // Start from invisible
-    y: 20, // Start 20px lower than the final position
-    duration: 3, // Animation duration of 1 second
-    stagger: 0.05,
-    delay:4,
-    scrollTrigger: {
-      trigger: "#hook1",
-      start: 'top 50%', 
-      end: 'top 20%', 
-      toggleActions: 'play none none reverse', // Play the animation on scroll down and reverse on scroll up
-    },
-  });
-
-  
+    gsap.from("#hook3 span", {
+      opacity: 0, // Start from invisible
+      y: 20, // Start 20px lower than the final position
+      duration: 3, // Animation duration of 1 second
+      stagger: 0.05,
+      delay:4,
+      scrollTrigger: {
+        trigger: "#hook1",
+        start: 'top 50%', 
+        end: 'top 20%', 
+        toggleActions: 'play none none reverse', // Play the animation on scroll down and reverse on scroll up
+      },
+    });
 
     gsap.from(".button-style", {
       opacity: 0, // Start from invisible
@@ -150,9 +148,9 @@
 
 
   function drawLinePlot() {
-    const margin = { top: 50, right: 150, bottom: 80, left: 80 };
-    const width = 1000 - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
+    const margin = { top: 50, right: 150, bottom: 200, left: 80 };
+    const width = 1200 - margin.left - margin.right;
+    const height = 600 - margin.top - margin.bottom;
 
     const svg = d3.select("#line-plot")
       .append("svg")
@@ -226,6 +224,17 @@
       .attr("transform", "rotate(-90)")
       .text("Price");
     
+    
+    // Add graph title
+    svg.append("text")
+        .attr("class", "title")
+        .attr("text-anchor", "middle")
+        .attr("x", width -650)
+        .attr("y", -margin.top / 2) // Adjusted positioning
+        .text("United States 10-Year Bond Yield")
+        .style("font-size", "18px");
+
+
     // Add graph title
     svg.append("text")
         .attr("class", "title")
@@ -288,7 +297,7 @@
 
 
   function drawGDPLinePlot() {
-    const margin = { top: 50, right: 30, bottom: 30, left: 60 };
+    const margin = { top: 50, right: 30, bottom: 90, left: 60 };
     const svgWidth = 1000;
     const svgHeight = 500;
     const plotWidth = svgWidth - margin.left - margin.right;
@@ -499,8 +508,10 @@
       </a>
     </section>
 
-    <section id = "hook">
+    <!-- add for better transit, do not delete! -->
+    <section></section>
 
+    <section id = "hook">
       <p class="style1" id="hook1">In a world where fluctuation of numbers and rates gauged the pulse of the economy, the dynamics of the 10-Year Treasury Yield stand out as a critical barometer of economic health and investor sentiment.</p>
 
       <h3 id='hook2'>But what if the seemingly arcane interplay between GDP growth, and inflation rates could unlock the secrets to predicting treasury yields and crafting savvy investment strategies?</h3>
@@ -509,14 +520,13 @@
         {#each "Join us on a journey that transforms complex economic data into a captivating narrative," .split('').map((char) => char === ' ' ? '\u00A0' : char) as letter}
         <span>{letter}</span>
         {/each}
-        </p>
+      </p>
 
       <p class='style1' id='hook3'>
         {#each " where each trend line tells a story of opportunity, risk, and the relentless quest." .split('').map((char) => char === ' ' ? '\u00A0' : char) as letter}
         <span>{letter}</span>
         {/each}
       </p>
-
     </section>
 
     <section id = 'zero'>
@@ -542,6 +552,9 @@
       <!-- <p class="style2"> By simplifying complex economic interactions into an intuitive and interactive format, the concept of treasury yield becomes more accessible to a broader audience. Unlike traditional explanations that rely heavily on textual descriptions and static charts, the interactive elements below allow users to explore and understand the dynamic relationship between the 10-Year Treasury Yield, GDP growth, and inflation rates on their own terms. This hands-on approach not only enhances comprehension but also engages users in a more meaningful exploration of economic principles. </p> -->
     </section>
 
+    <!-- add for better transit, do not delete! -->
+    <section></section>
+
     <section id = "bond">
       <h2> Treasury Bond </h2>
       <p>The U.S. 10-Year Bond is a debt obligation note by The United States Treasury, 
@@ -555,9 +568,12 @@
     </section>
 
     <section id = "bondviz">
-      <h2> continue on treasury bond </h2>
-      <div id="line-plot"></div>
+      <h2> United States 10-Year Bond Yield </h2>
+      <div id="line-plot"></div> <!-- Container for the bond line plot -->
     </section>
+
+    <!-- add for better transit, do not delete! -->
+    <section></section>
 
     <section id = "gdp">
       <h2> What is GDP? </h2>
@@ -570,6 +586,9 @@
       <h2>Quarterly GDP</h2>
       <div id="gdp-line-plot"></div> <!-- Container for the GDP line plot -->
     </section>
+
+    <!-- add for better transit, do not delete! -->
+    <section></section>
 
     <section id = "inflation">
       <h2>What is Inflation?</h2>
@@ -614,11 +633,11 @@
     margin: 0 auto;
     height: auto;
     position: relative;
-    /*outline: red solid 3px;*/
+    outline: red solid 3px;
   }
 
   section {
-    height: 100vh;      /* height of each section */
+    height: 80vh;      /* height of each section */
     /* background-color: rgba(0, 0, 0, 0.2); */
     /* outline: magenta solid 3px; */
     text-align: center;
@@ -741,29 +760,29 @@
   }
 
   .button-style {
-  padding: 20px 35px;
-  margin: 20px;
-  background-color: #f2a365; /* Warm shade picked from the sunlight */
-  color: #fff; /* White text */
-  border: None; /* No border */
-  border-radius: 10px; /* Slightly rounded edges */
-  font-size: 20px; /* Readable size */
-  cursor: pointer; /* Indicates the button is clickable */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
-  transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s; /* Smooth transitions for interactions */
-  font-style: italic;
+    padding: 20px 35px;
+    margin: 20px;
+    background-color: #f2a365; /* Warm shade picked from the sunlight */
+    color: #fff; /* White text */
+    border: None; /* No border */
+    border-radius: 10px; /* Slightly rounded edges */
+    font-size: 20px; /* Readable size */
+    cursor: pointer; /* Indicates the button is clickable */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s; /* Smooth transitions for interactions */
+    font-style: italic;
 }
 
   .button-style:hover {
-  background-color: #f9b085; /* A lighter shade for the hover state */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* A more pronounced shadow on hover */
-  transform: translateY(-2px); /* A slight lift when hovered */
+    background-color: #f9b085; /* A lighter shade for the hover state */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* A more pronounced shadow on hover */
+    transform: translateY(-2px); /* A slight lift when hovered */
 }
 
   .button-style:active {
-  background-color: #e6957d; /* A darker shade for the active state */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Less shadow to simulate being pressed */
-  transform: translateY(0); /* Return to normal position when clicked */
+    background-color: #e6957d; /* A darker shade for the active state */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Less shadow to simulate being pressed */
+    transform: translateY(0); /* Return to normal position when clicked */
 }
 
 .buttons-section {
@@ -832,6 +851,7 @@
   }
 
   #hook3{
+    position: relative;
     color: #bd5709;
     font-family: "Gill Sans", sans-serif;
     font-size: 2em; /* Adjust the font size here */

@@ -61,7 +61,7 @@
 </script>
 
 <svg class="graph" width={width} height={height}>
-  {#if index === 1} <!-- it's the 2rd section now-->
+  {#if index === 5} <!-- it's the 6rd section now-->
     {drawAnimatedLine()}
   {/if}
 </svg>
