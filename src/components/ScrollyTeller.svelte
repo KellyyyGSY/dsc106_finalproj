@@ -12,6 +12,9 @@
   let count, index, offset, progress;
   let width, height;
   let data, gdpData, cpiData;
+  let startQuarter, endQuarter;
+  let growthRate = 0;
+
   const timeline = gsap.timeline({defaults: {duration: 2, opacity: 0}});
   const timeline2 = gsap.timeline({
     scrollTrigger: {
@@ -154,7 +157,6 @@
     drawCPILinePlot();
 
   });
-
 
   function drawLinePlot() {
     const margin = { top: 50, right: 150, bottom: 200, left: 80 };
@@ -457,6 +459,19 @@
     }
   }
 
+  $: if (startQuarter && endQuarter) {
+    growthRate = calculateGrowthRate(startQuarter, endQuarter);
+  } else {
+    growthRate = 0;
+  }
+
+  function calculateGrowthRate(start, end) {
+    const startValue = gdpData.find(entry => entry.date.getTime() == start)?.gdpCurrent;
+    const endValue = gdpData.find(entry => entry.date.getTime() == end)?.gdpCurrent;
+
+    return startValue && endValue ? ((endValue - startValue) / startValue) * 100 : 0;
+  }
+
   function drawCPILinePlot() {
     const margin = { top: 50, right: 30, bottom: 120, left: 60 };
     const svgWidth = 1000;
@@ -743,8 +758,37 @@
     </section>
 
     <!-- add for better transit, do not delete! -->
-    <section></section>
+    <section>
+      <h2>GDP Growth Rate Calculator</h2>   
+      <div>
+        <label>
+          Start Quarter:
+          <select bind:value={startQuarter}>
+            <option value="">Select Start Quarter</option>
+            {#each gdpData as index, entry}
+            <!-- <option value="{entry.quarter}">{entry.quarter}</option>-->
+            {/each} 
+          </select>
+        </label>
+      </div>
 
+      <!-- <div>
+        <label>
+          End Quarter:
+          <select bind:value={endQuarter}>
+            <option value="">Select End Quarter</option>
+            {#each gdpData as entry, index}
+              <option value="{entry.quarter}">{entry.quarter}</option>
+
+            {/each}
+          </select>
+        </label>
+      </div>
+    
+      <p>GDP Growth Rate: {growthRate.toFixed(2)}%</p>--> 
+    </section> 
+
+    <section> </section>
     <section id = "inflation">
       <h2>What is Inflation?</h2>
       <p>Inflation is a key economic metric that denotes the rate at which the general level of prices for goods and services is rising, and subsequently, how purchasing power is falling. Central banks attempt to limit inflation, and avoid deflation, in order to keep the economy running smoothly. Inflation can be measured through various indices, the most common being the Consumer Price Index (CPI) and the Wholesale Price Index (WPI). CPI measures the average price change over time of a basket of goods and services that a typical household might purchase, while WPI measures the price change of goods sold and traded in bulk by wholesale businesses to other businesses.</p>
