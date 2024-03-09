@@ -13,6 +13,15 @@
   let width, height;
   let data, gdpData;
   const timeline = gsap.timeline({defaults: {duration: 2, opacity: 0}});
+  const timeline2 = gsap.timeline({
+    scrollTrigger: {
+      trigger: "#hook", // Assuming this is your intended trigger element
+      start: 'top 50%', 
+      end: 'top 20%', 
+      toggleActions: 'play none none reverse',
+      markers: true
+    }
+  });
   gsap.registerPlugin(ScrollTrigger);
 
   onMount(async () => {
@@ -30,7 +39,32 @@
                     duration: 0.1,
                     stagger: 0.04,
                     ease: "power1.inOut"}, "<.5") 
-            .from(".center-link", {duration: 1.5, opacity: 0}, "<1"); 
+            .from(".center-link", {duration: 1.5, opacity: 0}, "<1")
+            .from("#hook1", {
+              opacity: 0, // Start from invisible
+              y: 20, // Optional: start 20px lower than the final position
+              duration: 1, // Animation duration of 1 second
+              scrollTrigger: {
+                trigger: "#hook1",
+                start: "top center", // Trigger the animation when the top of #hook1 enters the center of the viewport
+                end: "bottom top", // Optional: define when the animation should end
+                toggleActions: "play none none none", // Play the animation on scroll down without reversing
+                markers: true
+              }
+            })
+            .from('#hook2', {
+              opacity: 0, // Start from invisible
+              y: 20, // Optional: start 20px lower than the final position
+              duration: 1, // Animation duration of 1 second
+              scrollTrigger: {
+                trigger: "#hook2",
+                start: "top center", // Trigger the animation when the top of #hook2 enters the center of the viewport
+                end: "bottom top", // Optional: define when the animation should end
+                toggleActions: "play none none none", // Play the animation on scroll down without reversing
+                markers: true
+              }
+            });
+
     
     gsap.utils.toArray('section').forEach((section, index, sections) => {
       const prevSection = sections[index - 1];
@@ -67,6 +101,18 @@
       duration: 1, // Animation duration of 1 second
       scrollTrigger: {
         trigger: "#zero-title",
+        start: 'top 50%', 
+        end: 'top 20%', 
+        toggleActions: 'play none none reverse', // Play the animation on scroll down and reverse on scroll up
+      },
+    });
+
+    gsap.from("#bond", {
+      opacity: 0, // Start from invisible
+      y: 20, // Start 20px lower than the final position
+      duration: 1, // Animation duration of 1 second
+      scrollTrigger: {
+        trigger: "#bond",
         start: 'top 50%', 
         end: 'top 20%', 
         toggleActions: 'play none none reverse', // Play the animation on scroll down and reverse on scroll up
@@ -438,11 +484,11 @@
 
     <section id = "hook">
 
-      <p class="style1">In a world where fluctuation of numbers and rates gauged the pulse of the economy, the dynamics of the 10-Year Treasury Yield stand out as a critical barometer of economic health and investor sentiment.</p>
+      <p class="style1" id="hook1">In a world where fluctuation of numbers and rates gauged the pulse of the economy, the dynamics of the 10-Year Treasury Yield stand out as a critical barometer of economic health and investor sentiment.</p>
 
       <h3>But what if the seemingly arcane interplay between GDP growth, and inflation rates could unlock the secrets to predicting treasury yields and crafting savvy investment strategies?</h3>
 
-      <p class="style1">Join us on a journey that transforms complex economic data into a captivating narrative, where each data point and trend line tells a story of opportunity, risk, and the relentless quest for financial wisdom.</p>
+      <p class="style1" id="hook2">Join us on a journey that transforms complex economic data into a captivating narrative, where each data point and trend line tells a story of opportunity, risk, and the relentless quest for financial wisdom.</p>
 
     </section>
 
@@ -582,28 +628,25 @@
   p.style1{
     font-family: "Gill Sans", sans-serif;
     font-size: 1.5em; /* Adjust the font size here */
-    /* background-color: rgba(255, 255, 255, 0.7); Adjust the opacity as needed */
-    display: inline-block; /* Or as per your layout needs */
     padding: 10px; /* Adds some space around the text */
+    display: inline-flex;
   }
 
   p.style2{
     font-family: "Gill Sans", sans-serif;
     font-size: 1em; /* Adjust the font size here */
-    /* background-color: rgba(255, 255, 255, 0.7); Adjust the opacity as needed */
     display: inline-block; /* Or as per your layout needs */
     margin-top: 80px; 
     padding-left: 80px;
     padding-right: 80px;
     font-weight: normal;
-    color: #F2F2F0;
+    color: white;
     text-align: left;
   }
 
   li {
     font-family: "Gill Sans", sans-serif;
     font-size: 1.5em; /* Adjust the font size here */
-    /* background-color: rgba(255, 255, 255, 0.7); Adjust the opacity as needed */
     display: inline-block; /* Or as per your layout needs */
     padding: 10px; /* Adds some space around the text */
     background-color: rgba(242,163,101, 0.7); /* Adjust the opacity as needed */
@@ -730,23 +773,6 @@
   #custom-background-section > * {
       position: relative;
       z-index: 1;
-  }
-
-  /* Fade-in animation for the entire section */
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  #hook {
-    animation: fadeIn 1s ease-out;
-    
   }
 
   /* Up-and-down bobbing animation for the h3 tag */
