@@ -672,13 +672,12 @@
 
       <h3 id='hook2'>But what if the seemingly arcane interplay between GDP growth, and inflation rates could unlock the secrets to predicting treasury yields and crafting savvy investment strategies?</h3>
 
-      <p class="style1" id="hook3">
+      <p class="style2" id="hook3">
         {#each "Join us on a journey that transforms complex economic data into a captivating narrative," .split('').map((char) => char === ' ' ? '\u00A0' : char) as letter}
         <span>{letter}</span>
         {/each}
       </p>
-
-      <p class='style1' id='hook3'>
+      <p class='style3' id='hook3'>
         {#each " where each trend line tells a story of opportunity, risk, and the relentless quest." .split('').map((char) => char === ' ' ? '\u00A0' : char) as letter}
         <span>{letter}</span>
         {/each}
@@ -720,7 +719,7 @@
       Investing resources into a 10 year treasury note is often considered favorable 
       due to federal government securities being exempt from state and local income tax. 
       </p>
-      <li><a href="#zero" style="color: #A6A498;">Back to main menu</a>
+      <li style="margin-top: 50px;"><a href="#zero" style="color: #42393B;">Back to main menu</a>
     </section>
 
     <section id = "bondviz">
@@ -735,7 +734,7 @@
       <h2> What is GDP? </h2>
       <p> Gross Domestic Product (GDP) is a crucial economic indicator that measures the total value of all goods and services produced within a country over a specific period, typically a quarter or a year. It is used as a comprehensive gauge of a country's overall economic health, reflecting the size and growth rate of its economy. GDP can be calculated using three approaches: the production (or output or value added) approach, the income approach, and the expenditure approach, each offering a different perspective but theoretically arriving at the same total. </p>
       <p> In the context of this project, GDP serves as a fundamental economic indicator that can significantly influence the dynamics of the 10-Year Treasury Yield. Changes in GDP growth rates can lead to adjustments in monetary policy, which in turn can affect interest rates and thus the Treasury yields. A strong and growing GDP may lead to higher yields, as investors demand more return in a booming economy, whereas a weak or contracting GDP can lead to lower yields, reflecting a move towards safer investments and potential monetary easing by the central bank to stimulate growth. </p>
-      <li><a href="#zero" style="color: #A6A498;">Back to main menu</a>
+      <li style="margin-top: 50px;"><a href="#zero" style="color: #42393B;">Back to main menu</a>
     </section>
 
     <section id = "gdpviz">
@@ -750,7 +749,7 @@
       <h2>What is Inflation?</h2>
       <p>Inflation is a key economic metric that denotes the rate at which the general level of prices for goods and services is rising, and subsequently, how purchasing power is falling. Central banks attempt to limit inflation, and avoid deflation, in order to keep the economy running smoothly. Inflation can be measured through various indices, the most common being the Consumer Price Index (CPI) and the Wholesale Price Index (WPI). CPI measures the average price change over time of a basket of goods and services that a typical household might purchase, while WPI measures the price change of goods sold and traded in bulk by wholesale businesses to other businesses.</p>
       <p>In the context of this project, understanding inflation is vital as it directly impacts the dynamics of the 10-Year Treasury Yield. Inflation erodes the real return on investments, including those in government securities such as Treasury bonds. As inflation expectations rise, investors may demand higher yields to compensate for the anticipated decrease in the purchasing power of their future interest payments. Conversely, low inflation rates may lead to lower yields, as the real return on investments becomes more stable, making government securities more attractive. Central banks may adjust monetary policy in response to inflation levels to stabilize the economy, influencing interest rates and thus impacting Treasury yields.</p>
-      <li><a href="#zero" style="color: #A6A498;">Back to main menu</a>
+      <li style="margin-top: 50px;"><a href="#zero" style="color: #42393B;">Back to main menu</a>
     </section>
 
     <section id = 'cpiviz'>
@@ -835,24 +834,37 @@
     display: inline-block;
   }
 
-  p.style2{
+  p.style2 {
     font-family: "Gill Sans", sans-serif;
-    font-size: 1em; /* Adjust the font size here */
-    display: inline-block; /* Or as per your layout needs */
-    margin-top: 80px; 
+    font-size: 1em;
+    display: inline-block;
+    margin-top: 80px;
     padding-left: 80px;
     padding-right: 80px;
     font-weight: normal;
     color: white;
     text-align: left;
+    margin-bottom: 0px; /* Reduce the bottom margin to decrease space */
+  }
+
+  p.style3 {
+    font-family: "Gill Sans", sans-serif;
+    font-size: 1em;
+    display: inline-block;
+    padding-left: 80px;
+    padding-right: 80px;
+    font-weight: normal;
+    color: white;
+    text-align: left;
+    margin-top: 0px; /* Reduce the top margin to pull closer to the previous paragraph */
   }
 
   li {
     font-family: "Gill Sans", sans-serif;
-    font-size: 1.5em; /* Adjust the font size here */
+    font-size: 1.3em; /* Adjust the font size here */
     display: inline-block; /* Or as per your layout needs */
-    padding: 10px; /* Adds some space around the text */
-    background-color: rgba(242,163,101, 0.7); /* Adjust the opacity as needed */
+    padding: 5px; /* Adds some space around the text */
+    background-color: #bdaa96; /* Adjust the opacity as needed */
     border: None;
     border-radius: 10px;
     font-style: italic;
@@ -904,53 +916,72 @@
     font-size: 35px;
   }
 
-  #zero{
+  #zero {
+    position: relative; /* Needed for the absolute positioning of the pseudo-element */
+    height: 700px; /* Adjust based on your needs */
+  }
+
+  #zero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background-image: url("https://storage.googleapis.com/pic0_dsc106/pic5.jpeg");
     background-size: cover; /* Cover the entire section */
     background-position: center; /* Center the background image */
-    height: 700px; /* Adjust based on your needs */
+    opacity: 0.5; /* Apply opacity to the background image */
+    z-index: -1; /* Ensure the pseudo-element is behind the content */
+  }
+
+  /* Ensure content of #zero is positioned above the pseudo-element */
+  #zero > * {
+    position: relative;
+    z-index: 1;
   }
 
   #zero-title span{
     color: white;
-    text-shadow: 0 0 10px #f2a365;
+    text-shadow: 0 0 10px #bdaa96;
   }
 
+  #buttons-section {
+    display: flex;
+    flex-direction: column; /* or column, depending on your design */
+    align-items: self-start;
+  }
+  
   .button-style {
-    padding: 20px 35px;
+    padding: 10px 10px;
     margin: 20px;
-    background-color: #f2a365; /* Warm shade picked from the sunlight */
-    color: #fff; /* White text */
-    border: None; /* No border */
-    border-radius: 10px; /* Slightly rounded edges */
-    font-size: 20px; /* Readable size */
+    background-color: transparent; /* Make the background transparent */
+    color: #fff; /* Use the warm shade for text, the same as the previous background */
+    border: 2px solid #bdaa96; /* Outline the button with a border in the warm shade */
+    border-radius: 10px; /* Slightly rounded edges remain */
+    font-size: 25px; /* Readable size */
     cursor: pointer; /* Indicates the button is clickable */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
-    transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s; /* Smooth transitions for interactions */
-    font-style: italic;
-}
+    box-shadow: none; /* Remove the shadow for a cleaner outline look */
+    transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s, color 0.3s, border-color 0.3s; /* Update transitions */
+    font-style: normal;
 
-  .button-style:hover {
-    background-color: #f9b085; /* A lighter shade for the hover state */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* A more pronounced shadow on hover */
-    transform: translateY(-2px); /* A slight lift when hovered */
-}
+    /* Add hover effects to invert colors on hover for better interaction feedback */
+    &:hover {
+      background-color: #E9CCB1; /* Fill color on hover */
+      color: #fff; /* Text color back to white on hover */
+      border-color: #E9CCB1; /* Keep the border color consistent on hover */
+    }
+  }
 
   .button-style:active {
-    background-color: #e6957d; /* A darker shade for the active state */
+    background-color: #bdaa96; /* A darker shade for the active state */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Less shadow to simulate being pressed */
     transform: translateY(0); /* Return to normal position when clicked */
-}
+  }
 
-.buttons-section {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; /* Align items to the left */
-}
-
-.slider-navigation {
-  margin-bottom: 20px; /* Adds space between each button-container */
-}
+  .slider-navigation {
+    margin-top: 50px;
+  }
 
   #custom-background-section {
       position: relative; /* Needed for the absolute positioning of the pseudo-element */
@@ -1007,14 +1038,14 @@
     animation: bobbing 3s ease-in-out infinite;
   }
 
-  #hook3{
+  #hook3 {
     position: relative;
-    color: #bd5709;
+    color: #D3C4BE;
     font-family: "Gill Sans", sans-serif;
     font-size: 2em; /* Adjust the font size here */
     padding: 10px; /* Adds some space around the text */
     display: inline-block;
-    text-shadow: 0 0 10px #d8370f;
+    text-shadow: 0 0 10px #999999;
     max-width: 90%;
   }
 
