@@ -11,7 +11,7 @@
 
   let count, index, offset, progress;
   let width, height;
-  let data, gdpData;
+  let data, gdpData, cpiData;
   const timeline = gsap.timeline({defaults: {duration: 2, opacity: 0}});
   const timeline2 = gsap.timeline({
     scrollTrigger: {
@@ -144,6 +144,15 @@
 
     drawLinePlot();
     drawGDPLinePlot();
+
+    const cpiRes = await fetch('monthly_inflation.csv');
+    const cpiCsv = await cpiRes.text();
+    cpiData = d3.csvParse(cpiCsv, d => ({
+      date: d3.timeParse("%Y/%m")(d.Date),
+      percentageChange: +d["Percent_Change"]
+    }));
+    drawCPILinePlot();
+
   });
 
 
@@ -210,7 +219,8 @@
     svg.append("text")
       .attr("class", "x label")
       .attr("text-anchor", "end")
-      .attr("x", width - 380)
+      .attr("fill", "white")
+      .attr("x", width - 470)
       .attr("y", height + 50) // Adjusted positioning
       .text("Date");
 
@@ -218,31 +228,13 @@
     svg.append("text")
       .attr("class", "y label")
       .attr("text-anchor", "end")
+      .attr("fill", "white")
       .attr("x", -margin.left - 65)
       .attr("y", -margin.left + 20) // Adjusted positioning
       .attr("dy", ".75em")
       .attr("transform", "rotate(-90)")
       .text("Price");
     
-    
-    // Add graph title
-    svg.append("text")
-        .attr("class", "title")
-        .attr("text-anchor", "middle")
-        .attr("x", width -650)
-        .attr("y", -margin.top / 2) // Adjusted positioning
-        .text("United States 10-Year Bond Yield")
-        .style("font-size", "18px");
-
-
-    // Add graph title
-    svg.append("text")
-        .attr("class", "title")
-        .attr("text-anchor", "middle")
-        .attr("x", width -650)
-        .attr("y", -margin.top / 2) // Adjusted positioning
-        .text("United States 10-Year Bond Yield")
-        .style("font-size", "18px");
 
     // Add data points
     svg.selectAll(".dot")
@@ -450,12 +442,12 @@
         .style("left", `${event.pageX + 15}px`)
         .style("top", `${event.pageY - 28}px`)
         .style("display", "block");
-  }
+    }
 
-  // Hide the tooltip when clicking anywhere on the page outside the data points
-  d3.select("body").on("click", function() {
-      tooltip.style("display", "none");
-    }, true); // True for capturing phase
+    // Hide the tooltip when clicking anywhere on the page outside the data points
+    d3.select("body").on("click", function() {
+        tooltip.style("display", "none");
+      }, true); // True for capturing phase
   }
 
   function scrollToSection(sectionId) {
@@ -465,7 +457,171 @@
     }
   }
 
+  function drawCPILinePlot() {
+    const margin = { top: 50, right: 30, bottom: 120, left: 60 };
+    const svgWidth = 1000;
+    const svgHeight = 500;
+    const plotWidth = svgWidth - margin.left - margin.right;
+    const plotHeight = svgHeight - margin.top - margin.bottom;
+
+    // Define the SVG container
+    const svg = d3.select("#cpi-line-plot")
+      .append("svg")
+      .attr("width", svgWidth)
+      .attr("height", svgHeight)
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Assuming your date parsing has been done correctly when loading the data
+    const xScale = d3.scaleTime()
+      .domain(d3.extent(cpiData, d => d.date))
+      .range([0, plotWidth]);
+
+    const yScale = d3.scaleLinear()
+      .domain([-3, d3.max(cpiData, d => d.percentageChange) + 1])
+      .range([plotHeight, 0]);
+
+    // Define axes
+    const xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat("%Y"));
+    const yAxis = d3.axisLeft(yScale);
+
+    // Append axes to the SVG
+    svg.append("g")
+      .attr("transform", `translate(0,${plotHeight})`)
+      .call(xAxis);
+
+    svg.append("g")
+      .call(yAxis);
+
+    svg.append("g")
+      .attr("class", "grid")
+      .call(d3.axisLeft(yScale)
+          .tickSize(-plotWidth)
+          .tickFormat("")
+      )
+      .selectAll(".tick line")
+      .attr("stroke", "#ccc");
+
+    svg.append("g")
+      .attr("class", "grid")
+      .attr("transform", `translate(0,${plotHeight})`)
+      .call(d3.axisBottom(xScale)
+          .tickSize(-plotHeight)
+          .tickFormat("")
+      )
+      .selectAll(".tick line")
+      .attr("stroke", "#ccc");
+    
+    svg.append("line")
+      .attr("x1", 0)
+      .attr("y1", yScale(0))
+      .attr("x2", plotWidth)
+      .attr("y2", yScale(0))
+      .attr("stroke", "white")
+      .attr("stroke-width", 2);
+    
+    // Add x-axis label
+    svg.append("text")
+      .attr("class", "x label")
+      .attr("text-anchor", "end")
+      .attr("fill", "white")
+      .attr("x", plotWidth - 435)
+      .attr("y", plotHeight + 50) // Adjusted positioning
+      .text("Date");
+
+    // Add y-axis label
+    svg.append("text")
+      .attr("class", "y label")
+      .attr("text-anchor", "end")
+      .attr("fill", "white")
+      .attr("x", -margin.left - 50)
+      .attr("y", -margin.left + 20) // Adjusted positioning
+      .attr("dy", ".75em")
+      .attr("transform", "rotate(-90)")
+      .text("Percentage Change");
+
+    // Area generator for CPI
+    const areaCPI = d3.area()
+      .x(d => xScale(d.date))
+      .y0(yScale(0)) // Set y0 to y-coordinate of the line y=0
+      .y1(d => yScale(d.percentageChange))
+      .curve(d3.curveMonotoneX);
+
+    // Append the area for CPI
+    svg.append("path")
+      .datum(cpiData)
+      .attr("fill", "blue")
+      .attr("opacity", 0.2)
+      .attr("d", areaCPI);
+
+    // Line generator for CPI
+    const lineCPI = d3.line()
+      .x(d => xScale(d.date))
+      .y(d => yScale(d.percentageChange))
+      .curve(d3.curveMonotoneX);
+
+    // Append the path for CPI
+    svg.append("path")
+      .datum(cpiData)
+      .attr("fill", "none")
+      .attr("stroke", "blue")
+      .attr("stroke-width", 2)
+      .attr("d", lineCPI);
+    
+    // Add data points
+    svg.selectAll(".dot-cpi")
+      .data(cpiData)
+      .enter().append("circle")
+      .attr("class", "dot-cpi")
+      .attr("cx", d => xScale(d.date))
+      .attr("cy", d => yScale(d.percentageChange))
+      .attr("r", 4)
+      .style("fill", "white")
+      .style("opacity", 0.1)
+      .on("mouseover", (event, d) => {
+        tooltip.style("display", "block")
+          .attr("transform", `translate(${xScale(d.date)}, ${yScale(d.percentageChange)})`);
+        tooltipText.select(".date").text(`Date: ${d.date}`);
+        tooltipText.select(".change").text(`Change%: ${d.percentageChange}`);
+      })
+      .on("mouseout", () => {
+        tooltip.style("display", "none");
+      });
+
+    // Add a tooltip
+    const tooltip = svg.append("g")
+      .attr("class", "tooltip")
+      .style("display", "none");
+
+    tooltip.append("rect")
+      .attr("width", 188)
+      .attr("height", 70)
+      .attr("fill", "white")
+      .style("opacity", 0.9)
+      .attr("stroke", "steelblue")
+      .attr("rx", 5) // rounded corners
+      .attr("ry", 5);
+
+    const tooltipText = tooltip.append("text")
+      .attr("x", 10)
+      .attr("y", 20);
+
+    tooltipText.append("tspan")
+      .attr("class", "date")
+      .attr("x", 10)
+      .attr("dy", "1.2em");
+
+    tooltipText.append("tspan")
+      .attr("class", "change")
+      .attr("x", 10)
+      .attr("dy", "1.2em");
+  }
+
 </script>
+
+
+
+
 <Scroller
   top={0.0}
   bottom={1}
@@ -597,8 +753,9 @@
       <li><a href="#zero" style="color: #A6A498;">Back to main menu</a>
     </section>
 
-    <section id = "inflationviz">
-      <h2>Visualize Inflation</h2>
+    <section id = 'cpiviz'>
+      <h2> Year to Year U.S. Consumer Price Index (CPI) </h2>
+      <div id="cpi-line-plot"></div> <!-- Container for the CPI line plot -->
     </section>
 
     <section> </section>
@@ -639,7 +796,7 @@
   section {
     height: 80vh;      /* height of each section */
     /* background-color: rgba(0, 0, 0, 0.2); */
-    /* outline: magenta solid 3px; */
+    outline: magenta solid 3px;
     text-align: center;
     max-width: 100%; /* adjust at will */
     color: white;    /* color of title */
