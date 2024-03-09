@@ -38,30 +38,41 @@
 
       ScrollTrigger.create({
         trigger: section,
-        start:"top 1px",
-        end: "bottom 20%",
+        start:"top top",
+        end: "bottom 50%",
         pinSpacing: false,
         pin: true,
         onEnter: () => gsap.to(section, { autoAlpha: 1 }), // Fade in the current section
         onLeaveBack: () => gsap.to(section, { autoAlpha: 0 }), // Fade out the current section when scrolling back
-        markers: true,
       });
     });
 
     window.scrollTo(10, 10);
 
-    // gsap.to("#first",{
-    //   ScrollTrigger:{
-    //     trigger: "#first",
-    //     start: "top 40%",
-    //     toggleActions: "restart pause reverse pause"
-    //   }
-    //   opacity:1,
+    gsap.from("#zero-title", {
+    opacity: 0, // Start from invisible
+    y: 20, // Start 20px lower than the final position
+    duration: 1, // Animation duration of 1 second
+    scrollTrigger: {
+      trigger: "#zero-title",
+      start: 'top 50%', 
+      end: 'top 20%', 
+      toggleActions: 'play none none reverse', // Play the animation on scroll down and reverse on scroll up
+    },
+  });
 
+    gsap.from(".button-style", {
+      opacity: 0, // Start from invisible
+      y: 20, // Start 20px lower than the final position
+      duration: 1, // Animation duration of 1 second
+      scrollTrigger: {
+        trigger: "#zero-title",
+        start: 'top 50%', 
+        end: 'top 20%', 
+        toggleActions: 'play none none reverse', // Play the animation on scroll down and reverse on scroll up
+      },
+    });
 
-    // });
-
-    // Fetch and parse the GDP data
     const gdpRes = await fetch('Quarterly GDP.csv');
     const gdpCsv = await gdpRes.text();
     gdpData = d3.csvParse(gdpCsv, d => ({
@@ -73,7 +84,6 @@
     drawLinePlot();
     drawGDPLinePlot();
   });
-
 
 
   function drawLinePlot() {
@@ -370,10 +380,17 @@
         .style("display", "block");
   }
 
-    // Hide the tooltip when clicking anywhere on the page outside the data points
-    d3.select("body").on("click", function() {
+  // Hide the tooltip when clicking anywhere on the page outside the data points
+  d3.select("body").on("click", function() {
       tooltip.style("display", "none");
     }, true); // True for capturing phase
+  }
+
+  function scrollToSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
   }
 
 </script>
@@ -420,28 +437,37 @@
     </section>
 
     <section id = "hook">
-      <p class="style1">In a world where the pulse of the economy is often gauged by the fluctuation of numbers and rates, the dynamics of the 10-Year Treasury Yield stand out as a critical barometer of economic health and investor sentiment.</p>
 
-      <h3>But what if the seemingly arcane interplay between treasury yields, GDP growth, and inflation rates could unlock the secrets to predicting economic trends and crafting savvy investment strategies?</h3>
+      <p class="style1">In a world where fluctuation of numbers and rates gauged the pulse of the economy, the dynamics of the 10-Year Treasury Yield stand out as a critical barometer of economic health and investor sentiment.</p>
+
+      <h3>But what if the seemingly arcane interplay between GDP growth, and inflation rates could unlock the secrets to predicting treasury yields and crafting savvy investment strategies?</h3>
 
       <p class="style1">Join us on a journey that transforms complex economic data into a captivating narrative, where each data point and trend line tells a story of opportunity, risk, and the relentless quest for financial wisdom.</p>
 
     </section>
 
-    <section></section>
-
-    <section id="content">
-      <h2>Contents</h2>
-      <ul>
-        <li><a href="#bond" style="color: #A6A498;">Understanding Treasury Bonds</a> - Explore the basics and significance of Treasury Bonds in the financial market.</li>
-        <li><a href="#gdp" style="color: #A6A498;">Gross Domestic Product (GDP)</a> - Dive into GDP growth factors and its role as an economic health indicator.</li>
-        <li><a href="#inflation" style="color: #A6A498;">Inflation Dynamics</a> - Unpack the causes and effects of inflation on the economy and purchasing power.</li>
-        <li><a href="#rela" style="color: #A6A498;">Interconnections</a> - Interactive visualizations showing how Treasury Bonds, GDP, and Inflation are interconnected.</li>
-      </ul>
-      <p class="style2"> By simplifying complex economic interactions into an intuitive and interactive format, the concept of treasury yield becomes more accessible to a broader audience. Unlike traditional explanations that rely heavily on textual descriptions and static charts, the interactive elements below allow users to explore and understand the dynamic relationship between the 10-Year Treasury Yield, GDP growth, and inflation rates on their own terms. This hands-on approach not only enhances comprehension but also engages users in a more meaningful exploration of economic principles. </p>
+    <section id = 'zero'>
+      <h1 id="zero-title">
+        {#each "Tutorial we've prepared for you".split('').map((char) => char === ' ' ? '\u00A0' : char) as letter}
+        <span>{letter}</span>
+        {/each}
+      </h1>
+      <div id="buttons-section">
+        <div class="slider-navigation">
+          <button class="button-style" on:click={() => scrollToSection('inflation')}>Inflation Dynamics</button>
+          <li>Explore the basics and significance of Treasury Bonds in the financial market.</li>
+        </div>
+        <div class="slider-navigation">
+          <button class="button-style" on:click={() => scrollToSection('gdp')}>Gross Domestic Product(GDP)</button>
+          <li>Dive into GDP growth factors and its role as an economic health indicator.</li>
+        </div>
+        <div class="slider-navigation">
+          <button class="button-style" on:click={() => scrollToSection('bond')}>Understanding Treasury Bonds</button>
+          <li>Unpack the causes and effects of inflation on the economy and purchasing power.</li>
+        </div>
+      </div>
+      <!-- <p class="style2"> By simplifying complex economic interactions into an intuitive and interactive format, the concept of treasury yield becomes more accessible to a broader audience. Unlike traditional explanations that rely heavily on textual descriptions and static charts, the interactive elements below allow users to explore and understand the dynamic relationship between the 10-Year Treasury Yield, GDP growth, and inflation rates on their own terms. This hands-on approach not only enhances comprehension but also engages users in a more meaningful exploration of economic principles. </p> -->
     </section>
-    
-    <section> </section>
 
     <section id = "bond">
       <h2> Treasury Bond </h2>
@@ -452,42 +478,32 @@
       Investing resources into a 10 year treasury note is often considered favorable 
       due to federal government securities being exempt from state and local income tax. 
       </p>
-      <li><a href="#content" style="color: #A6A498;">Back to Contents</a>
+      <li><a href="#zero" style="color: #A6A498;">Back to main menu</a>
     </section>
-
-    <section> </section>
 
     <section id = "bondviz">
       <h2> continue on treasury bond </h2>
       <div id="line-plot"></div>
     </section>
 
-    <section> </section>
-
     <section id = "gdp">
       <h2> What is GDP? </h2>
       <p> Gross Domestic Product (GDP) is a crucial economic indicator that measures the total value of all goods and services produced within a country over a specific period, typically a quarter or a year. It is used as a comprehensive gauge of a country's overall economic health, reflecting the size and growth rate of its economy. GDP can be calculated using three approaches: the production (or output or value added) approach, the income approach, and the expenditure approach, each offering a different perspective but theoretically arriving at the same total. </p>
       <p> In the context of this project, GDP serves as a fundamental economic indicator that can significantly influence the dynamics of the 10-Year Treasury Yield. Changes in GDP growth rates can lead to adjustments in monetary policy, which in turn can affect interest rates and thus the Treasury yields. A strong and growing GDP may lead to higher yields, as investors demand more return in a booming economy, whereas a weak or contracting GDP can lead to lower yields, reflecting a move towards safer investments and potential monetary easing by the central bank to stimulate growth. </p>
-      <li><a href="#content" style="color: #A6A498;">Back to Contents</a>
+      <li><a href="#zero" style="color: #A6A498;">Back to main menu</a>
     </section>
-
-    <section> </section>
 
     <section id = "gdpviz">
       <h2>Quarterly GDP</h2>
       <div id="gdp-line-plot"></div> <!-- Container for the GDP line plot -->
     </section>
 
-    <section> </section>
-
     <section id = "inflation">
       <h2>What is Inflation?</h2>
       <p>Inflation is a key economic metric that denotes the rate at which the general level of prices for goods and services is rising, and subsequently, how purchasing power is falling. Central banks attempt to limit inflation, and avoid deflation, in order to keep the economy running smoothly. Inflation can be measured through various indices, the most common being the Consumer Price Index (CPI) and the Wholesale Price Index (WPI). CPI measures the average price change over time of a basket of goods and services that a typical household might purchase, while WPI measures the price change of goods sold and traded in bulk by wholesale businesses to other businesses.</p>
       <p>In the context of this project, understanding inflation is vital as it directly impacts the dynamics of the 10-Year Treasury Yield. Inflation erodes the real return on investments, including those in government securities such as Treasury bonds. As inflation expectations rise, investors may demand higher yields to compensate for the anticipated decrease in the purchasing power of their future interest payments. Conversely, low inflation rates may lead to lower yields, as the real return on investments becomes more stable, making government securities more attractive. Central banks may adjust monetary policy in response to inflation levels to stabilize the economy, influencing interest rates and thus impacting Treasury yields.</p>
-      <li><a href="#content" style="color: #A6A498;">Back to Contents</a>
+      <li><a href="#zero" style="color: #A6A498;">Back to main menu</a>
     </section>
-
-    <section> </section>
 
     <section id = "inflationviz">
       <h2>Visualize Inflation</h2>
@@ -504,6 +520,10 @@
 
 
 <style>
+
+  * {
+    font-family: "Gill Sans", sans-serif;
+  }
 
   :global(body) {
     color: white;
@@ -586,6 +606,10 @@
     /* background-color: rgba(255, 255, 255, 0.7); Adjust the opacity as needed */
     display: inline-block; /* Or as per your layout needs */
     padding: 10px; /* Adds some space around the text */
+    background-color: rgba(242,163,101, 0.7); /* Adjust the opacity as needed */
+    border: None;
+    border-radius: 10px;
+    font-style: italic;
   }
 
   .text-reveal{
@@ -634,6 +658,54 @@
     font-size: 35px;
   }
 
+  #zero{
+    background-image: url("https://storage.googleapis.com/pic0_dsc106/pic5.jpeg");
+    background-size: cover; /* Cover the entire section */
+    background-position: center; /* Center the background image */
+    height: 700px; /* Adjust based on your needs */
+  }
+
+  #zero-title span{
+    color: white;
+    text-shadow: 0 0 10px #f2a365;
+  }
+
+  .button-style {
+  padding: 20px 35px;
+  margin: 20px;
+  background-color: #f2a365; /* Warm shade picked from the sunlight */
+  color: #fff; /* White text */
+  border: None; /* No border */
+  border-radius: 10px; /* Slightly rounded edges */
+  font-size: 20px; /* Readable size */
+  cursor: pointer; /* Indicates the button is clickable */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s; /* Smooth transitions for interactions */
+  font-style: italic;
+}
+
+  .button-style:hover {
+  background-color: #f9b085; /* A lighter shade for the hover state */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* A more pronounced shadow on hover */
+  transform: translateY(-2px); /* A slight lift when hovered */
+}
+
+  .button-style:active {
+  background-color: #e6957d; /* A darker shade for the active state */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Less shadow to simulate being pressed */
+  transform: translateY(0); /* Return to normal position when clicked */
+}
+
+.buttons-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Align items to the left */
+}
+
+.slider-navigation {
+  margin-bottom: 20px; /* Adds space between each button-container */
+}
+
   #custom-background-section {
       position: relative; /* Needed for the absolute positioning of the pseudo-element */
       height: 700px; /* Adjust based on your needs */
@@ -641,17 +713,17 @@
   }
 
   #custom-background-section::before {
-      content: ''; /* Necessary for the pseudo-element to be generated */
+      content: '';
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background-image: url("https://storage.googleapis.com/pic0_dsc106/pic0.jpeg");
       background-size: cover; /* Cover the entire section */
       background-position: center; /* Center the background image */
       opacity: 0.5; /* Adjust opacity as needed */
       z-index: -1; /* Ensures the background is behind the content */
+      animation: switchBackground 40s infinite; /* Apply the animation */
   }
 
   /* Make sure the content inside #custom-background-section has a higher z-index if needed */
@@ -673,7 +745,8 @@
   }
 
   #hook {
-    animation: fadeIn 2s ease-out;
+    animation: fadeIn 1s ease-out;
+    
   }
 
   /* Up-and-down bobbing animation for the h3 tag */
@@ -685,6 +758,21 @@
       transform: translateY(-10px);
     }
   }
+
+  @keyframes switchBackground {
+              0%, 20% {
+                  background-image: url("https://storage.googleapis.com/pic0_dsc106/pic0.jpeg");
+              }
+              45%,55% {
+                  background-image: url("https://storage.googleapis.com/pic0_dsc106/pic1.jpeg");
+              }
+              55%,70% {
+                  background-image: url('https://storage.googleapis.com/pic0_dsc106/pic2.jpeg');
+              }
+              100%,0% {
+                  background-image: url('https://storage.googleapis.com/pic0_dsc106/pic3.jpeg');
+              }
+          }
 
   #hook h3 {
     animation: bobbing 3s ease-in-out infinite;
