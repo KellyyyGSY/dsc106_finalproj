@@ -40,30 +40,6 @@
                     stagger: 0.04,
                     ease: "power1.inOut"}, "<.5") 
             .from(".center-link", {duration: 1.5, opacity: 0}, "<1")
-            .from("#hook1", {
-              opacity: 0, // Start from invisible
-              y: 20, // Optional: start 20px lower than the final position
-              duration: 1, // Animation duration of 1 second
-              scrollTrigger: {
-                trigger: "#hook1",
-                start: "top center", // Trigger the animation when the top of #hook1 enters the center of the viewport
-                end: "bottom top", // Optional: define when the animation should end
-                toggleActions: "play none none none", // Play the animation on scroll down without reversing
-                markers: true
-              }
-            })
-            .from('#hook2', {
-              opacity: 0, // Start from invisible
-              y: 20, // Optional: start 20px lower than the final position
-              duration: 1, // Animation duration of 1 second
-              scrollTrigger: {
-                trigger: "#hook2",
-                start: "top center", // Trigger the animation when the top of #hook2 enters the center of the viewport
-                end: "bottom top", // Optional: define when the animation should end
-                toggleActions: "play none none none", // Play the animation on scroll down without reversing
-                markers: true
-              }
-            });
 
     
     gsap.utils.toArray('section').forEach((section, index, sections) => {
@@ -83,6 +59,7 @@
 
     window.scrollTo(10, 10);
 
+
     gsap.from("#zero-title", {
     opacity: 0, // Start from invisible
     y: 20, // Start 20px lower than the final position
@@ -94,6 +71,46 @@
       toggleActions: 'play none none reverse', // Play the animation on scroll down and reverse on scroll up
     },
   });
+
+  gsap.from("#hook1", {
+    opacity: 0, // Start from invisible
+    y: 20, // Start 20px lower than the final position
+    duration: 3, // Animation duration of 1 second
+    scrollTrigger: {
+      trigger: "#hook1",
+      start: 'top 50%', 
+      end: 'top 20%', 
+      toggleActions: 'play none none reverse', // Play the animation on scroll down and reverse on scroll up
+    },
+  });
+
+  gsap.from("#hook2", {
+    opacity: 0, // Start from invisible
+    duration: 3, // Animation duration of 1 second
+    delay:2,
+    scrollTrigger: {
+      trigger: "#hook1",
+      start: 'top 50%', 
+      end: 'top 20%', 
+      toggleActions: 'play none none reverse', // Play the animation on scroll down and reverse on scroll up
+    },
+  });
+
+  gsap.from("#hook3 span", {
+    opacity: 0, // Start from invisible
+    y: 20, // Start 20px lower than the final position
+    duration: 3, // Animation duration of 1 second
+    stagger: 0.05,
+    delay:4,
+    scrollTrigger: {
+      trigger: "#hook1",
+      start: 'top 50%', 
+      end: 'top 20%', 
+      toggleActions: 'play none none reverse', // Play the animation on scroll down and reverse on scroll up
+    },
+  });
+
+  
 
     gsap.from(".button-style", {
       opacity: 0, // Start from invisible
@@ -486,9 +503,19 @@
 
       <p class="style1" id="hook1">In a world where fluctuation of numbers and rates gauged the pulse of the economy, the dynamics of the 10-Year Treasury Yield stand out as a critical barometer of economic health and investor sentiment.</p>
 
-      <h3>But what if the seemingly arcane interplay between GDP growth, and inflation rates could unlock the secrets to predicting treasury yields and crafting savvy investment strategies?</h3>
+      <h3 id='hook2'>But what if the seemingly arcane interplay between GDP growth, and inflation rates could unlock the secrets to predicting treasury yields and crafting savvy investment strategies?</h3>
 
-      <p class="style1" id="hook2">Join us on a journey that transforms complex economic data into a captivating narrative, where each data point and trend line tells a story of opportunity, risk, and the relentless quest for financial wisdom.</p>
+      <p class="style1" id="hook3">
+        {#each "Join us on a journey that transforms complex economic data into a captivating narrative," .split('').map((char) => char === ' ' ? '\u00A0' : char) as letter}
+        <span>{letter}</span>
+        {/each}
+        </p>
+
+      <p class='style1' id='hook3'>
+        {#each " where each trend line tells a story of opportunity, risk, and the relentless quest." .split('').map((char) => char === ' ' ? '\u00A0' : char) as letter}
+        <span>{letter}</span>
+        {/each}
+      </p>
 
     </section>
 
@@ -629,7 +656,7 @@
     font-family: "Gill Sans", sans-serif;
     font-size: 1.5em; /* Adjust the font size here */
     padding: 10px; /* Adds some space around the text */
-    display: inline-flex;
+    display: inline-block;
   }
 
   p.style2{
@@ -802,6 +829,16 @@
 
   #hook h3 {
     animation: bobbing 3s ease-in-out infinite;
+  }
+
+  #hook3{
+    color: #bd5709;
+    font-family: "Gill Sans", sans-serif;
+    font-size: 2em; /* Adjust the font size here */
+    padding: 10px; /* Adds some space around the text */
+    display: inline-block;
+    text-shadow: 0 0 10px #d8370f;
+    max-width: 90%;
   }
 
 
