@@ -520,19 +520,21 @@
     svg.append("g")
       .attr("class", "grid")
       .call(d3.axisLeft(yScale)
-        .tickSize(-plotWidth)
-        .tickFormat("")
+          .tickSize(-plotWidth)
+          .tickFormat("")
       )
       .selectAll(".tick line")
       .attr("stroke", "#ccc");
 
-    svg.append("line")
-      .attr("x1", 0)
-      .attr("y1", yScale(0))
-      .attr("x2", plotWidth)
-      .attr("y2", yScale(0))
-      .attr("stroke", "white")
-      .attr("stroke-width", 2);
+    svg.append("g")
+      .attr("class", "grid")
+      .attr("transform", `translate(0,${plotHeight})`)
+      .call(d3.axisBottom(xScale)
+          .tickSize(-plotHeight)
+          .tickFormat("")
+      )
+      .selectAll(".tick line")
+      .attr("stroke", "#ccc");
 
     // Add x-axis label
     svg.append("text")
@@ -934,11 +936,11 @@
           </select>
         </label>
       </div>
-    
+
       <p>GDP Growth Rate: {growthRate.toFixed(2)}%</p>--> 
     </section>
     
-    
+
     <section> </section>
 
     <section id = "inflation">
