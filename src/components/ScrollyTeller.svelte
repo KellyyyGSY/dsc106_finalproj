@@ -473,9 +473,9 @@
   }
 
   function drawCPILinePlot() {
-    const margin = { top: 50, right: 30, bottom: 120, left: 60 };
-    const svgWidth = 1000;
-    const svgHeight = 500;
+    const margin = { top: 50, right: 150, bottom: 200, left: 90};
+    const svgWidth = 1200;
+    const svgHeight = 600;
     const plotWidth = svgWidth - margin.left - margin.right;
     const plotHeight = svgHeight - margin.top - margin.bottom;
 
@@ -497,7 +497,7 @@
       .range([plotHeight, 0]);
 
     // Define axes
-    const xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat("%Y"));
+    const xAxis = d3.axisBottom(xScale).tickFormat(d => d.getFullYear()); // Format ticks to display only the year
     const yAxis = d3.axisLeft(yScale);
 
     // Append axes to the SVG
@@ -511,22 +511,12 @@
     svg.append("g")
       .attr("class", "grid")
       .call(d3.axisLeft(yScale)
-          .tickSize(-plotWidth)
-          .tickFormat("")
+        .tickSize(-plotWidth)
+        .tickFormat("")
       )
       .selectAll(".tick line")
       .attr("stroke", "#ccc");
 
-    svg.append("g")
-      .attr("class", "grid")
-      .attr("transform", `translate(0,${plotHeight})`)
-      .call(d3.axisBottom(xScale)
-          .tickSize(-plotHeight)
-          .tickFormat("")
-      )
-      .selectAll(".tick line")
-      .attr("stroke", "#ccc");
-    
     svg.append("line")
       .attr("x1", 0)
       .attr("y1", yScale(0))
@@ -534,13 +524,13 @@
       .attr("y2", yScale(0))
       .attr("stroke", "white")
       .attr("stroke-width", 2);
-    
+
     // Add x-axis label
     svg.append("text")
       .attr("class", "x label")
       .attr("text-anchor", "end")
       .attr("fill", "white")
-      .attr("x", plotWidth - 435)
+      .attr("x", plotWidth - 460)
       .attr("y", plotHeight + 50) // Adjusted positioning
       .text("Date");
 
@@ -549,8 +539,8 @@
       .attr("class", "y label")
       .attr("text-anchor", "end")
       .attr("fill", "white")
-      .attr("x", -margin.left - 50)
-      .attr("y", -margin.left + 20) // Adjusted positioning
+      .attr("x", -margin.left - 20)
+      .attr("y", -margin.left + 40) // Adjusted positioning
       .attr("dy", ".75em")
       .attr("transform", "rotate(-90)")
       .text("Percentage Change");
@@ -582,7 +572,7 @@
       .attr("stroke", "blue")
       .attr("stroke-width", 2)
       .attr("d", lineCPI);
-    
+
     // Add data points
     svg.selectAll(".dot-cpi")
       .data(cpiData)
@@ -590,13 +580,13 @@
       .attr("class", "dot-cpi")
       .attr("cx", d => xScale(d.date))
       .attr("cy", d => yScale(d.percentageChange))
-      .attr("r", 4)
+      .attr("r", 5)
       .style("fill", "white")
-      .style("opacity", 0.1)
+      .style("opacity", 0.0)
       .on("mouseover", (event, d) => {
         tooltip.style("display", "block")
           .attr("transform", `translate(${xScale(d.date)}, ${yScale(d.percentageChange)})`);
-        tooltipText.select(".date").text(`Date: ${d.date}`);
+        tooltipText.select(".date").text(`Date: ${d3.timeFormat("%b %Y")(d.date)}`);
         tooltipText.select(".change").text(`Change%: ${d.percentageChange}`);
       })
       .on("mouseout", () => {
@@ -609,8 +599,8 @@
       .style("display", "none");
 
     tooltip.append("rect")
-      .attr("width", 188)
-      .attr("height", 70)
+      .attr("width", 140)
+      .attr("height", 50)
       .attr("fill", "white")
       .style("opacity", 0.9)
       .attr("stroke", "steelblue")
@@ -624,13 +614,13 @@
     tooltipText.append("tspan")
       .attr("class", "date")
       .attr("x", 10)
-      .attr("dy", "1.2em");
+      .attr("dy", "0.1em");
 
     tooltipText.append("tspan")
       .attr("class", "change")
       .attr("x", 10)
       .attr("dy", "1.2em");
-  }
+}
 
 </script>
 
@@ -757,7 +747,8 @@
       <div id="gdp-line-plot"></div> <!-- Container for the GDP line plot -->
     </section>
 
-    <!-- add for better transit, do not delete! -->
+    <!-- GDP Growth Rate Calculator here -->
+    <!-- debug needed -->
     <section>
       <h2>GDP Growth Rate Calculator</h2>   
       <div>
@@ -789,6 +780,7 @@
     </section> 
 
     <section> </section>
+
     <section id = "inflation">
       <h2>What is Inflation?</h2>
       <p>Inflation is a key economic metric that denotes the rate at which the general level of prices for goods and services is rising, and subsequently, how purchasing power is falling. Central banks attempt to limit inflation, and avoid deflation, in order to keep the economy running smoothly. Inflation can be measured through various indices, the most common being the Consumer Price Index (CPI) and the Wholesale Price Index (WPI). CPI measures the average price change over time of a basket of goods and services that a typical household might purchase, while WPI measures the price change of goods sold and traded in bulk by wholesale businesses to other businesses.</p>
@@ -801,6 +793,7 @@
       <div id="cpi-line-plot"></div> <!-- Container for the CPI line plot -->
     </section>
 
+    <!-- add for better transit, do not delete! -->
     <section> </section>
 
     <section id = "rela"> 
