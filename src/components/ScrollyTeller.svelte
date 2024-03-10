@@ -11,9 +11,7 @@
 
   let count, index, offset, progress;
   let width, height;
-  let data, gdpData, cpindexData, cpiData;
-  let startQuarter, endQuarter;
-  let growthRate = 0;
+  let data, gdpData, rGDPData, cpindexData, cpiData;
 
   const timeline = gsap.timeline({defaults: {duration: 2, opacity: 0}});
   const timeline2 = gsap.timeline({
@@ -144,9 +142,17 @@
       gdpCurrent: +d["GDP in billions of current dollars"],
       gdpChained: +d["GDP in billions of chained 2017 dollars"]
     }));
+    
+    const response = await fetch('rGDP_growth.csv');
+    const text = await response.text();
+    rGDPData = d3.csvParse(text, d => ({
+      date: d3.timeParse("%YQ%q")(d.Quarterly), 
+      growth: +d['Growth']
+    }));
 
     drawLinePlot();
     drawGDPLinePlot();
+    drawBarChart();
 
     const cpindexRes = await fetch('cpi.csv');
     const cpindexCsv = await cpindexRes.text();
@@ -461,6 +467,100 @@
       }, true); // True for capturing phase
   }
 
+  function drawBarChart() {
+    const margin = { top: 50, right: 30, bottom: 90, left: 60 };
+    const svgWidth = 1000;
+    const svgHeight = 500;
+    const plotWidth = svgWidth - margin.left - margin.right;
+    const plotHeight = svgHeight - margin.top - margin.bottom;
+
+    // Define the SVG container
+    const svg = d3.select("#gdpgrowth")
+        .append("svg")
+        .attr("width", svgWidth)
+        .attr("height", svgHeight)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Scales and axes
+    const xScale = d3.scaleTime()
+        .domain(d3.extent(rGDPData, d => d.date))
+        .range([0, plotWidth]);
+
+    const yScale = d3.scaleLinear()
+        .domain([0, d3.max(rGDPData, d => d.growth)])
+        .range([plotHeight, 0]);
+
+    const xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat("%Y"));
+    const yAxis = d3.axisLeft(yScale);
+
+    // Append axes to the SVG
+    const xAxisGroup = svg.append("g")
+        .attr("transform", `translate(0,${plotHeight})`)
+        .call(xAxis);
+
+    svg.append("g")
+        .call(yAxis);
+
+    // Tooltip for displaying detailed information
+    const tooltip = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0.8)
+        .style("position", "absolute")
+        .style("background", "white")
+        .style("color", "#000") // black text
+        .style("border", "solid 1px #000")
+        .style("padding", "15px")
+        .style("pointer-events", "none");
+
+    // Calculate bar width based on the number of data points
+    let barWidth = plotWidth / rGDPData.length;
+
+    // Bars
+    const bars = svg.selectAll(".bar")
+        .data(rGDPData)
+        .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", d => xScale(d.date) - barWidth / 2) // Center the bar
+        .attr("y", d => yScale(d.growth))
+        .attr("width", barWidth)
+        .attr("height", d => plotHeight - yScale(d.growth))
+        .attr("fill", "#69b3a2")
+        .on("click", (event, d) => {
+            // Determine the scale for the zoomed-in view
+            const domainPadding = (xScale.range()[1] - xScale.range()[0]) / 10; // 10% padding on each side
+            const newDomain = [new Date(d.date.getTime() - domainPadding), new Date(d.date.getTime() + domainPadding)];
+
+            // Update the xScale domain
+            xScale.domain(newDomain);
+
+            // Recalculate the bar width based on the new scale
+            barWidth = (xScale.range()[1] - xScale.range()[0]) / rGDPData.length;
+
+            // Rescale the x-axis
+            xAxisGroup.transition().duration(500).call(xAxis);
+
+            // Update bars
+            bars.transition().duration(500)
+                .attr("x", d => xScale(d.date) - barWidth / 2)
+                .attr("width", barWidth);
+        })
+        .on("mouseover", (event, d) => {
+            tooltip.transition()
+                .duration(200)
+                .style("opacity", .9);
+            tooltip.html("Date: " + d3.timeFormat("%Y Q%q")(d.date) + "<br/>Growth: " + d.growth)
+                .style("left", (event.pageX) + "px")
+                .style("top", (event.pageY - 28) + "px");
+        })
+        .on("mouseout", (event, d) => {
+            tooltip.transition()
+                .duration(500)
+                .style("opacity", 0);
+        });
+  }
+
+
   function scrollToSection(sectionId) {
     const section = document.getElementById(sectionId);
     if (section) {
@@ -472,13 +572,6 @@
     growthRate = calculateGrowthRate(startQuarter, endQuarter);
   } else {
     growthRate = 0;
-  }
-
-  function calculateGrowthRate(start, end) {
-    const startValue = gdpData.find(entry => entry.date.getTime() == start)?.gdpCurrent;
-    const endValue = gdpData.find(entry => entry.date.getTime() == end)?.gdpCurrent;
-
-    return startValue && endValue ? ((endValue - startValue) / startValue) * 100 : 0;
   }
 
   function drawCPILinePlot() {
@@ -911,33 +1004,8 @@
     <!-- GDP Growth Rate Calculator here -->
     <!-- debug needed -->
     <section>
-      <h2>GDP Growth Rate Calculator</h2>   
-      <div>
-        <label>
-          Start Quarter:
-          <select bind:value={startQuarter}>
-            <option value="">Select Start Quarter</option>
-            {#each gdpData as index, entry}
-            <!-- <option value="{entry.quarter}">{entry.quarter}</option>-->
-            {/each} 
-          </select>
-        </label>
-      </div>
-
-      <!-- <div>
-        <label>
-          End Quarter:
-          <select bind:value={endQuarter}>
-            <option value="">Select End Quarter</option>
-            {#each gdpData as entry, index}
-              <option value="{entry.quarter}">{entry.quarter}</option>
-
-            {/each}
-          </select>
-        </label>
-      </div>
-
-      <p>GDP Growth Rate: {growthRate.toFixed(2)}%</p>--> 
+      <h2>Real GDP Growth Rate</h2>
+      <div id="gdpgrowth"></div>
     </section>
     
 
