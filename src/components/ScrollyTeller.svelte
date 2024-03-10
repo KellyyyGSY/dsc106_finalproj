@@ -11,7 +11,7 @@
 
   let count, index, offset, progress;
   let width, height;
-  let data, gdpData, cpiData;
+  let data, gdpData, cpindexData, cpiData;
   let startQuarter, endQuarter;
   let growthRate = 0;
 
@@ -148,13 +148,22 @@
     drawLinePlot();
     drawGDPLinePlot();
 
+    const cpindexRes = await fetch('cpi.csv');
+    const cpindexCsv = await cpindexRes.text();
+    cpindexData = d3.csvParse(cpindexCsv, d => ({
+      date: d3.timeParse("%Y/%m")(d.Date),
+      cpindex: +d["Index"]
+    }));
+
+    drawCPILinePlot();
+
     const cpiRes = await fetch('monthly_inflation.csv');
     const cpiCsv = await cpiRes.text();
     cpiData = d3.csvParse(cpiCsv, d => ({
       date: d3.timeParse("%Y/%m")(d.Date),
       percentageChange: +d["Percent_Change"]
     }));
-    drawCPILinePlot();
+    drawCPIPCLinePlot();
 
   });
 
@@ -489,6 +498,156 @@
 
     // Assuming your date parsing has been done correctly when loading the data
     const xScale = d3.scaleTime()
+      .domain(d3.extent(cpindexData, d => d.date))
+      .range([0, plotWidth]);
+
+    const yScale = d3.scaleLinear()
+      .domain([100, d3.max(cpindexData, d => d.cpindex) + 1])
+      .range([plotHeight, 0]);
+
+    // Define axes
+    const xAxis = d3.axisBottom(xScale).tickFormat(d => d.getFullYear()); // Format ticks to display only the year
+    const yAxis = d3.axisLeft(yScale);
+
+    // Append axes to the SVG
+    svg.append("g")
+      .attr("transform", `translate(0,${plotHeight})`)
+      .call(xAxis);
+
+    svg.append("g")
+      .call(yAxis);
+
+    svg.append("g")
+      .attr("class", "grid")
+      .call(d3.axisLeft(yScale)
+        .tickSize(-plotWidth)
+        .tickFormat("")
+      )
+      .selectAll(".tick line")
+      .attr("stroke", "#ccc");
+
+    svg.append("line")
+      .attr("x1", 0)
+      .attr("y1", yScale(0))
+      .attr("x2", plotWidth)
+      .attr("y2", yScale(0))
+      .attr("stroke", "white")
+      .attr("stroke-width", 2);
+
+    // Add x-axis label
+    svg.append("text")
+      .attr("class", "x label")
+      .attr("text-anchor", "end")
+      .attr("fill", "white")
+      .attr("x", plotWidth - 460)
+      .attr("y", plotHeight + 50) // Adjusted positioning
+      .text("Date");
+
+    // Add y-axis label
+    svg.append("text")
+      .attr("class", "y label")
+      .attr("text-anchor", "end")
+      .attr("fill", "white")
+      .attr("x", -margin.left - 20)
+      .attr("y", -margin.left + 40) // Adjusted positioning
+      .attr("dy", ".75em")
+      .attr("transform", "rotate(-90)")
+      .text("Consumer Price Index");
+
+    // Area generator for CPIndex
+    const areaCPIndex = d3.area()
+      .x(d => xScale(d.date))
+      .y0(yScale(100)) // Set y0 to y-coordinate of the line y=100
+      .y1(d => yScale(d.cpindex))
+      .curve(d3.curveMonotoneX);
+
+    // Append the area for CPIndex
+    svg.append("path")
+      .datum(cpindexData)
+      .attr("fill", "blue")
+      .attr("opacity", 0.1)
+      .attr("d", areaCPIndex);
+
+    // Line generator for CPIndex
+    const lineCPIndex = d3.line()
+      .x(d => xScale(d.date))
+      .y(d => yScale(d.cpindex))
+      .curve(d3.curveMonotoneX);
+
+    // Append the path for CPIndex
+    svg.append("path")
+      .datum(cpindexData)
+      .attr("fill", "none")
+      .attr("stroke", "blue")
+      .attr("stroke-width", 2)
+      .attr("d", lineCPIndex);
+
+    // Add data points
+    svg.selectAll(".dot-cpi")
+      .data(cpindexData)
+      .enter().append("circle")
+      .attr("class", "dot-cpi")
+      .attr("cx", d => xScale(d.date))
+      .attr("cy", d => yScale(d.cpindex))
+      .attr("r", 5)
+      .style("fill", "white")
+      .style("opacity", 0.0)
+      .on("mouseover", (event, d) => {
+        tooltip.style("display", "block")
+          .attr("transform", `translate(${xScale(d.date)}, ${yScale(d.cpindex)})`);
+        tooltipText.select(".date").text(`Date: ${d3.timeFormat("%b %Y")(d.date)}`);
+        tooltipText.select(".index").text(`Index: ${d.cpindex}`);
+      })
+      .on("mouseout", () => {
+        tooltip.style("display", "none");
+      });
+
+    // Add a tooltip
+    const tooltip = svg.append("g")
+      .attr("class", "tooltip")
+      .style("display", "none");
+
+    tooltip.append("rect")
+      .attr("width", 140)
+      .attr("height", 50)
+      .attr("fill", "white")
+      .style("opacity", 0.9)
+      .attr("stroke", "steelblue")
+      .attr("rx", 5) // rounded corners
+      .attr("ry", 5);
+
+    const tooltipText = tooltip.append("text")
+      .attr("x", 10)
+      .attr("y", 20);
+
+    tooltipText.append("tspan")
+      .attr("class", "date")
+      .attr("x", 10)
+      .attr("dy", "0.1em");
+
+    tooltipText.append("tspan")
+      .attr("class", "index")
+      .attr("x", 10)
+      .attr("dy", "1.2em");
+  }
+
+  function drawCPIPCLinePlot() {
+    const margin = { top: 50, right: 150, bottom: 200, left: 90};
+    const svgWidth = 1200;
+    const svgHeight = 600;
+    const plotWidth = svgWidth - margin.left - margin.right;
+    const plotHeight = svgHeight - margin.top - margin.bottom;
+
+    // Define the SVG container
+    const svg = d3.select("#cpi-pc-line-plot")
+      .append("svg")
+      .attr("width", svgWidth)
+      .attr("height", svgHeight)
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Assuming your date parsing has been done correctly when loading the data
+    const xScale = d3.scaleTime()
       .domain(d3.extent(cpiData, d => d.date))
       .range([0, plotWidth]);
 
@@ -620,7 +779,7 @@
       .attr("class", "change")
       .attr("x", 10)
       .attr("dy", "1.2em");
-}
+  }
 
 </script>
 
@@ -777,8 +936,9 @@
       </div>
     
       <p>GDP Growth Rate: {growthRate.toFixed(2)}%</p>--> 
-    </section> 
-
+    </section>
+    
+    
     <section> </section>
 
     <section id = "inflation">
@@ -788,9 +948,14 @@
       <li style="margin-top: 50px;"><a href="#zero" style="color: #42393B;">Back to main menu</a>
     </section>
 
-    <section id = 'cpiviz'>
+    <section id = 'cpi-viz'>
       <h2> Year to Year U.S. Consumer Price Index (CPI) </h2>
       <div id="cpi-line-plot"></div> <!-- Container for the CPI line plot -->
+    </section>
+
+    <section id = 'cpi-pc-viz'>
+      <h2> CPI 12-Month Percent Change </h2>
+      <div id="cpi-pc-line-plot"></div> <!-- Container for the CPI PC line plot -->
     </section>
 
     <!-- add for better transit, do not delete! -->
