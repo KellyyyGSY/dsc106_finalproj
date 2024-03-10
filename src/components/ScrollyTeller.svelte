@@ -568,11 +568,6 @@
     }
   }
 
-  $: if (startQuarter && endQuarter) {
-    growthRate = calculateGrowthRate(startQuarter, endQuarter);
-  } else {
-    growthRate = 0;
-  }
 
   function drawCPILinePlot() {
     const margin = { top: 50, right: 150, bottom: 200, left: 90};
