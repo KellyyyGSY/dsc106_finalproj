@@ -858,7 +858,7 @@
       </h1>
       <div id="buttons-section">
         <div class="slider-navigation">
-          <button class="button-style" on:click={() => scrollToSection('inflation')}>Inflation Dynamics</button>
+          <button class="button-style" on:click={() => scrollToSection('bond')}>Understanding Treasury Bonds</button>
           <li>Explore the basics and significance of Treasury Bonds in the financial market.</li>
         </div>
         <div class="slider-navigation">
@@ -866,7 +866,7 @@
           <li>Dive into GDP growth factors and its role as an economic health indicator.</li>
         </div>
         <div class="slider-navigation">
-          <button class="button-style" on:click={() => scrollToSection('bond')}>Understanding Treasury Bonds</button>
+          <button class="button-style" on:click={() => scrollToSection('inflation')}>Inflation Dynamics</button>
           <li>Unpack the causes and effects of inflation on the economy and purchasing power.</li>
         </div>
       </div>
