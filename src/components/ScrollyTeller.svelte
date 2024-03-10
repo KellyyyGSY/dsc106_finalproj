@@ -142,7 +142,7 @@
       gdpCurrent: +d["GDP in billions of current dollars"],
       gdpChained: +d["GDP in billions of chained 2017 dollars"]
     }));
-    
+
     const response = await fetch('rGDP_growth.csv');
     const text = await response.text();
     rGDPData = d3.csvParse(text, d => ({
@@ -170,7 +170,6 @@
       percentageChange: +d["Percent_Change"]
     }));
     drawCPIPCLinePlot();
-
   });
 
   function drawLinePlot() {
@@ -1023,12 +1022,27 @@
       <div id="cpi-pc-line-plot"></div> <!-- Container for the CPI PC line plot -->
     </section>
 
-    <!-- add for better transit, do not delete! -->
+    <section id = 'cpi-pc-explain0'></section>
+    <section id = 'cpi-pc-explain1'> 
+      <div class="frame">
+        <p> This line graph displays the trend of percentage change of consumer price index in each month from 2000 to 2024. We may observe from the line graph that the trend before 2008 did not fluctate greatly day to day.</p>
+      </div>
+    </section>
+
+    <section id = 'cpi-pc-explain2'> 
+      <div class="frame">
+        <p> haha something here</p>
+      </div>
+    </section>
+    <section id = 'cpi-pc-explain3'> </section>
+
     <section> </section>
 
     <section id = "rela"> 
       <h2> Interconnections </h2>
     </section>
+
+    <section> </section>
 
   </div>
 </Scroller>
@@ -1314,6 +1328,25 @@
     display: inline-block;
     text-shadow: 0 0 10px #999999;
     max-width: 90%;
+  }
+
+  #cpi-pc-explain1 {
+    text-align: center; /* Center-align the content */
+  }
+
+  .frame {
+    display: inline-block; /* Ensure the frame doesn't stretch to full width */
+    padding: 20px; /* Adjust padding as needed */
+    background-color: white; /* White background */
+    border: 2px solid black; /* Black border */
+    border-radius: 10px; /* Rounded corners */
+    margin-top: 150px; /* Adjust margin as needed */
+    width: 500px; /* Adjust width as needed */
+    height: 150px; /* Adjust height as needed */
+  }
+
+  .frame p {
+    color: black; /* Black text color */
   }
 
 
