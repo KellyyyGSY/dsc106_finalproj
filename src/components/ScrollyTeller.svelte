@@ -1028,13 +1028,26 @@
         <p> This line graph displays the trend of percentage change of consumer price index in each month from 2000 to 2024. We may observe from the line graph that the trend before 2008 did not fluctate greatly day to day.</p>
       </div>
     </section>
-
     <section id = 'cpi-pc-explain2'> 
       <div class="frame">
-        <p> haha something here</p>
+        <p> However, in the midst of 2008, commodity prices experienced a significant downturn, coinciding with the onset of the global financial crisis in September of that year. Initially, the decrease in overall economic activity was moderate, but it rapidly intensified during the autumn of 2008, reaching a critical point as financial market pressures peaked.</p>
       </div>
     </section>
-    <section id = 'cpi-pc-explain3'> </section>
+    <section id = 'cpi-pc-explain3'> 
+      <div class="frame">
+        <p> In December 2008, the Consumer Price Index for All Urban Consumers (CPI-U) showed a 0.7 percent decline on a seasonally adjusted basis, marking the third consecutive month of decrease. This drop was mainly driven by lower energy prices, particularly for gasoline, with the energy index falling by 8.3 percent in December. </p>
+      </div>
+    </section>
+    <section id = 'cpi-pc-explain4'> 
+      <div class="frame">
+        <p> It is worth to notice the post-pandemic recovery. When vaccinations became available, the trend in CPI shows a significant increase. This upward trend persists throughout 2021 and into early 2022, with the CPI steadily rising from 1.4% in January 2021 to 9.1% in June 2022.</p>
+      </div>
+    </section>
+    <section id = 'cpi-pc-explain5'> 
+      <div class="frame">
+        <p> From June 2022 until 2024, the trend in the Consumer Price Index (CPI) appears to continue with a relatively stable or gradually increasing trajectory. </p>
+      </div>
+    </section>
 
     <section> </section>
 
@@ -1336,13 +1349,14 @@
 
   .frame {
     display: inline-block; /* Ensure the frame doesn't stretch to full width */
-    padding: 20px; /* Adjust padding as needed */
+    padding: 30px; /* Adjust padding as needed */
     background-color: white; /* White background */
     border: 2px solid black; /* Black border */
     border-radius: 10px; /* Rounded corners */
     margin-top: 150px; /* Adjust margin as needed */
-    width: 500px; /* Adjust width as needed */
+    width: 600px; /* Adjust width as needed */
     height: 150px; /* Adjust height as needed */
+    text-align: left; /* Center-align the text content within the frame */
   }
 
   .frame p {
