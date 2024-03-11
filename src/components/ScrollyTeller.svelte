@@ -259,7 +259,7 @@
       .attr("class", "dot")
       .attr("cx", d => x(new Date(d.Date)))
       .attr("cy", d => y(d.Price))
-      .attr("r", 4)
+      .attr("r", 5)
       .style("fill", "white")
       .style("opacity", 0.0)
       .on("mouseover", (event, d) => {

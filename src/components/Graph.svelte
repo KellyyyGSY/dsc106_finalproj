@@ -179,6 +179,74 @@
       .attr("stroke", "blue")
       .attr("stroke-width", 2)
       .attr("d", lineCPI);
+
+    // Add annotations
+    const annotations = [
+        { date: new Date("2008/07"), percentChange: 7.2, text: "Global Financial Crisis:\nSep 2008" },
+        { date: new Date("2020/11"), percentChange: 3.8, text: "First vaccinations:\nDec 14th 2020" }
+        // add more if needed
+    ];
+
+    // Define arrowhead marker
+    cpiSvg.append("defs").append("marker")
+      .attr("id", "arrowhead")
+      .attr("viewBox", "0 -5 10 10")
+      .attr("refX", 8)
+      .attr("refY", 0)
+      .attr("orient", "auto")
+      .attr("markerWidth", 6)
+      .attr("markerHeight", 6)
+      .append("path")
+      .attr("d", "M0,-5L10,0L0,5")
+      .attr("fill", "white");
+
+    // Add arrows and annotations
+    annotations.forEach(annotation => {
+      const xPos = xScale(annotation.date);
+      const yPos = yScale(annotation.percentChange);
+
+      // Split text into lines
+      const lines = annotation.text.split('\n');
+
+      // Add annotation text
+      lines.forEach((line, i) => {
+        cpiSvg.append("text")
+          .attr("x", xPos)
+          .attr("y", yPos + i * 20) // Adjust dy for line spacing
+          .attr("dy", "-0.5em")
+          .text(line)
+          .attr("fill", "white");
+      });
+
+      // Find the closest point on the line to the annotation
+      const closestPoint = findClosestPointOnLine(cpiData, { x: xPos, y: yPos });
+
+      // Add arrow line
+      cpiSvg.append("line")
+        .attr("x1", xPos)
+        .attr("y1", yPos)
+        .attr("x2", closestPoint.x)
+        .attr("y2", closestPoint.y)
+        .attr("stroke", "white")
+        .attr("stroke-width", 1)
+        .attr("marker-end", "url(#arrowhead)");
+    });
+
+    // Function to find the closest point on the line
+    function findClosestPointOnLine(data, point) {
+      let minDistance = Infinity;
+      let closestPoint = null;
+
+      data.forEach(d => {
+        const distance = Math.abs(point.x - xScale(d.date));
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestPoint = { x: xScale(d.date), y: yScale(d.percentageChange) };
+        }
+      });
+
+      return closestPoint;
+    }
   }
 
 </script>
