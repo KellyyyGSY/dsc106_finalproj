@@ -8,10 +8,12 @@
   import Graph from "./Graph.svelte";
   import Scroller from "@sveltejs/svelte-scroller";
   import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
+  import Chart from 'chart.js/auto';
 
   let count, index, offset, progress;
   let width, height;
   let data, gdpData, rGDPData, cpindexData, cpiData;
+  let chart
 
   const timeline = gsap.timeline({defaults: {duration: 2, opacity: 0}});
   const timeline2 = gsap.timeline({
@@ -20,7 +22,7 @@
       start: 'top 50%', 
       end: 'top 20%', 
       toggleActions: 'play none none reverse',
-      markers: true
+
     }
   });
   gsap.registerPlugin(ScrollTrigger);
@@ -1056,6 +1058,10 @@
       <li style="margin-top: 50px;"><a href="#zero" style="color: #42393B;">Back to main menu</a>
     </section>
 
+    <section id="plot-section">
+      <div id="plot-container"></div>
+    </section>
+
     <section id = "bondviz">
       <h2> United States 10-Year Bond Yield </h2>
       <div id="line-plot"></div> <!-- Container for the bond line plot -->
@@ -1095,12 +1101,12 @@
 
     <section id = 'cpi-viz'>
       <h2> Year to Year U.S. Consumer Price Index (CPI) </h2>
-      <div id="cpi-line-plot"></div> <!-- Container for the CPI line plot -->
+      <div id="cpi-line-plot"></div> 
     </section>
 
     <section id = 'cpi-pc-viz'>
       <h2> CPI 12-Month Percent Change </h2>
-      <div id="cpi-pc-line-plot"></div> <!-- Container for the CPI PC line plot -->
+      <div id="cpi-pc-line-plot"></div>
     </section>
 
     <section id = 'cpi-pc-explain0'></section>
@@ -1164,13 +1170,11 @@
     margin: 0 auto;
     height: auto;
     position: relative;
-    outline: red solid 3px;
   }
 
   section {
     height: 80vh;      /* height of each section */
     /* background-color: rgba(0, 0, 0, 0.2); */
-    outline: magenta solid 3px;
     text-align: center;
     max-width: 100%; /* adjust at will */
     color: white;    /* color of title */
