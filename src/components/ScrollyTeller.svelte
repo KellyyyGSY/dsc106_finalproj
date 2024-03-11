@@ -305,7 +305,7 @@
 
 
   function drawGDPLinePlot() {
-    const margin = { top: 50, right: 30, bottom: 90, left: 60 };
+    const margin = { top: 50, right: 180, bottom: 90, left: 160};
     const svgWidth = 1000;
     const svgHeight = 500;
     const plotWidth = svgWidth - margin.left - margin.right;
@@ -425,8 +425,53 @@
       .attr("r", 3)
       .style("fill", "blue")
       .style("opacity", 0.5)
-      .on("mouseover", (event, d) => displayTooltip(event, d, "Current Dollars"))
-      .on("mouseout", () => tooltip.style("display", "none"));
+      .on("mouseover", (event, d) => {
+        const xOffset = -160; // Adjust this value for horizontal offset
+        const yOffset = 5; // Adjust this value for vertical offset
+
+        // Calculate the adjusted position
+        const adjustedX = xScale(d.date) + xOffset;
+        const adjustedY = yScale(d.gdpCurrent) + yOffset;
+
+        // Set the position of the tooltip
+        tooltipCurrent.style("display", "block")
+          .attr("transform", `translate(${adjustedX}, ${adjustedY})`);
+        
+        // Update tooltip text
+        tooltipTextCurrent.select(".date").text(`Date: ${d3.timeFormat("%Y Q%q")(d.date)}`);
+        tooltipTextCurrent.select(".gdpCurrent").text(`GDP (Current Dollars): $${d.gdpCurrent} Billion`);
+      })
+      .on("mouseout", () => {
+        tooltipCurrent.style("display", "none");
+      });
+
+    // Add a tooltip for GDP in current dollars
+    const tooltipCurrent = svg.append("g")
+      .attr("class", "tooltip")
+      .style("display", "none");
+
+    tooltipCurrent.append("rect")
+      .attr("width", 320)
+      .attr("height", 50)
+      .attr("fill", "white")
+      .style("opacity", 0.9)
+      .attr("stroke", "steelblue")
+      .attr("rx", 5) // rounded corners
+      .attr("ry", 5);
+
+    const tooltipTextCurrent = tooltipCurrent.append("text")
+      .attr("x", 10)
+      .attr("y", 20);
+
+    tooltipTextCurrent.append("tspan")
+      .attr("class", "date")
+      .attr("x", 10)
+      .attr("dy", "0.1em");
+
+    tooltipTextCurrent.append("tspan")
+      .attr("class", "gdpCurrent")
+      .attr("x", 10)
+      .attr("dy", "1.2em");
 
     // Add circles for GDP in chained 2017 dollars
     svg.selectAll(".dot-chained")
@@ -438,36 +483,58 @@
       .attr("r", 3)
       .style("fill", "green")
       .style("opacity", 0.5)
-      .on("mouseover", (event, d) => displayTooltip(event, d, "Chained 2017 Dollars"))
-      .on("mouseout", () => tooltip.style("display", "none"));
+      .on("mouseover", (event, d) => {
+        const xOffset = -160; // Adjust this value for horizontal offset
+        const yOffset = 5; // Adjust this value for vertical offset
 
-    // Tooltip setup...
-    const tooltip = d3.select("body").append("div")
+        // Calculate the adjusted position
+        const adjustedX = xScale(d.date) + xOffset;
+        const adjustedY = yScale(d.gdpChained) + yOffset;
+
+        // Set the position of the tooltip
+        tooltipChained.style("display", "block")
+          .attr("transform", `translate(${adjustedX}, ${adjustedY})`);
+        
+        // Update tooltip text
+        tooltipTextChained.select(".date").text(`Date: ${d3.timeFormat("%Y Q%q")(d.date)}`);
+        tooltipTextChained.select(".gdpChained").text(`GDP (Chained 2017 Dollars): $${d.gdpChained} Billion`);
+      })
+      .on("mouseout", () => {
+        tooltipChained.style("display", "none");
+      });
+
+    // Add a tooltip for GDP in chained 2017 dollars
+    const tooltipChained = svg.append("g")
       .attr("class", "tooltip")
-      .style("position", "absolute")
-      .style("background-color", "#262626")
-      .style("opacity", 0.9)
-      .style("border", "1px solid black")
-      .style("border-radius", "5px")
-      .style("padding", "10px")
       .style("display", "none");
 
-    function displayTooltip(event, d, type) {
-      tooltip
-        .html(`Date: ${d3.timeFormat("%Y Q%q")(d.date)}<br/>GDP (${type}): $${type === "Current Dollars" ? d.gdpCurrent : d.gdpChained} Billion`)
-        .style("left", `${event.pageX + 15}px`)
-        .style("top", `${event.pageY - 28}px`)
-        .style("display", "block");
-    }
+    tooltipChained.append("rect")
+      .attr("width", 360)
+      .attr("height", 50)
+      .attr("fill", "white")
+      .style("opacity", 0.9)
+      .attr("stroke", "steelblue")
+      .attr("rx", 5) // rounded corners
+      .attr("ry", 5);
 
-    // Hide the tooltip when clicking anywhere on the page outside the data points
-    d3.select("body").on("click", function() {
-        tooltip.style("display", "none");
-      }, true); // True for capturing phase
+    const tooltipTextChained = tooltipChained.append("text")
+      .attr("x", 10)
+      .attr("y", 20);
+
+    tooltipTextChained.append("tspan")
+      .attr("class", "date")
+      .attr("x", 10)
+      .attr("dy", "0.1em");
+
+    tooltipTextChained.append("tspan")
+      .attr("class", "gdpChained")
+      .attr("x", 10)
+      .attr("dy", "1.2em");
+
   }
 
   function drawBarChart() {
-    const margin = { top: 50, right: 140, bottom: 90, left: 60 };
+    const margin = { top: 50, right: 140, bottom: 90, left: 80 };
     const svgWidth = 1000;
     const svgHeight = 500;
     const plotWidth = svgWidth - margin.left - margin.right;
