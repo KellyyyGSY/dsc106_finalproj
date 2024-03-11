@@ -1058,10 +1058,6 @@
       <li style="margin-top: 50px;"><a href="#zero" style="color: #42393B;">Back to main menu</a>
     </section>
 
-    <section id="plot-section">
-      <div id="plot-container"></div>
-    </section>
-
     <section id = "bondviz">
       <h2> United States 10-Year Bond Yield </h2>
       <div id="line-plot"></div> <!-- Container for the bond line plot -->
