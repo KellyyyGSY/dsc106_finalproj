@@ -467,7 +467,7 @@
   }
 
   function drawBarChart() {
-    const margin = { top: 50, right: 30, bottom: 90, left: 60 };
+    const margin = { top: 50, right: 140, bottom: 90, left: 60 };
     const svgWidth = 1000;
     const svgHeight = 500;
     const plotWidth = svgWidth - margin.left - margin.right;
@@ -500,17 +500,6 @@
 
     svg.append("g")
         .call(yAxis);
-
-    // Tooltip for displaying detailed information
-    const tooltip = d3.select("body").append("div")
-        .attr("class", "tooltip")
-        .style("opacity", 0.8)
-        .style("position", "absolute")
-        .style("background", "white")
-        .style("color", "#000") // black text
-        .style("border", "solid 1px #000")
-        .style("padding", "15px")
-        .style("pointer-events", "none");
 
     // Calculate bar width based on the number of data points
     let barWidth = plotWidth / rGDPData.length;
@@ -545,18 +534,43 @@
                 .attr("width", barWidth);
         })
         .on("mouseover", (event, d) => {
-            tooltip.transition()
-                .duration(200)
-                .style("opacity", .9);
-            tooltip.html("Date: " + d3.timeFormat("%Y Q%q")(d.date) + "<br/>Growth: " + d.growth)
-                .style("left", (event.pageX) + "px")
-                .style("top", (event.pageY - 28) + "px");
+            tooltip.style("display", "block")
+              .attr("transform", `translate(${xScale(d.date)}, ${yScale(d.growth)})`);
+            tooltipText.select(".date").text(`Date: ${d3.timeFormat("%Y Q%q")(d.date)}`);
+            tooltipText.select(".growth").text(`Growth: ${d.growth}`);
         })
-        .on("mouseout", (event, d) => {
-            tooltip.transition()
-                .duration(500)
-                .style("opacity", 0);
+        .on("mouseout", () => {
+            tooltip.style("display", "none");
         });
+
+    // Add a tooltip
+    const tooltip = svg.append("g")
+      .attr("class", "tooltip")
+      .style("display", "none");
+    
+    tooltip.append("rect")
+      .attr("width", 140)
+      .attr("height", 50)
+      .attr("fill", "white")
+      .style("opacity", 0.9)
+      .attr("stroke", "steelblue")
+      .attr("rx", 5) // rounded corners
+      .attr("ry", 5);
+
+
+    const tooltipText = tooltip.append("text")
+      .attr("x", 10)
+      .attr("y", 20);
+
+    tooltipText.append("tspan")
+      .attr("class", "date")
+      .attr("x", 10)
+      .attr("dy", "0.1em");
+
+    tooltipText.append("tspan")
+      .attr("class", "growth")
+      .attr("x", 10)
+      .attr("dy", "1.2em");
   }
 
 
