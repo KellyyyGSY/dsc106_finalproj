@@ -15,7 +15,6 @@
     const res = await fetch('US10_Year_Bond_Yield_20-24.csv');
     const csv = await res.text();
     data = d3.csvParse(csv, d3.autoType);
-    data.sort((a, b) => new Date(a.Date) - new Date(b.Date));
 
     const cpiRes = await fetch('monthly_inflation.csv');
     const cpiCsv = await cpiRes.text();
