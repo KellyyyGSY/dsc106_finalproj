@@ -1339,7 +1339,7 @@
     background-image: url("https://storage.googleapis.com/pic0_dsc106/pic5.jpeg");
     background-size: cover; /* Cover the entire section */
     background-position: center; /* Center the background image */
-    opacity: 0.7; /* Apply opacity to the background image */
+    opacity: 0.5; /* Apply opacity to the background image */
     z-index: -1; /* Ensure the pseudo-element is behind the content */
   }
 
