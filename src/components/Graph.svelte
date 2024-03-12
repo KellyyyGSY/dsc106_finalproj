@@ -9,11 +9,13 @@
   let data, cpiData;
   let cpiSvg;
   let animatedLineSvg;
+  
 
   onMount(async () => {
     const res = await fetch('US10_Year_Bond_Yield_20-24.csv');
     const csv = await res.text();
     data = d3.csvParse(csv, d3.autoType);
+    data.sort((a, b) => new Date(a.Date) - new Date(b.Date));
 
     const cpiRes = await fetch('monthly_inflation.csv');
     const cpiCsv = await cpiRes.text();
@@ -24,13 +26,13 @@
   });
 
   afterUpdate(() => {
-    if (index === 5) {
+    if (index >= 1 && index <= 4) {
       drawAnimatedLine();
     } else {
       if (animatedLineSvg) animatedLineSvg.remove();
     }
 
-    if (index >= 16 && index <= 21) {
+    if (index >= 14 && index <= 19) {
       drawCPIPCBG();
     } else {
       if (cpiSvg) cpiSvg.remove();
@@ -51,7 +53,7 @@
       .attr('height', svgHeight + margin.top + margin.bottom)
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
+    
     const x = scaleTime()
       .domain(d3.extent(data, d => new Date(d.Date)))
       .range([0, svgWidth]);
