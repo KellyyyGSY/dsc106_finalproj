@@ -16,6 +16,7 @@
   let selectedYear = "2000";
   let allowedYears = Array.from({length: 2024 - 2000}, (v, i) => (2000 + i).toString());
   let filteredGDP = [];
+  let filteredGrow = [];
   let yearIndex = allowedYears.indexOf(selectedYear);
 
   const messages_bonds = [
@@ -143,6 +144,7 @@
       gdpCurrent: +d["GDP in billions of current dollars"],
       gdpChained: +d["GDP in billions of chained 2017 dollars"]
     }));
+    drawGDPLinePlot()
 
     const response = await fetch('rGDP_growth.csv');
     const text = await response.text();
@@ -150,6 +152,7 @@
       date: d3.timeParse("%YQ%q")(d.Quarterly), 
       growth: +d['Growth']
     }));
+    drawBarChart();
 
     drawLinePlot();
 
@@ -173,12 +176,6 @@
         scrub: 3
       }
     });
-
-    
-    filteredGDP = gdpData.filter(d => d.date.startsWith(selectedYear));
-
-
-    drawBarChart();
 
     const cpindexRes = await fetch('cpi.csv');
     const cpindexCsv = await cpindexRes.text();
@@ -321,25 +318,8 @@
   }
 
 
-  function updateYear(event) {
-    yearIndex = +event.target.value;
-    selectedYear = allowedYears[yearIndex];
-    updatePlot(); // Call updatePlot to redraw the plot with the new year
-  }
-
-  function updatePlot() {
-    // Filter gdpData based on selectedYear
-    filteredGDP = gdpData.filter(d => d.date.getFullYear().toString() === selectedYear);
-    
-    if (filteredGDP.length > 0) {
-      drawGDPLinePlot();
-    }
-  }
-
+// GDP overview
   function drawGDPLinePlot() {
-    // Clear the existing SVG to avoid overlaying multiple plots
-    d3.select("#gdp-line-plot").select("svg").remove();
-
     const margin = { top: 0, right: 180, bottom: 90, left: 160};
     const svgWidth = 1200;
     const svgHeight = 500;
@@ -354,10 +334,272 @@
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    filteredGDP.sort((a, b) => new Date(a.Date) - new Date(b.Date));
+    data.sort((a, b) => new Date(a.Date) - new Date(b.Date));
+    // Assuming your date parsing has been done correctly when loading the data
     const xScale = d3.scaleTime()
-      .domain(d3.extent(filteredGDP, d => d.date))
+      .domain(d3.extent(gdpData, d => d.date))
       .range([0, plotWidth]);
+
+    const yScale = d3.scaleLinear()
+      .domain([0, d3.max(gdpData, d => Math.max(d.gdpCurrent, d.gdpChained))])
+      .range([plotHeight, 0]);
+
+    // Define axes
+    const xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat("%Y"));
+    const yAxis = d3.axisLeft(yScale);
+
+    // Append axes to the SVG
+    svg.append("g")
+      .attr("transform", `translate(0,${plotHeight})`)
+      .call(xAxis);
+
+    svg.append("g")
+      .call(yAxis);
+    
+    // Add X-axis label
+    svg.append("text")
+      .attr("text-anchor", "end")
+      .attr("x", plotWidth / 2) // Center the text
+      .attr("y", svgHeight - margin.bottom / 4) // Position below the X-axis
+      .text("Year")
+      .attr("fill", "white");
+
+    // Add Y-axis label
+    svg.append("text")
+      .attr("text-anchor", "end")
+      .attr("transform", "rotate(-90)") // Rotate the text for vertical alignment
+      .attr("y", -margin.left / 2) // Position left of the Y-axis
+      .attr("x", -plotHeight / 2.5) // Center the text vertically
+      .text("Billion Dollars")
+      .attr("fill", "white");
+
+
+    // Area generator for GDP in current dollars
+    const areaCurrent = d3.area()
+      .x(d => xScale(d.date))
+      .y0(plotHeight)
+      .y1(d => yScale(d.gdpCurrent))
+      .curve(d3.curveMonotoneX);
+
+    // Area generator for GDP in chained 2017 dollars
+    const areaChained = d3.area()
+      .x(d => xScale(d.date))
+      .y0(plotHeight)
+      .y1(d => yScale(d.gdpChained))
+      .curve(d3.curveMonotoneX);
+
+    // Append the area for GDP in current dollars
+    svg.append("path")
+      .datum(gdpData)
+      .attr("fill", "steelblue")
+      .attr("opacity", 0.1)
+      .attr("d", areaCurrent);
+
+    // Append the area for GDP in chained 2017 dollars
+    svg.append("path")
+      .datum(gdpData)
+      .attr("fill", "white")
+      .attr("opacity", 0.1)
+      .attr("d", areaChained);
+
+    // Line generator for GDP in current dollars
+    const lineCurrent = d3.line()
+      .x(d => xScale(d.date))
+      .y(d => yScale(d.gdpCurrent))
+      .curve(d3.curveMonotoneX);
+
+    // Line generator for GDP in chained 2017 dollars
+    const lineChained = d3.line()
+      .x(d => xScale(d.date))
+      .y(d => yScale(d.gdpChained))
+      .curve(d3.curveMonotoneX);
+
+    // Append the path for GDP in current dollars
+    svg.append("path")
+      .datum(gdpData)
+      .attr("fill", "none")
+      .attr("stroke", "steelblue")
+      .attr("stroke-width", 2)
+      .attr('class' , 'gdpline')
+      .attr("d", lineCurrent);
+
+    // Append the path for GDP in chained 2017 dollars
+    svg.append("path")
+      .datum(gdpData)
+      .attr("fill", "none")
+      .attr("stroke", "white")
+      .attr("stroke-width", 2)
+      .attr("d", lineChained);
+
+    // Add circles for GDP in current dollars
+    svg.selectAll(".dot-current")
+      .data(gdpData)
+      .enter().append("circle")
+      .attr("class", "dot-current")
+      .attr("cx", d => xScale(d.date))
+      .attr("cy", d => yScale(d.gdpCurrent))
+      .attr("r", 3)
+      .style("fill", "steelblue")
+      .style("opacity", 0.5)
+      .on("mouseover", (event, d) => {
+        const xOffset = -160; // Adjust this value for horizontal offset
+        const yOffset = 5; // Adjust this value for vertical offset
+
+        // Calculate the adjusted position
+        const adjustedX = xScale(d.date) + xOffset;
+        const adjustedY = yScale(d.gdpCurrent) + yOffset;
+
+        // Set the position of the tooltip
+        tooltipCurrent.style("display", "block")
+          .attr("transform", `translate(${adjustedX}, ${adjustedY})`);
+        
+        // Update tooltip text
+        tooltipTextCurrent.select(".date").text(`Date: ${d3.timeFormat("%Y Q%q")(d.date)}`);
+        tooltipTextCurrent.select(".gdpCurrent").text(`GDP (Current Dollars): $${d.gdpCurrent} Billion`);
+      })
+      .on("mouseout", () => {
+        tooltipCurrent.style("display", "none");
+      });
+
+    // Add a tooltip for GDP in current dollars
+    const tooltipCurrent = svg.append("g")
+      .attr("class", "tooltip")
+      .style("display", "none");
+
+    tooltipCurrent.append("rect")
+      .attr("width", 320)
+      .attr("height", 50)
+      .attr("fill", "white")
+      .style("opacity", 0.9)
+      .attr("stroke", "steelblue")
+      .attr("rx", 5) // rounded corners
+      .attr("ry", 5);
+
+    const tooltipTextCurrent = tooltipCurrent.append("text")
+      .attr("x", 10)
+      .attr("y", 20);
+
+    tooltipTextCurrent.append("tspan")
+      .attr("class", "date")
+      .attr("x", 10)
+      .attr("dy", "0.1em");
+
+    tooltipTextCurrent.append("tspan")
+      .attr("class", "gdpCurrent")
+      .attr("x", 10)
+      .attr("dy", "1.2em");
+
+    // Add circles for GDP in chained 2017 dollars
+    svg.selectAll(".dot-chained")
+      .data(gdpData)
+      .enter().append("circle")
+      .attr("class", "dot-chained")
+      .attr("cx", d => xScale(d.date))
+      .attr("cy", d => yScale(d.gdpChained))
+      .attr("r", 3)
+      .style("fill", "white")
+      .style("opacity", 0.5)
+      .on("mouseover", (event, d) => {
+        const xOffset = -160; // Adjust this value for horizontal offset
+        const yOffset = 5; // Adjust this value for vertical offset
+
+        // Calculate the adjusted position
+        const adjustedX = xScale(d.date) + xOffset;
+        const adjustedY = yScale(d.gdpChained) + yOffset;
+
+        // Set the position of the tooltip
+        tooltipChained.style("display", "block")
+          .attr("transform", `translate(${adjustedX}, ${adjustedY})`);
+        
+        // Update tooltip text
+        tooltipTextChained.select(".date").text(`Date: ${d3.timeFormat("%Y Q%q")(d.date)}`);
+        tooltipTextChained.select(".gdpChained").text(`GDP (Chained 2017 Dollars): $${d.gdpChained} Billion`);
+      })
+      .on("mouseout", () => {
+        tooltipChained.style("display", "none");
+      });
+
+    // Add a tooltip for GDP in chained 2017 dollars
+    const tooltipChained = svg.append("g")
+      .attr("class", "tooltip")
+      .style("display", "none");
+
+    tooltipChained.append("rect")
+      .attr("width", 360)
+      .attr("height", 50)
+      .attr("fill", "white")
+      .style("opacity", 0.9)
+      .attr("stroke", "steelblue")
+      .attr("rx", 5) // rounded corners
+      .attr("ry", 5);
+
+    const tooltipTextChained = tooltipChained.append("text")
+      .attr("x", 10)
+      .attr("y", 20);
+
+    tooltipTextChained.append("tspan")
+      .attr("class", "date")
+      .attr("x", 10)
+      .attr("dy", "0.1em");
+
+    tooltipTextChained.append("tspan")
+      .attr("class", "gdpChained")
+      .attr("x", 10)
+      .attr("dy", "1.2em");
+
+  }
+
+// GDP by quarter
+  function updateYear(event) {
+    yearIndex = +event.target.value;
+    selectedYear = allowedYears[yearIndex];
+    updatePlot(); // Call updatePlot to redraw the plot with the new year
+  }
+
+  function updatePlot() {
+    // Filter gdpData based on selectedYear
+    filteredGDP = gdpData.filter(d => d.date.getFullYear().toString() === selectedYear);
+    filteredGrow = rGDPData.filter(d => d.date.getFullYear().toString() === selectedYear);
+    
+    if (filteredGDP.length > 0) {
+      drawGDPbyQuarter();
+      drawBarQuarter();
+    }
+  }
+
+  function drawGDPbyQuarter() {
+    // Clear the existing SVG to avoid overlaying multiple plots
+    d3.select("#gdp-quarter").select("svg").remove();
+
+    const margin = { top: 50, right: 180, bottom: 90, left: 160};
+    const svgWidth = 800;
+    const svgHeight = 300;
+    const plotWidth = svgWidth - margin.left - margin.right;
+    const plotHeight = svgHeight - margin.top - margin.bottom;
+
+    // Define the SVG container
+    const svg = d3.select("#gdp-quarter")
+      .append("svg")
+      .attr("width", svgWidth)
+      .attr("height", svgHeight)
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    filteredGDP.sort((a, b) => new Date(a.Date) - new Date(b.Date));
+    // Get the earliest and latest dates from your data
+    const startDate = d3.min(filteredGDP, d => d.date);
+    const endDate = d3.max(filteredGDP, d => d.date);
+
+    // Adjust start date to be one month earlier
+    const newStartDate = new Date(startDate.getFullYear(), startDate.getMonth() - 1, startDate.getDate());
+
+    // Adjust end date to be one quarter (3 months) later
+    const newEndDate = new Date(endDate.getFullYear(), endDate.getMonth() + 3, endDate.getDate());
+
+    // Now set the domain of your xScale using these new dates
+    const xScale = d3.scaleTime()
+        .domain([newStartDate, newEndDate])
+        .range([0, plotWidth]);
 
     const yScale = d3.scaleLinear()
       .domain([0, d3.max(filteredGDP, d => Math.max(d.gdpCurrent, d.gdpChained))])
@@ -566,9 +808,11 @@
 
   }
 
+
+// Growth overview
   function drawBarChart() {
     const margin = { top: 0, right: 140, bottom: 90, left: 80 };
-    const svgWidth = 1000;
+    const svgWidth = 1200;
     const svgHeight = 500;
     const plotWidth = svgWidth - margin.left - margin.right;
     const plotHeight = svgHeight - margin.top - margin.bottom;
@@ -587,52 +831,47 @@
         .range([0, plotWidth]);
 
     const yScale = d3.scaleLinear()
-        .domain([0, d3.max(rGDPData, d => d.growth)])
+        .domain([d3.min(rGDPData, d => d.growth), d3.max(rGDPData, d => d.growth)])
         .range([plotHeight, 0]);
 
     const xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat("%Y"));
     const yAxis = d3.axisLeft(yScale);
 
-    // Append axes to the SVG
-    const xAxisGroup = svg.append("g")
-        .attr("transform", `translate(0,${plotHeight})`)
-        .call(xAxis);
-
     svg.append("g")
         .call(yAxis);
+
+    // Add X-axis label
+    svg.append("text")
+      .attr("text-anchor", "end")
+      .attr("x", plotWidth / 2) // Center the text
+      .attr("y", svgHeight - margin.bottom / 4) // Position below the X-axis
+      .text("Year")
+      .attr("fill", "white");
+
+    // Add Y-axis label
+    svg.append("text")
+      .attr("text-anchor", "end")
+      .attr("transform", "rotate(-90)") // Rotate the text for vertical alignment
+      .attr("y", -margin.left / 2) // Position left of the Y-axis
+      .attr("x", -plotHeight / 2.5) // Center the text vertically
+      .text("Percent (%)")
+      .attr("fill", "white");
 
     // Calculate bar width based on the number of data points
     let barWidth = plotWidth / rGDPData.length;
 
     // Bars
-    const bars = svg.selectAll(".bar")
+    svg.selectAll(".bar")
         .data(rGDPData)
         .enter().append("rect")
         .attr("class", "bar")
         .attr("x", d => xScale(d.date) - barWidth / 2) // Center the bar
-        .attr("y", d => yScale(d.growth))
+        // Set the y position based on whether the growth value is positive or negative
+        .attr("y", d => yScale(Math.max(0, d.growth)))
+        // Set the height based on whether the growth value is positive or negative
+        .attr("height", d => Math.abs(yScale(d.growth) - yScale(0)))
         .attr("width", barWidth)
-        .attr("height", d => plotHeight - yScale(d.growth))
         .attr("fill", "#69b3a2")
-        .on("click", (event, d) => {
-            // Determine the scale for the zoomed-in view
-            const domainPadding = (xScale.range()[1] - xScale.range()[0]) / 10; // 10% padding on each side
-            const newDomain = [new Date(d.date.getTime() - domainPadding), new Date(d.date.getTime() + domainPadding)];
-
-            // Update the xScale domain
-            xScale.domain(newDomain);
-
-            // Recalculate the bar width based on the new scale
-            barWidth = (xScale.range()[1] - xScale.range()[0]) / rGDPData.length;
-
-            // Rescale the x-axis
-            xAxisGroup.transition().duration(500).call(xAxis);
-
-            // Update bars
-            bars.transition().duration(500)
-                .attr("x", d => xScale(d.date) - barWidth / 2)
-                .attr("width", barWidth);
-        })
         .on("mouseover", (event, d) => {
             tooltip.style("display", "block")
               .attr("transform", `translate(${xScale(d.date)}, ${yScale(d.growth)})`);
@@ -642,6 +881,11 @@
         .on("mouseout", () => {
             tooltip.style("display", "none");
         });
+    
+    // Append axes to the SVG
+    svg.append("g")
+      .attr("transform", `translate(0,${yScale(0)})`) // Position the X-axis at y=0
+      .call(xAxis);
 
     // Add a tooltip
     const tooltip = svg.append("g")
@@ -673,6 +917,141 @@
       .attr("dy", "1.2em");
   }
 
+// Growth by quarter
+  function drawBarQuarter() {
+    // Clear the existing SVG to avoid overlaying multiple plots
+    d3.select("#quartergrowth").select("svg").remove();
+
+    const margin = { top: 0, right: 140, bottom: 90, left: 80 };
+    const svgWidth = 750;
+    const svgHeight = 500;
+    const plotWidth = svgWidth - margin.left - margin.right;
+    const plotHeight = svgHeight - margin.top - margin.bottom;
+
+    // Define the SVG container
+    const svg = d3.select("#quartergrowth")
+        .append("svg")
+        .attr("width", svgWidth)
+        .attr("height", svgHeight)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Get the last date from your data
+    const lastDate = d3.max(filteredGrow, d => d.date);
+    // Create a new date one quarter (3 months) past the last date
+    const oneQuarterLater = new Date(lastDate.getFullYear(), lastDate.getMonth() + 3, lastDate.getDate());
+        
+    // Scales and axes
+    const xScale = d3.scaleTime()
+      .domain([d3.min(filteredGrow, d => d.date), oneQuarterLater]) // Extend domain to oneQuarterLater
+      .range([0, plotWidth]);
+
+    const yScale = d3.scaleLinear()
+        .domain([d3.min(rGDPData, d => d.growth), d3.max(rGDPData, d => d.growth)])
+        .range([plotHeight, 0]);
+
+    // Define the tick format for the x-axis
+    const xAxisTickFormat = (date) => {
+      const year = date.getFullYear();
+      // Assuming the first month of a quarter is representative of the quarter
+      const quarter = Math.floor(date.getMonth() / 3) + 1;
+      return `Year ${year}, Quarter ${quarter}`;
+    };
+
+    // Set tick values based on your data points
+    const xTickValues = filteredGrow.map(d => d.date);
+
+    // Define the x-axis with custom tick format and tick values
+    const xAxis = d3.axisBottom(xScale)
+      .tickFormat(xAxisTickFormat)
+      .tickValues(xTickValues) // Ensure a tick for each data point
+      .tickSizeOuter(0); // Remove the square end ticks if desired
+    
+    const yAxis = d3.axisLeft(yScale);
+
+    // Add X-axis label
+    svg.append("text")
+      .attr("text-anchor", "end")
+      .attr("x", plotWidth / 2) // Center the text
+      .attr("y", svgHeight - margin.bottom / 4) // Position below the X-axis
+      .text("Year")
+      .attr("fill", "white");
+
+    // Add Y-axis label
+    svg.append("text")
+      .attr("text-anchor", "end")
+      .attr("transform", "rotate(-90)") // Rotate the text for vertical alignment
+      .attr("y", -margin.left / 2) // Position left of the Y-axis
+      .attr("x", -plotHeight / 2.5) // Center the text vertically
+      .text("Percent (%)")
+      .attr("fill", "white");
+
+    // Calculate bar width based on the number of data points
+    let barWidth = 80;
+
+    // Bars
+    svg.selectAll(".bar")
+        .data(filteredGrow)
+        .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", d => xScale(d.date)) // Center the bar
+        // Set the y position based on whether the growth value is positive or negative
+        .attr("y", d => yScale(Math.max(0, d.growth)))
+        // Set the height based on whether the growth value is positive or negative
+        .attr("height", d => Math.abs(yScale(d.growth) - yScale(0)))
+        .attr("width", barWidth)
+        .attr("fill", "#69b3a2")
+        .on("mouseover", (event, d) => {
+            tooltip.style("display", "block")
+              .attr("transform", `translate(${xScale(d.date)}, ${yScale(d.growth)})`);
+            tooltipText.select(".date").text(`Date: ${d3.timeFormat("%Y Q%q")(d.date)}`);
+            tooltipText.select(".growth").text(`Growth: ${d.growth}`);
+        })
+        .on("mouseout", () => {
+            tooltip.style("display", "none");
+        });
+    
+    // Append axes to the SVG
+
+      const xAxisGroup = svg.append("g")
+      .attr("transform", `translate(0,${yScale(0)})`)
+      .call(xAxis);
+    // Select all tick texts and set their text-anchor to 'start' after the axis has been drawn
+    xAxisGroup.selectAll("text")
+      .style("text-anchor", "start");
+    
+    svg.append("g")
+        .call(yAxis);
+
+    // Add a tooltip
+    const tooltip = svg.append("g")
+      .attr("class", "tooltip")
+      .style("display", "none");
+    
+    tooltip.append("rect")
+      .attr("width", 140)
+      .attr("height", 50)
+      .attr("fill", "white")
+      .style("opacity", 0.9)
+      .attr("stroke", "steelblue")
+      .attr("rx", 5) // rounded corners
+      .attr("ry", 5);
+
+
+    const tooltipText = tooltip.append("text")
+      .attr("x", 10)
+      .attr("y", 20);
+
+    tooltipText.append("tspan")
+      .attr("class", "date")
+      .attr("x", 10)
+      .attr("dy", "0.1em");
+
+    tooltipText.append("tspan")
+      .attr("class", "growth")
+      .attr("x", 10)
+      .attr("dy", "1.2em");
+  }
 
   function scrollToSection(sectionId) {
     const section = document.getElementById(sectionId);
@@ -992,7 +1371,7 @@
 <Scroller
   top={0.0}
   bottom={1}
-  threshold={0.5}
+  threshold={0.25}
   bind:count
   bind:index
   bind:offset
@@ -1145,28 +1524,37 @@
       <li style="margin-top: 50px;"><a href="#zero" style="color: #42393B;">Back to main menu</a>
     </section>
 
-    <section id = "gdpviz">
-      <h2>Quarterly GDP</h2>
-      <div class="slider-container">
-        <input
-          type="range"
-          min="0"
-          max="{allowedYears.length - 1}"
-          step="1"
-          bind:value="{yearIndex}"
-          on:input="{updateYear}"
-        />
-        <!-- Add 'Year' prefix before displaying selectedYear -->
-        <span class="year-label">Year {selectedYear}</span>
-      </div>
+    <section id = "gdpoverview">
+      <h2>GDP Overview from 2000 to 2023</h2>
       <div id="gdp-line-plot"></div> <!-- Container for the GDP line plot -->
     </section>
 
     <section>
-      <h2>Real GDP Growth Rate</h2>
+      <h2>Real GDP Growth Rate Overview from 2000 to 2023</h2>
       <div id="gdpgrowth"></div>
     </section>
 
+    <section id="gdpviz" style="display: flex; flex-direction: column; align-items: center;">
+      <div class="title-slider-container">
+        <h2>Quarterly GDP</h2>
+        <div class="slider-container">
+          <input
+            type="range"
+            min="0"
+            max="{allowedYears.length - 1}"
+            step="1"
+            bind:value="{yearIndex}"
+            on:input="{updateYear}"
+          />
+          <span class="year-label">Year {selectedYear}</span>
+        </div>
+      </div>
+      <div class="graphs-container" style="display: flex; width: 100%;">
+        <div id="gdp-quarter" style="flex: 1;"></div>
+        <div id="quartergrowth" style="flex: 1;"></div>
+      </div>
+    </section>
+  
     <section id = "inflation">
       <h2>What is Inflation?</h2>
       <p>Inflation is a key economic metric that denotes the rate at which the general level of prices for goods and services is rising, and subsequently, how purchasing power is falling. Central banks attempt to limit inflation, and avoid deflation, in order to keep the economy running smoothly. Inflation can be measured through various indices, the most common being the Consumer Price Index (CPI) and the Wholesale Price Index (WPI). CPI measures the average price change over time of a basket of goods and services that a typical household might purchase, while WPI measures the price change of goods sold and traded in bulk by wholesale businesses to other businesses.
@@ -1571,6 +1959,33 @@
   }
   #gdp {
       color: #000; /* Change text color */
+  }
+
+  /* Container for the title and slider */
+  .title-slider-container {
+    text-align: center; /* Center the text elements */
+    padding: 20px; /* Add some padding around the elements */
+  }
+
+  /* Container for the slider */
+  .slider-container {
+    display: flex;
+    justify-content: center; /* Center the slider horizontally */
+    gap: 10px; /* Add a gap between the slider and the label */
+    margin-top: 10px; /* Space below the slider */
+  }
+
+  /* Container to hold graphs side by side */
+  .graphs-container {
+    display: flex; /* Align graph divs horizontally */
+    justify-content: space-around; /* Distribute space around the graph containers */
+    width: 100%; /* Ensure the container takes full width */
+  }
+
+  /* Individual graph containers */
+  #gdp-quarter, #quartergrowth {
+    flex: 1; /* Allow the graphs to take up an equal amount of space */
+    margin: 0 10px; /* Spacing between graph containers */
   }
 
   #inflation {
