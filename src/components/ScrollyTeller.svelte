@@ -12,6 +12,12 @@
   let count, index, offset, progress;
   let width, height;
   let data, gdpData, rGDPData, cpindexData, cpiData;
+
+  let selectedYear = "2000";
+  let allowedYears = Array.from({length: 2024 - 2000}, (v, i) => (2000 + i).toString());
+  let filteredGDP = [];
+  let yearIndex = allowedYears.indexOf(selectedYear);
+
   const messages_bonds = [
   { date: "2008-10-01", Yield: 3.97, message: "Point A reached" },
   { date: "2022-01-01", price: 150, message: "Point B reached" }];
@@ -168,7 +174,10 @@
       }
     });
 
-    drawGDPLinePlot();
+    
+    filteredGDP = gdpData.filter(d => d.date.startsWith(selectedYear));
+
+
     drawBarChart();
 
     const cpindexRes = await fetch('cpi.csv');
@@ -312,7 +321,25 @@
   }
 
 
+  function updateYear(event) {
+    yearIndex = +event.target.value;
+    selectedYear = allowedYears[yearIndex];
+    updatePlot(); // Call updatePlot to redraw the plot with the new year
+  }
+
+  function updatePlot() {
+    // Filter gdpData based on selectedYear
+    filteredGDP = gdpData.filter(d => d.date.getFullYear().toString() === selectedYear);
+    
+    if (filteredGDP.length > 0) {
+      drawGDPLinePlot();
+    }
+  }
+
   function drawGDPLinePlot() {
+    // Clear the existing SVG to avoid overlaying multiple plots
+    d3.select("#gdp-line-plot").select("svg").remove();
+
     const margin = { top: 0, right: 180, bottom: 90, left: 160};
     const svgWidth = 1200;
     const svgHeight = 500;
@@ -327,46 +354,42 @@
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    data.sort((a, b) => new Date(a.Date) - new Date(b.Date));
-    // Assuming your date parsing has been done correctly when loading the data
+    filteredGDP.sort((a, b) => new Date(a.Date) - new Date(b.Date));
     const xScale = d3.scaleTime()
-      .domain(d3.extent(gdpData, d => d.date))
+      .domain(d3.extent(filteredGDP, d => d.date))
       .range([0, plotWidth]);
 
     const yScale = d3.scaleLinear()
-      .domain([0, d3.max(gdpData, d => Math.max(d.gdpCurrent, d.gdpChained))])
+      .domain([0, d3.max(filteredGDP, d => Math.max(d.gdpCurrent, d.gdpChained))])
       .range([plotHeight, 0]);
 
     // Define axes
-    const xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat("%Y"));
     const yAxis = d3.axisLeft(yScale);
 
-    // Append axes to the SVG
+    // Define the tick format for the x-axis
+    const xAxisTickFormat = (date) => {
+      const year = date.getFullYear();
+      // Assuming the first month of a quarter is representative of the quarter
+      const quarter = Math.floor(date.getMonth() / 3) + 1;
+      return `Year ${year}, Quarter ${quarter}`;
+    };
+
+    // Set tick values based on your data points
+    const xTickValues = filteredGDP.map(d => d.date);
+
+    // Define the x-axis with custom tick format and tick values
+    const xAxis = d3.axisBottom(xScale)
+      .tickFormat(xAxisTickFormat)
+      .tickValues(xTickValues); // Ensure a tick for each data point
+
+    // Append the x-axis to the SVG
     svg.append("g")
       .attr("transform", `translate(0,${plotHeight})`)
       .call(xAxis);
 
+    // Append axes to the SVG
     svg.append("g")
       .call(yAxis);
-
-    // svg.append("g")
-    //   .attr("class", "grid")
-    //   .call(d3.axisLeft(yScale)
-    //       .tickSize(-plotWidth)
-    //       .tickFormat("")
-    //   )
-    //   .selectAll(".tick line")
-    //   .attr("stroke", "#ccc");
-
-    // svg.append("g")
-    //   .attr("class", "grid")
-    //   .attr("transform", `translate(0,${plotHeight})`)
-    //   .call(d3.axisBottom(xScale)
-    //       .tickSize(-plotHeight)
-    //       .tickFormat("")
-    //   )
-    //   .selectAll(".tick line")
-    //   .attr("stroke", "#ccc");
 
     // Area generator for GDP in current dollars
     const areaCurrent = d3.area()
@@ -384,15 +407,15 @@
 
     // Append the area for GDP in current dollars
     svg.append("path")
-      .datum(gdpData)
-      .attr("fill", "blue")
-      .attr("opacity", 0.1)
+      .datum(filteredGDP)
+      .attr("fill", "steelblue")
+      .attr("opacity", 0.3)
       .attr("d", areaCurrent);
 
     // Append the area for GDP in chained 2017 dollars
     svg.append("path")
-      .datum(gdpData)
-      .attr("fill", "green")
+      .datum(filteredGDP)
+      .attr("fill", "white")
       .attr("opacity", 0.1)
       .attr("d", areaChained);
 
@@ -410,31 +433,31 @@
 
     // Append the path for GDP in current dollars
     svg.append("path")
-      .datum(gdpData)
+      .datum(filteredGDP)
       .attr("fill", "none")
-      .attr("stroke", "blue")
+      .attr("stroke", "steelblue")
       .attr("stroke-width", 2)
       .attr('class' , 'gdpline')
       .attr("d", lineCurrent);
 
     // Append the path for GDP in chained 2017 dollars
     svg.append("path")
-      .datum(gdpData)
+      .datum(filteredGDP)
       .attr("fill", "none")
-      .attr("stroke", "green")
+      .attr("stroke", "white")
       .attr("stroke-width", 2)
       .attr("d", lineChained);
 
     // Add circles for GDP in current dollars
     svg.selectAll(".dot-current")
-      .data(gdpData)
+      .data(filteredGDP)
       .enter().append("circle")
       .attr("class", "dot-current")
       .attr("cx", d => xScale(d.date))
       .attr("cy", d => yScale(d.gdpCurrent))
-      .attr("r", 3)
-      .style("fill", "blue")
-      .style("opacity", 0.5)
+      .attr("r", 5)
+      .style("fill", "steelblue")
+      .style("opacity", 1)
       .on("mouseover", (event, d) => {
         const xOffset = -160; // Adjust this value for horizontal offset
         const yOffset = 5; // Adjust this value for vertical offset
@@ -485,14 +508,14 @@
 
     // Add circles for GDP in chained 2017 dollars
     svg.selectAll(".dot-chained")
-      .data(gdpData)
+      .data(filteredGDP)
       .enter().append("circle")
       .attr("class", "dot-chained")
       .attr("cx", d => xScale(d.date))
       .attr("cy", d => yScale(d.gdpChained))
-      .attr("r", 3)
-      .style("fill", "green")
-      .style("opacity", 0.5)
+      .attr("r", 5)
+      .style("fill", "white")
+      .style("opacity", 1)
       .on("mouseover", (event, d) => {
         const xOffset = -160; // Adjust this value for horizontal offset
         const yOffset = 5; // Adjust this value for vertical offset
@@ -1124,6 +1147,18 @@
 
     <section id = "gdpviz">
       <h2>Quarterly GDP</h2>
+      <div class="slider-container">
+        <input
+          type="range"
+          min="0"
+          max="{allowedYears.length - 1}"
+          step="1"
+          bind:value="{yearIndex}"
+          on:input="{updateYear}"
+        />
+        <!-- Add 'Year' prefix before displaying selectedYear -->
+        <span class="year-label">Year {selectedYear}</span>
+      </div>
       <div id="gdp-line-plot"></div> <!-- Container for the GDP line plot -->
     </section>
 
