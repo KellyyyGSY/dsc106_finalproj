@@ -8,29 +8,22 @@
   import Graph from "./Graph.svelte";
   import Scroller from "@sveltejs/svelte-scroller";
   import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
-  import Chart from 'chart.js/auto';
 
   let count, index, offset, progress;
   let width, height;
   let data, gdpData, rGDPData, cpindexData, cpiData;
-  let chart
+  const messages_bonds = [
+  { date: "2008-10-01", Yield: 3.97, message: "Point A reached" },
+  { date: "2022-01-01", price: 150, message: "Point B reached" }];
 
   const timeline = gsap.timeline({defaults: {duration: 2, opacity: 0}});
-  const timeline2 = gsap.timeline({
-    scrollTrigger: {
-      trigger: "#hook", // Assuming this is your intended trigger element
-      start: 'top 50%', 
-      end: 'top 20%', 
-      toggleActions: 'play none none reverse',
-
-    }
-  });
   gsap.registerPlugin(ScrollTrigger);
 
   onMount(async () => {
     const res = await fetch('US10_Year_Bond_Yield_20-24.csv');
     const csv = await res.text();
     data = d3.csvParse(csv, d3.autoType);
+    
     timeline.from(".text-reveal", {opacity: 0})
             .to(".title span", {
                     opacity: 1,
@@ -78,7 +71,7 @@
     gsap.from("#hook1", {
       opacity: 0, // Start from invisible
       y: 20, // Start 20px lower than the final position
-      duration: 3, // Animation duration of 1 second
+      duration: 1, // Animation duration of 1 second
       scrollTrigger: {
         trigger: "#hook1",
         start: 'top 50%', 
@@ -89,8 +82,8 @@
 
     gsap.from("#hook2", {
       opacity: 0, // Start from invisible
-      duration: 3, // Animation duration of 1 second
-      delay:2,
+      duration: 1, // Animation duration of 1 second
+      delay:1,
       scrollTrigger: {
         trigger: "#hook1",
         start: 'top 50%', 
@@ -102,9 +95,9 @@
     gsap.from("#hook3 span", {
       opacity: 0, // Start from invisible
       y: 20, // Start 20px lower than the final position
-      duration: 3, // Animation duration of 1 second
+      duration: 0.5, // Animation duration of 1 second
       stagger: 0.05,
-      delay:4,
+      delay: 2,
       scrollTrigger: {
         trigger: "#hook1",
         start: 'top 50%', 
@@ -132,7 +125,7 @@
       scrollTrigger: {
         trigger: "#bond",
         start: 'top 50%', 
-        end: 'top 20%', 
+        end: '+=300%%', 
         toggleActions: 'play none none reverse', // Play the animation on scroll down and reverse on scroll up
       },
     });
@@ -153,6 +146,28 @@
     }));
 
     drawLinePlot();
+
+
+    const path = d3.select(".dataline").node();
+    const pathLength = path.getTotalLength();
+    
+    path.style.strokeDasharray = pathLength;
+    path.style.strokeDashoffset = pathLength;
+
+    // ScrollTrigger setup to animate the drawing
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.to(path.style, {
+      strokeDashoffset: 0,
+      ease: "none",
+      scrollTrigger: {
+        trigger: "#line-plot",
+        start: "top 50%", // Animation starts when the top of the plot enters the view
+        end: "bottom top", // Animation ends when the bottom of the plot exits the view
+        scrub: 3
+      }
+    });
+
     drawGDPLinePlot();
     drawBarChart();
 
@@ -175,9 +190,9 @@
   });
 
   function drawLinePlot() {
-    const margin = { top: 50, right: 150, bottom: 200, left: 80 };
-    const width = 1200 - margin.left - margin.right;
-    const height = 600 - margin.top - margin.bottom;
+    const margin = { top: 0, right: 150, bottom: 200, left: 80 };
+    const width = 1300 - margin.left - margin.right;
+    const height = 700 - margin.top - margin.bottom;
 
     const svg = d3.select("#line-plot")
       .append("svg")
@@ -185,7 +200,8 @@
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+    
+    data.sort((a, b) => new Date(a.Date) - new Date(b.Date));
     const x = scaleTime()
       .domain(d3.extent(data, d => new Date(d.Date)))
       .range([0, width]);
@@ -211,27 +227,18 @@
     svg.selectAll(".y-axis line")
       .attr("stroke", "#ccc");
 
-    svg.append("g")
-      .attr("class", "grid")
-      .call(d3.axisLeft(y)
-          .tickSize(-width)
-          .tickFormat("")
-      )
-      .selectAll(".tick line")
-      .attr("stroke", "#ccc");
-
     const lineGenerator = line()
       .x(d => x(new Date(d.Date)))
       .y(d => y(d.Price))
       .curve(curveMonotoneX);
 
     svg.append("path")
+      .attr("class", "dataline")
       .datum(data)
       .attr("fill", "none")
       .attr("stroke", "steelblue")
       .attr("stroke-width", 1.5)
       .attr("d", lineGenerator);
-      
 
     // Add x-axis label
     svg.append("text")
@@ -252,7 +259,6 @@
       .attr("dy", ".75em")
       .attr("transform", "rotate(-90)")
       .text("Price");
-    
 
     // Add data points
     svg.selectAll(".dot")
@@ -268,7 +274,7 @@
         tooltip.style("display", null);
         tooltip.attr("transform", `translate(${x(new Date(d.Date))},${y(d.Price)})`);
         tooltipText.text(`Date: ${d.Date}`);
-        tooltipText.append("tspan").attr("x", 10).attr("dy", "1.2em").text(`Price: ${d.Price}`);
+        tooltipText.append("tspan").attr("x", 10).attr("dy", "1.2em").text(`Yield: ${d.Price}`);
         tooltipText.append("tspan").attr("x", 10).attr("dy", "1.2em").text(`Open: ${d.Open}`);
         tooltipText.append("tspan").attr("x", 10).attr("dy", "1.2em").text(`High: ${d.High}`);
         tooltipText.append("tspan").attr("x", 10).attr("dy", "1.2em").text(`Low: ${d.Low}`);
@@ -307,9 +313,9 @@
 
 
   function drawGDPLinePlot() {
-    const margin = { top: 50, right: 180, bottom: 90, left: 160};
-    const svgWidth = 1000;
-    const svgHeight = 500;
+    const margin = { top: 0, right: 180, bottom: 90, left: 160};
+    const svgWidth = 1300;
+    const svgHeight = 600;
     const plotWidth = svgWidth - margin.left - margin.right;
     const plotHeight = svgHeight - margin.top - margin.bottom;
 
@@ -321,6 +327,7 @@
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
+    data.sort((a, b) => new Date(a.Date) - new Date(b.Date));
     // Assuming your date parsing has been done correctly when loading the data
     const xScale = d3.scaleTime()
       .domain(d3.extent(gdpData, d => d.date))
@@ -342,24 +349,24 @@
     svg.append("g")
       .call(yAxis);
 
-    svg.append("g")
-      .attr("class", "grid")
-      .call(d3.axisLeft(yScale)
-          .tickSize(-plotWidth)
-          .tickFormat("")
-      )
-      .selectAll(".tick line")
-      .attr("stroke", "#ccc");
+    // svg.append("g")
+    //   .attr("class", "grid")
+    //   .call(d3.axisLeft(yScale)
+    //       .tickSize(-plotWidth)
+    //       .tickFormat("")
+    //   )
+    //   .selectAll(".tick line")
+    //   .attr("stroke", "#ccc");
 
-    svg.append("g")
-      .attr("class", "grid")
-      .attr("transform", `translate(0,${plotHeight})`)
-      .call(d3.axisBottom(xScale)
-          .tickSize(-plotHeight)
-          .tickFormat("")
-      )
-      .selectAll(".tick line")
-      .attr("stroke", "#ccc");
+    // svg.append("g")
+    //   .attr("class", "grid")
+    //   .attr("transform", `translate(0,${plotHeight})`)
+    //   .call(d3.axisBottom(xScale)
+    //       .tickSize(-plotHeight)
+    //       .tickFormat("")
+    //   )
+    //   .selectAll(".tick line")
+    //   .attr("stroke", "#ccc");
 
     // Area generator for GDP in current dollars
     const areaCurrent = d3.area()
@@ -407,6 +414,7 @@
       .attr("fill", "none")
       .attr("stroke", "blue")
       .attr("stroke-width", 2)
+      .attr('class' , 'gdpline')
       .attr("d", lineCurrent);
 
     // Append the path for GDP in chained 2017 dollars
@@ -1000,9 +1008,6 @@
       </a>
     </section>
 
-    <!-- add for better transit, do not delete! -->
-    <section></section>
-
     <section id = "hook">
       <p class="style1" id="hook1">In a world where fluctuation of numbers and rates gauged the pulse of the economy, the dynamics of the 10-Year Treasury Yield stand out as a critical barometer of economic health and investor sentiment.</p>
 
@@ -1039,6 +1044,10 @@
           <button class="button-style" on:click={() => scrollToSection('inflation')}>Inflation Dynamics</button>
           <li>Unpack the causes and effects of inflation on the economy and purchasing power.</li>
         </div>
+        <div class="slider-navigation">
+          <button class="button-style" on:click={() => scrollToSection('rela')}>Quant Model</button>
+          <li>Enpower you with ability to produce customized quant prediction model</li>
+        </div>
       </div>
       <!-- <p class="style2"> By simplifying complex economic interactions into an intuitive and interactive format, the concept of treasury yield becomes more accessible to a broader audience. Unlike traditional explanations that rely heavily on textual descriptions and static charts, the interactive elements below allow users to explore and understand the dynamic relationship between the 10-Year Treasury Yield, GDP growth, and inflation rates on their own terms. This hands-on approach not only enhances comprehension but also engages users in a more meaningful exploration of economic principles. </p> -->
     </section>
@@ -1048,23 +1057,29 @@
 
     <section id = "bond">
       <h2> Treasury Bond </h2>
-      <p>The U.S. 10-Year Bond is a debt obligation note by The United States Treasury, 
-      that has the eventual maturity of 10 years. The yield on a Treasury bill represents 
-      the return an investor will receive by holding the bond to maturity, 
-      and should be monitored closely as an indicator of the government debt situation. 
+      <p>
+      The U.S. 10-Year Bond is a debt obligation note by The United States Treasury. <br>
+      The yield on a Treasury bill represents the return an investor will receive by holding the bond to maturity.
       Investing resources into a 10 year treasury note is often considered favorable 
       due to federal government securities being exempt from state and local income tax. 
+      <br>
+      <br>
+      Quick plain-language takeaway: <br>
+      1. bonds price and bonds yield have reverse relationship (if you have to pay higher price to buy, less you earned)<br>
+      2. People buy bonds when they are panic, more people buy, price will go up, yield will go down.<br>
+      3. People will also buy bonds when they believe their money preserve valu (low inflation)
+
       </p>
       <li style="margin-top: 50px;"><a href="#zero" style="color: #42393B;">Back to main menu</a>
     </section>
 
-    <section id = "bondviz">
-      <h2> United States 10-Year Bond Yield </h2>
-      <div id="line-plot"></div> <!-- Container for the bond line plot -->
+    <section id="plot-section">
+      <div id="plot-container"></div>
     </section>
 
-    <!-- add for better transit, do not delete! -->
-    <section></section>
+    <section id = "bondviz">
+      <h2> United States 10-Year Bond Yield </h2>
+    </section> <!-- Container for the bond line plot -->
 
     <section id = "gdp">
       <h2> What is GDP? </h2>
@@ -1085,13 +1100,21 @@
       <div id="gdpgrowth"></div>
     </section>
     
-
     <section> </section>
 
     <section id = "inflation">
       <h2>What is Inflation?</h2>
       <p>Inflation is a key economic metric that denotes the rate at which the general level of prices for goods and services is rising, and subsequently, how purchasing power is falling. Central banks attempt to limit inflation, and avoid deflation, in order to keep the economy running smoothly. Inflation can be measured through various indices, the most common being the Consumer Price Index (CPI) and the Wholesale Price Index (WPI). CPI measures the average price change over time of a basket of goods and services that a typical household might purchase, while WPI measures the price change of goods sold and traded in bulk by wholesale businesses to other businesses.</p>
-      <p>In the context of this project, understanding inflation is vital as it directly impacts the dynamics of the 10-Year Treasury Yield. Inflation erodes the real return on investments, including those in government securities such as Treasury bonds. As inflation expectations rise, investors may demand higher yields to compensate for the anticipated decrease in the purchasing power of their future interest payments. Conversely, low inflation rates may lead to lower yields, as the real return on investments becomes more stable, making government securities more attractive. Central banks may adjust monetary policy in response to inflation levels to stabilize the economy, influencing interest rates and thus impacting Treasury yields.</p>
+      <p>In the context of this project, understanding inflation is vital as it directly impacts the dynamics of the 10-Year Treasury Yield. Inflation erodes the real return on investments, including those in government securities such as Treasury bonds. As inflation expectations rise, investors may demand higher yields to compensate for the anticipated decrease in the purchasing power of their future interest payments. Conversely, low inflation rates may lead to lower yields, as the real return on investments becomes more stable, making government securities more attractive. Central banks may adjust monetary policy in response to inflation levels to stabilize the economy, influencing interest rates and thus impacting Treasury yields.
+      <br>
+      <br>
+      Quick plain-language takeaway: <br>
+      1. Inflation is how quick your money lose value naturally as time goes<br>
+      Analogy: if inflation is 10%, the money you can buy 100 apples this year, can only buy 91 apples next year.<br>
+      2. People prefer bonds when their money preserve value (low inflation)<br>
+
+      </p>
+
       <li style="margin-top: 50px;"><a href="#zero" style="color: #42393B;">Back to main menu</a>
     </section>
 
@@ -1135,10 +1158,24 @@
     <section> </section>
 
     <section id = "rela"> 
-      <h2> Interconnections </h2>
+      <h2> Treasury bond quant model </h2>
+      <br>
+      <h4>Datasets</h4>
+      <label><input type="checkbox" name="data" value="dataset1">GDP</label>
+      <label><input type="checkbox" name="data" value="dataset2">Inflation</label>
+      <label><input type="checkbox" name="data" value="dataset2">wage rate</label>
+      <label><input type="checkbox" name="data" value="dataset2">unemployment rate</label>
+      <label><input type="checkbox" name="data" value="dataset2">consumer confidence</label>
+      <br>
+      <h4>lambda-slider</h4>
+      <input type="range" id="lambda-slider" min="0" max="1" step="0.01" value="0.1">
     </section>
 
-    <section> </section>
+    <section>
+      <h1>Thank you for watching</h1><br>
+      <h1>Complete project coming soon</h1>
+    </section>
+    
 
   </div>
 </Scroller>
@@ -1169,7 +1206,7 @@
   }
 
   section {
-    height: 80vh;      /* height of each section */
+    height: 100vh;      /* height of each section */
     /* background-color: rgba(0, 0, 0, 0.2); */
     text-align: center;
     max-width: 100%; /* adjust at will */
