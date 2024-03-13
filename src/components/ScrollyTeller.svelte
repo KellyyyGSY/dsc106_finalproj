@@ -1081,6 +1081,28 @@
     </section>
 
     <section id = 'bond-explain0'></section>
+    <section id = 'bond-explain1'> 
+      <div class="frame">
+        <p> Inflation Expectations: Think of inflation like the rate at which money loses its value over time. In 2020, people expected money to hold its value better than usual because everyone was spending less. When people think their money will stay valuable, they like investing in government bonds, which pay back with interest over time. Because so many people wanted these bonds, their yields (or the interest you earn from them) went down.</p>
+      </div>
+    </section>
+    <section id = 'bond-explain2'> 
+      <div class="frame">
+        <p> Economic Activity (GDP): The economy took a big hit in 2020 due to the pandemic. Businesses closed, and many people stopped buying things, leading to a drop in the country's total production and services. During such times, people prefer putting their money into something safe, like government bonds, rather than riskier investments. This rush to buy bonds made their yields lower, as there was less need for the government to offer high interest to attract buyers.</p>
+      </div>
+    </section>
+    <section id = 'bond-explain3'> 
+      <div class="frame">
+        <p> Inflation Expectations: By 2023, people started to notice prices going up faster than before, which means the money in your pocket doesn't go as far as it used to. This happens when the economy gets too hot, and there's too much money chasing too few goods. When people expect prices to keep rising, they're less keen on bonds that pay fixed interest because the money they get back in the future won't buy as much. So, to attract buyers, the interest rates or yields on these bonds need to go up.</p>
+      </div>
+    </section>
+    <section id = 'bond-explain4'> 
+      <div class="frame">
+        <p> Economic Activity (GDP): The economy bounced back strongly in 2023 after the tough times caused by the pandemic. Businesses reopened, people went back to work, and spending increased. This recovery is good news, but it can also lead to too much money flowing in the economy, contributing to higher inflation. To keep things in balance and ensure the economy doesn't overheat, interest rates on government bonds were raised. This means if you're buying bonds, you can expect to earn more interest than before, reflecting the higher yields seen during this period.</p>
+      </div>
+    </section>
+    <section id = 'bond-explain5'></section>
+
 
     <section id = "gdp">
       <h2> What is GDP? </h2>

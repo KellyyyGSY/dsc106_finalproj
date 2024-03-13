@@ -33,13 +33,13 @@
       if (animatedLineSvg) animatedLineSvg.remove();
     }
 
-    if (index === 8) {
+    if (index >= 8 && index <= 13) {
       drawLinePlot();
     } else {
       if (bondSvg) bondSvg.remove();
     }
 
-    if (index >= 18 && index <= 23) {
+    if (index >= 23 && index <= 28) {
       drawCPIPCBG();
     } else {
       if (cpiSvg) cpiSvg.remove();
@@ -95,9 +95,9 @@
   }
 
   function drawLinePlot() {
-    const margin = { top: 50, right: 150, bottom: 200, left: 80 };
-    const width = 1200 - margin.left - margin.right;
-    const height = 600 - margin.top - margin.bottom;
+    const margin = { top: 50, right: 150, bottom: 200, left: 60};
+    const width = 1300 - margin.left - margin.right;
+    const height = 700 - margin.top - margin.bottom;
 
     // Remove existing svg if exists
     if (bondSvg) bondSvg.remove();
@@ -154,16 +154,6 @@
       .attr("stroke", "steelblue")
       .attr("stroke-width", 1.5)
       .attr("d", lineGenerator);
-      
-
-    // Add x-axis label
-    bondSvg.append("text")
-      .attr("class", "x label")
-      .attr("text-anchor", "end")
-      .attr("fill", "white")
-      .attr("x", width - 470)
-      .attr("y", height + 50) // Adjusted positioning
-      .text("Date");
 
     // Add y-axis label
     bondSvg.append("text")
