@@ -1062,24 +1062,23 @@
       The yield on a Treasury bill represents the return an investor will receive by holding the bond to maturity.
       Investing resources into a 10 year treasury note is often considered favorable 
       due to federal government securities being exempt from state and local income tax. 
-      <br>
-      <br>
-      Quick plain-language takeaway: <br>
-      1. bonds price and bonds yield have reverse relationship (if you have to pay higher price to buy, less you earned)<br>
-      2. People buy bonds when they are panic, more people buy, price will go up, yield will go down.<br>
-      3. People will also buy bonds when they believe their money preserve valu (low inflation)
-
       </p>
       <li style="margin-top: 50px;"><a href="#zero" style="color: #42393B;">Back to main menu</a>
     </section>
 
-    <section id="plot-section">
-      <div id="plot-container"></div>
+    <section id="bond_takeaway">
+      <h2> Quick plain-language takeaway: </h2>
+      <p>
+      1. bonds price and bonds yield have reverse relationship (if you have to pay higher price to buy, less you earned)<br>
+      2. People buy bonds when they are panic, more people buy, price will go up, yield will go down.<br>
+      3. People will also buy bonds when they believe their money preserve valu (low inflation)
+      </p>
     </section>
 
     <section id = "bondviz">
       <h2> United States 10-Year Bond Yield </h2>
-    </section> <!-- Container for the bond line plot -->
+      <div id="line-plot"></div> <!-- Container for the bond line plot -->
+    </section>
 
     <section id = "gdp">
       <h2> What is GDP? </h2>

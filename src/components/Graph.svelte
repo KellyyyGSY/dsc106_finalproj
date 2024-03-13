@@ -25,7 +25,7 @@
   });
 
   afterUpdate(() => {
-    if (index >= 1 && index <= 4 && index != 2) {
+    if (index === 5) {
       drawAnimatedLine();
     } else {
       if (animatedLineSvg) animatedLineSvg.remove();
