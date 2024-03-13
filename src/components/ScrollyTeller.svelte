@@ -1254,7 +1254,7 @@
   section {
     height: 100vh;      /* height of each section */
     /* background-color: rgba(0, 0, 0, 0.2); */
-    outline: magenta solid 3px;
+    /* outline: magenta solid 3px; */
     text-align: center;
     max-width: 100%; /* adjust at will */
     color: white;    /* color of title */
@@ -1501,11 +1501,12 @@
     position: relative;
     color: #D3C4BE;
     font-family: "Gill Sans", sans-serif;
-    font-size: 2em; /* Adjust the font size here */
+    font-size: 1.7em; /* Adjust the font size here */
     padding: 10px; /* Adds some space around the text */
     display: inline-block;
     text-shadow: 0 0 10px #999999;
-    max-width: 90%;
+    max-width: 100%;
+    word-wrap: break-word; /* Added to allow word wrapping */
   }
 
   #bond {
