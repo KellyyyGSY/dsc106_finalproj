@@ -45,7 +45,7 @@
       ScrollTrigger.create({
         trigger: section,
         start:"top top",
-        end: "bottom 50%",
+        end: "bottom 90%",
         pinSpacing: false,
         pin: true,
         onEnter: () => gsap.to(section, { autoAlpha: 1 }), // Fade in the current section
@@ -191,8 +191,8 @@
 
   function drawLinePlot() {
     const margin = { top: 0, right: 150, bottom: 200, left: 80 };
-    const width = 1300 - margin.left - margin.right;
-    const height = 700 - margin.top - margin.bottom;
+    const width = 1200 - margin.left - margin.right;
+    const height = 600 - margin.top - margin.bottom;
 
     const svg = d3.select("#line-plot")
       .append("svg")
@@ -314,8 +314,8 @@
 
   function drawGDPLinePlot() {
     const margin = { top: 0, right: 180, bottom: 90, left: 160};
-    const svgWidth = 1300;
-    const svgHeight = 600;
+    const svgWidth = 1200;
+    const svgHeight = 500;
     const plotWidth = svgWidth - margin.left - margin.right;
     const plotHeight = svgHeight - margin.top - margin.bottom;
 
@@ -544,7 +544,7 @@
   }
 
   function drawBarChart() {
-    const margin = { top: 50, right: 140, bottom: 90, left: 80 };
+    const margin = { top: 0, right: 140, bottom: 90, left: 80 };
     const svgWidth = 1000;
     const svgHeight = 500;
     const plotWidth = svgWidth - margin.left - margin.right;
@@ -1052,9 +1052,6 @@
       <!-- <p class="style2"> By simplifying complex economic interactions into an intuitive and interactive format, the concept of treasury yield becomes more accessible to a broader audience. Unlike traditional explanations that rely heavily on textual descriptions and static charts, the interactive elements below allow users to explore and understand the dynamic relationship between the 10-Year Treasury Yield, GDP growth, and inflation rates on their own terms. This hands-on approach not only enhances comprehension but also engages users in a more meaningful exploration of economic principles. </p> -->
     </section>
 
-    <!-- add for better transit, do not delete! -->
-    <section></section>
-
     <section id = "bond">
       <h2> Treasury Bond </h2>
       <p>
@@ -1067,12 +1064,27 @@
     </section>
 
     <section id="bond_takeaway">
-      <h2> Quick plain-language takeaway: </h2>
-      <p>
-      1. bonds price and bonds yield have reverse relationship (if you have to pay higher price to buy, less you earned)<br>
-      2. People buy bonds when they are panic, more people buy, price will go up, yield will go down.<br>
-      3. People will also buy bonds when they believe their money preserve valu (low inflation)
-      </p>
+      <h2> Quick Tips </h2>
+      <ul>
+        <li>
+          <label>
+            <input type="checkbox">
+            bonds price and bonds yield have reverse relationship (if you have to pay higher price to buy, less you earned)
+          </label>
+        </li>
+        <li>
+          <label>
+            <input type="checkbox">
+            People buy bonds when they are panic, more people buy, price will go up, yield will go down.
+          </label>
+        </li>
+        <li>
+          <label>
+            <input type="checkbox">
+            People will also buy bonds when they believe their money preserve valu (low inflation)
+          </label>
+        </li>
+      </ul>
     </section>
 
     <section id = "bondviz">
@@ -1082,26 +1094,25 @@
 
     <section id = 'bond-explain0'></section>
     <section id = 'bond-explain1'> 
-      <div class="frame">
+      <div class="bond_frame">
         <p> Inflation Expectations: Think of inflation like the rate at which money loses its value over time. In 2020, people expected money to hold its value better than usual because everyone was spending less. When people think their money will stay valuable, they like investing in government bonds, which pay back with interest over time. Because so many people wanted these bonds, their yields (or the interest you earn from them) went down.</p>
       </div>
     </section>
     <section id = 'bond-explain2'> 
-      <div class="frame">
+      <div class="bond_frame">
         <p> Economic Activity (GDP): The economy took a big hit in 2020 due to the pandemic. Businesses closed, and many people stopped buying things, leading to a drop in the country's total production and services. During such times, people prefer putting their money into something safe, like government bonds, rather than riskier investments. This rush to buy bonds made their yields lower, as there was less need for the government to offer high interest to attract buyers.</p>
       </div>
     </section>
     <section id = 'bond-explain3'> 
-      <div class="frame">
+      <div class="bond_frame">
         <p> Inflation Expectations: By 2023, people started to notice prices going up faster than before, which means the money in your pocket doesn't go as far as it used to. This happens when the economy gets too hot, and there's too much money chasing too few goods. When people expect prices to keep rising, they're less keen on bonds that pay fixed interest because the money they get back in the future won't buy as much. So, to attract buyers, the interest rates or yields on these bonds need to go up.</p>
       </div>
     </section>
     <section id = 'bond-explain4'> 
-      <div class="frame">
+      <div class="bond_frame">
         <p> Economic Activity (GDP): The economy bounced back strongly in 2023 after the tough times caused by the pandemic. Businesses reopened, people went back to work, and spending increased. This recovery is good news, but it can also lead to too much money flowing in the economy, contributing to higher inflation. To keep things in balance and ensure the economy doesn't overheat, interest rates on government bonds were raised. This means if you're buying bonds, you can expect to earn more interest than before, reflecting the higher yields seen during this period.</p>
       </div>
     </section>
-    <section id = 'bond-explain5'></section>
 
 
     <section id = "gdp">
@@ -1120,26 +1131,37 @@
       <h2>Real GDP Growth Rate</h2>
       <div id="gdpgrowth"></div>
     </section>
-    
-    <section> </section>
 
     <section id = "inflation">
       <h2>What is Inflation?</h2>
       <p>Inflation is a key economic metric that denotes the rate at which the general level of prices for goods and services is rising, and subsequently, how purchasing power is falling. Central banks attempt to limit inflation, and avoid deflation, in order to keep the economy running smoothly. Inflation can be measured through various indices, the most common being the Consumer Price Index (CPI) and the Wholesale Price Index (WPI). CPI measures the average price change over time of a basket of goods and services that a typical household might purchase, while WPI measures the price change of goods sold and traded in bulk by wholesale businesses to other businesses.
+      <br><br>In the context of this project, understanding inflation is vital as it directly impacts the dynamics of the 10-Year Treasury Yield. Inflation erodes the real return on investments, including those in government securities such as Treasury bonds. As inflation expectations rise, investors may demand higher yields to compensate for the anticipated decrease in the purchasing power of their future interest payments. Conversely, low inflation rates may lead to lower yields, as the real return on investments becomes more stable, making government securities more attractive. Central banks may adjust monetary policy in response to inflation levels to stabilize the economy, influencing interest rates and thus impacting Treasury yields.
       </p>
       <li style="margin-top: 50px;"><a href="#zero" style="color: #42393B;">Back to main menu</a>
     </section>
 
-    <section id = "inflation2">
-      <p>In the context of this project, understanding inflation is vital as it directly impacts the dynamics of the 10-Year Treasury Yield. Inflation erodes the real return on investments, including those in government securities such as Treasury bonds. As inflation expectations rise, investors may demand higher yields to compensate for the anticipated decrease in the purchasing power of their future interest payments. Conversely, low inflation rates may lead to lower yields, as the real return on investments becomes more stable, making government securities more attractive. Central banks may adjust monetary policy in response to inflation levels to stabilize the economy, influencing interest rates and thus impacting Treasury yields.</p>
-    </section>
-
     <section id = "inflation_takeaway">
-      <h2>Quick plain-language takeaway: </h2>
-      <p> 1. Inflation is how quick your money lose value naturally as time goes<br>
-      Analogy: if inflation is 10%, the money you can buy 100 apples this year, can only buy 91 apples next year.<br>
-      2. People prefer bonds when their money preserve value (low inflation)<br>
-      </p>
+      <h2> Quick Tips </h2>
+      <ul>
+        <li>
+          <label>
+            <input type="checkbox">
+            Inflation is how quick your money lose value naturally as time goes
+          </label>
+        </li>
+        <li>
+          <label>
+            <input type="checkbox">
+            Analogy: if inflation is 10%, the money you can buy 100 apples this year, can only buy 91 apples next year.
+          </label>
+        </li>
+        <li>
+          <label>
+            <input type="checkbox">
+            People prefer bonds when their money preserve value (low inflation)
+          </label>
+        </li>
+      </ul>
     </section>
 
     <section id = 'cpi-viz'>
@@ -1232,6 +1254,7 @@
   section {
     height: 100vh;      /* height of each section */
     /* background-color: rgba(0, 0, 0, 0.2); */
+    outline: magenta solid 3px;
     text-align: center;
     max-width: 100%; /* adjust at will */
     color: white;    /* color of title */
@@ -1249,10 +1272,10 @@
   h2 {
     font-family: "Gill Sans", sans-serif;
     font-size: 2.2em; /* Adjust the font size here */
-    margin-bottom: 0.8em; /* Add margin below the title */
     /* background-color: rgba(255, 255, 255, 0.7); Adjust the opacity as needed */
     display: inline-block; /* Or as per your layout needs */
-    padding: 10px; /* Adds some space around the text */
+    padding-top: 2em; /* Adjust top padding */
+    padding-bottom: 1em; /* Adjust bottom padding */
   }
 
   h3 {
@@ -1485,6 +1508,57 @@
     max-width: 90%;
   }
 
+  #bond {
+      background-color: #f0f0f0; /* Change frame color */
+  }
+  #bond {
+      color: #000; /* Change text color */
+  }
+
+  #bond_takeaway ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    text-align: left; 
+  }
+
+  #bond_takeaway li {
+    margin-bottom: 0.5em;
+  }
+
+  #bond_takeaway input[type="checkbox"] {
+    margin-right: 0.5em;
+  }
+
+  #gdp {
+      background-color: #f0f0f0; /* Change frame color */
+  }
+  #gdp {
+      color: #000; /* Change text color */
+  }
+
+  #inflation {
+      background-color: #f0f0f0; /* Change frame color */
+  }
+  #inflation {
+      color: #000; /* Change text color */
+  }
+
+  #inflation_takeaway ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    text-align: left; 
+  }
+
+  #inflation_takeaway li {
+    margin-bottom: 0.5em;
+  }
+
+  #inflation_takeaway input[type="checkbox"] {
+    margin-right: 0.5em;
+  }
+
   #cpi-pc-explain1 {
     text-align: center; /* Center-align the content */
   }
@@ -1502,6 +1576,22 @@
   }
 
   .frame p {
+    color: black; /* Black text color */
+  }
+
+  .bond_frame {
+    display: inline-block; /* Ensure the frame doesn't stretch to full width */
+    padding: 30px; /* Adjust padding as needed */
+    background-color: white; /* White background */
+    border: 2px solid black; /* Black border */
+    border-radius: 10px; /* Rounded corners */
+    margin-top: 150px; /* Adjust margin as needed */
+    width: 600px; /* Adjust width as needed */
+    height: 190px; /* Adjust height as needed */
+    text-align: left; /* Center-align the text content within the frame */
+  }
+
+  .bond_frame p {
     color: black; /* Black text color */
   }
 

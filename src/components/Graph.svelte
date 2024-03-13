@@ -11,7 +11,6 @@
   let animatedLineSvg;
   let bondSvg;
   let cpiSvg;
-  
 
   onMount(async () => {
     const res = await fetch('US10_Year_Bond_Yield_20-24.csv');
@@ -27,19 +26,19 @@
   });
 
   afterUpdate(() => {
-    if (index === 5) {
+    if (index === 26) {
       drawAnimatedLine();
     } else {
       if (animatedLineSvg) animatedLineSvg.remove();
     }
 
-    if (index >= 8 && index <= 13) {
+    if (index >= 7 && index <= 10) {
       drawLinePlot();
     } else {
       if (bondSvg) bondSvg.remove();
     }
 
-    if (index >= 23 && index <= 28) {
+    if (index >= 19 && index <= 23) {
       drawCPIPCBG();
     } else {
       if (cpiSvg) cpiSvg.remove();
@@ -95,88 +94,146 @@
   }
 
   function drawLinePlot() {
-    const margin = { top: 50, right: 150, bottom: 200, left: 60};
+    const margin = { top: 50, right: 100, bottom: 200, left: 140 };
     const width = 1300 - margin.left - margin.right;
     const height = 700 - margin.top - margin.bottom;
+
+    // Filter data based on the range [2016, 2024]
+    const filteredData = data.filter(d => new Date(d.Date) >= new Date('2018-01-01') && new Date(d.Date) <= new Date('2024-12-31'));
 
     // Remove existing svg if exists
     if (bondSvg) bondSvg.remove();
 
-    bondSvg = d3.select("#line-plot")
-      .append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    bondSvg = d3.select(".graph")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    const x = scaleTime()
-      .domain(d3.extent(data, d => new Date(d.Date)))
-      .range([0, width]);
-      
-    const y = scaleLinear()
-      .domain([0, d3.max(data, d => d.Price)])
-      .range([height, 0]);
+    const x = d3.scaleTime()
+        .domain(d3.extent(filteredData, d => new Date(d.Date)))
+        .range([0, width]);
 
-    const xAxis = axisBottom(x);
-    const yAxis = axisLeft(y);
+    const y = d3.scaleLinear()
+        .domain([0, d3.max(filteredData, d => d.Price)])
+        .range([height, 0]);
 
-    bondSvg.append("g")
-      .attr("class", "x-axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
+    const xAxis = d3.axisBottom(x);
+    const yAxis = d3.axisLeft(y);
 
     bondSvg.append("g")
-      .attr("class", "y-axis")
-      .call(yAxis);
-    
+        .attr("class", "x-axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+    bondSvg.append("g")
+        .attr("class", "y-axis")
+        .call(yAxis);
+
     bondSvg.selectAll(".x-axis line")
-      .attr("stroke", "#ccc");
+        .attr("stroke", "#ccc");
     bondSvg.selectAll(".y-axis line")
-      .attr("stroke", "#ccc");
+        .attr("stroke", "#ccc");
 
     bondSvg.append("g")
-      .attr("class", "grid")
-      .call(d3.axisLeft(y)
-          .tickSize(-width)
-          .tickFormat("")
-      )
-      .selectAll(".tick line")
-      .attr("stroke", "#ccc");
+        .attr("class", "grid")
+        .call(d3.axisLeft(y)
+            .tickSize(-width)
+            .tickFormat("")
+        )
+        .selectAll(".tick line")
+        .attr("stroke", "#ccc");
 
-    const lineGenerator = line()
-      .x(d => x(new Date(d.Date)))
-      .y(d => y(d.Price))
-      .curve(curveMonotoneX);
+    bondSvg.append("text")
+        .attr("class", "y label")
+        .attr("text-anchor", "end")
+        .attr("fill", "white")
+        .attr("x", -margin.left - 80)
+        .attr("y", -margin.left + 80) // Adjusted positioning
+        .attr("dy", ".75em")
+        .attr("transform", "rotate(-90)")
+        .text("Price");
+
+    const lineGenerator = d3.line()
+        .x(d => x(new Date(d.Date)))
+        .y(d => y(d.Price))
+        .curve(d3.curveMonotoneX);
 
     bondSvg.append("path")
-      .datum(data)
-      .attr("fill", "none")
-      .attr("stroke", "steelblue")
-      .attr("stroke-width", 1.5)
-      .attr("d", lineGenerator);
-
-    // Add y-axis label
-    bondSvg.append("text")
-      .attr("class", "y label")
-      .attr("text-anchor", "end")
-      .attr("fill", "white")
-      .attr("x", -margin.left - 65)
-      .attr("y", -margin.left + 20) // Adjusted positioning
-      .attr("dy", ".75em")
-      .attr("transform", "rotate(-90)")
-      .text("Price");
+        .datum(filteredData)
+        .attr("fill", "none")
+        .attr("stroke", "steelblue")
+        .attr("stroke-width", 1.5)
+        .attr("d", lineGenerator);
     
-    // Add data points
-    bondSvg.selectAll(".dot")
-      .data(data)
-      .enter().append("circle")
-      .attr("class", "dot")
-      .attr("cx", d => x(new Date(d.Date)))
-      .attr("cy", d => y(d.Price))
-      .attr("r", 5)
-      .style("fill", "white")
-      .style("opacity", 0.0)
+    // Add annotations
+    const annotations = [
+        { date: new Date("07/01/2020"), price: 2.5, text: "covid-19 pandemic:\n2020 low point" },
+        { date: new Date("01/01/2023"), price: 2.0, text: "post-pandemic:\n2023 economic rebound" }
+        // add more if needed
+    ];
+
+    // Define arrowhead marker
+    bondSvg.append("defs").append("marker")
+      .attr("id", "arrowhead")
+      .attr("viewBox", "0 -5 10 10")
+      .attr("refX", 8)
+      .attr("refY", 0)
+      .attr("orient", "auto")
+      .attr("markerWidth", 6)
+      .attr("markerHeight", 6)
+      .append("path")
+      .attr("d", "M0,-5L10,0L0,5")
+      .attr("fill", "white");
+
+    // Add arrows and annotations
+    annotations.forEach(annotation => {
+      const xPos = x(annotation.date);
+      const yPos = y(annotation.price);
+
+      // Add annotation text
+      const lines = annotation.text.split('\n');
+      lines.forEach((line, i) => {
+        bondSvg.append("text")
+          .attr("x", xPos)
+          .attr("y", yPos + i * 20) // Adjust dy for line spacing
+          .attr("dy", "-0.5em")
+          .text(line)
+          .attr("fill", "white");
+      });
+
+      // Find the closest point on the line to the annotation
+      const closestPoint = findClosestPointOnLine(data, { x: xPos, y: yPos });
+
+      // Add arrow line
+      bondSvg.append("line")
+        .attr("x1", xPos)
+        .attr("y1", yPos)
+        .attr("x2", closestPoint.x)
+        .attr("y2", closestPoint.y)
+        .attr("stroke", "white")
+        .attr("stroke-width", 1)
+        .attr("marker-end", "url(#arrowhead)");
+    });
+
+    // Function to find the closest point on the line
+    function findClosestPointOnLine(data, point) {
+      let minDistance = Infinity;
+      let closestPoint = null;
+
+      data.forEach(d => {
+        const distance = Math.abs(point.x - x(new Date(d.Date)));
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestPoint = { x: x(new Date(d.Date)), y: y(d.Price) };
+        }
+      });
+
+      return closestPoint;
+    }
   }
+
 
   function drawCPIPCBG() {
     const margin = { top: 50, right: 150, bottom: 200, left: 90 };
