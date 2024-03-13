@@ -1092,8 +1092,6 @@
       <div id="gdp-line-plot"></div> <!-- Container for the GDP line plot -->
     </section>
 
-    <!-- GDP Growth Rate Calculator here -->
-    <!-- debug needed -->
     <section>
       <h2>Real GDP Growth Rate</h2>
       <div id="gdpgrowth"></div>
@@ -1103,18 +1101,21 @@
 
     <section id = "inflation">
       <h2>What is Inflation?</h2>
-      <p>Inflation is a key economic metric that denotes the rate at which the general level of prices for goods and services is rising, and subsequently, how purchasing power is falling. Central banks attempt to limit inflation, and avoid deflation, in order to keep the economy running smoothly. Inflation can be measured through various indices, the most common being the Consumer Price Index (CPI) and the Wholesale Price Index (WPI). CPI measures the average price change over time of a basket of goods and services that a typical household might purchase, while WPI measures the price change of goods sold and traded in bulk by wholesale businesses to other businesses.</p>
-      <p>In the context of this project, understanding inflation is vital as it directly impacts the dynamics of the 10-Year Treasury Yield. Inflation erodes the real return on investments, including those in government securities such as Treasury bonds. As inflation expectations rise, investors may demand higher yields to compensate for the anticipated decrease in the purchasing power of their future interest payments. Conversely, low inflation rates may lead to lower yields, as the real return on investments becomes more stable, making government securities more attractive. Central banks may adjust monetary policy in response to inflation levels to stabilize the economy, influencing interest rates and thus impacting Treasury yields.
-      <br>
-      <br>
-      Quick plain-language takeaway: <br>
-      1. Inflation is how quick your money lose value naturally as time goes<br>
+      <p>Inflation is a key economic metric that denotes the rate at which the general level of prices for goods and services is rising, and subsequently, how purchasing power is falling. Central banks attempt to limit inflation, and avoid deflation, in order to keep the economy running smoothly. Inflation can be measured through various indices, the most common being the Consumer Price Index (CPI) and the Wholesale Price Index (WPI). CPI measures the average price change over time of a basket of goods and services that a typical household might purchase, while WPI measures the price change of goods sold and traded in bulk by wholesale businesses to other businesses.
+      </p>
+      <li style="margin-top: 50px;"><a href="#zero" style="color: #42393B;">Back to main menu</a>
+    </section>
+
+    <section id = "inflation2">
+      <p>In the context of this project, understanding inflation is vital as it directly impacts the dynamics of the 10-Year Treasury Yield. Inflation erodes the real return on investments, including those in government securities such as Treasury bonds. As inflation expectations rise, investors may demand higher yields to compensate for the anticipated decrease in the purchasing power of their future interest payments. Conversely, low inflation rates may lead to lower yields, as the real return on investments becomes more stable, making government securities more attractive. Central banks may adjust monetary policy in response to inflation levels to stabilize the economy, influencing interest rates and thus impacting Treasury yields.</p>
+    </section>
+
+    <section id = "inflation_takeaway">
+      <h2>Quick plain-language takeaway: </h2>
+      <p> 1. Inflation is how quick your money lose value naturally as time goes<br>
       Analogy: if inflation is 10%, the money you can buy 100 apples this year, can only buy 91 apples next year.<br>
       2. People prefer bonds when their money preserve value (low inflation)<br>
-
       </p>
-
-      <li style="margin-top: 50px;"><a href="#zero" style="color: #42393B;">Back to main menu</a>
     </section>
 
     <section id = 'cpi-viz'>

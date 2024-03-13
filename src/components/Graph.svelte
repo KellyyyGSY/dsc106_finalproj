@@ -31,7 +31,7 @@
       if (animatedLineSvg) animatedLineSvg.remove();
     }
 
-    if (index >= 14 && index <= 19) {
+    if (index >= 17 && index <= 22) {
       drawCPIPCBG();
     } else {
       if (cpiSvg) cpiSvg.remove();
