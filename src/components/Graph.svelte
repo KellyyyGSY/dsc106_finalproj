@@ -3,12 +3,14 @@
   import * as d3 from 'd3';
   import { scaleLinear, scaleTime } from 'd3-scale';
   import { line, curveMonotoneX } from 'd3-shape';
+  import { axisBottom, axisLeft } from 'd3-axis';
 
   export let index, width, height;
 
   let data, cpiData;
-  let cpiSvg;
   let animatedLineSvg;
+  let bondSvg;
+  let cpiSvg;
   
 
   onMount(async () => {
@@ -31,7 +33,13 @@
       if (animatedLineSvg) animatedLineSvg.remove();
     }
 
-    if (index >= 17 && index <= 22) {
+    if (index === 8) {
+      drawLinePlot();
+    } else {
+      if (bondSvg) bondSvg.remove();
+    }
+
+    if (index >= 18 && index <= 23) {
       drawCPIPCBG();
     } else {
       if (cpiSvg) cpiSvg.remove();
@@ -84,6 +92,100 @@
     path.transition()
       .duration(6000) // Adjust duration as needed
       .attr('stroke-dasharray', '0,' + totalLength);
+  }
+
+  function drawLinePlot() {
+    const margin = { top: 50, right: 150, bottom: 200, left: 80 };
+    const width = 1200 - margin.left - margin.right;
+    const height = 600 - margin.top - margin.bottom;
+
+    // Remove existing svg if exists
+    if (bondSvg) bondSvg.remove();
+
+    bondSvg = d3.select("#line-plot")
+      .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    const x = scaleTime()
+      .domain(d3.extent(data, d => new Date(d.Date)))
+      .range([0, width]);
+      
+    const y = scaleLinear()
+      .domain([0, d3.max(data, d => d.Price)])
+      .range([height, 0]);
+
+    const xAxis = axisBottom(x);
+    const yAxis = axisLeft(y);
+
+    bondSvg.append("g")
+      .attr("class", "x-axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+    bondSvg.append("g")
+      .attr("class", "y-axis")
+      .call(yAxis);
+    
+    bondSvg.selectAll(".x-axis line")
+      .attr("stroke", "#ccc");
+    bondSvg.selectAll(".y-axis line")
+      .attr("stroke", "#ccc");
+
+    bondSvg.append("g")
+      .attr("class", "grid")
+      .call(d3.axisLeft(y)
+          .tickSize(-width)
+          .tickFormat("")
+      )
+      .selectAll(".tick line")
+      .attr("stroke", "#ccc");
+
+    const lineGenerator = line()
+      .x(d => x(new Date(d.Date)))
+      .y(d => y(d.Price))
+      .curve(curveMonotoneX);
+
+    bondSvg.append("path")
+      .datum(data)
+      .attr("fill", "none")
+      .attr("stroke", "steelblue")
+      .attr("stroke-width", 1.5)
+      .attr("d", lineGenerator);
+      
+
+    // Add x-axis label
+    bondSvg.append("text")
+      .attr("class", "x label")
+      .attr("text-anchor", "end")
+      .attr("fill", "white")
+      .attr("x", width - 470)
+      .attr("y", height + 50) // Adjusted positioning
+      .text("Date");
+
+    // Add y-axis label
+    bondSvg.append("text")
+      .attr("class", "y label")
+      .attr("text-anchor", "end")
+      .attr("fill", "white")
+      .attr("x", -margin.left - 65)
+      .attr("y", -margin.left + 20) // Adjusted positioning
+      .attr("dy", ".75em")
+      .attr("transform", "rotate(-90)")
+      .text("Price");
+    
+    // Add data points
+    bondSvg.selectAll(".dot")
+      .data(data)
+      .enter().append("circle")
+      .attr("class", "dot")
+      .attr("cx", d => x(new Date(d.Date)))
+      .attr("cy", d => y(d.Price))
+      .attr("r", 5)
+      .style("fill", "white")
+      .style("opacity", 0.0)
   }
 
   function drawCPIPCBG() {

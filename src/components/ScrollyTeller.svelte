@@ -1080,6 +1080,8 @@
       <div id="line-plot"></div> <!-- Container for the bond line plot -->
     </section>
 
+    <section id = 'bond-explain0'></section>
+
     <section id = "gdp">
       <h2> What is GDP? </h2>
       <p> Gross Domestic Product (GDP) is a crucial economic indicator that measures the total value of all goods and services produced within a country over a specific period, typically a quarter or a year. It is used as a comprehensive gauge of a country's overall economic health, reflecting the size and growth rate of its economy. GDP can be calculated using three approaches: the production (or output or value added) approach, the income approach, and the expenditure approach, each offering a different perspective but theoretically arriving at the same total. </p>
