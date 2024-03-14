@@ -2098,7 +2098,7 @@
 
   #bond_takeaway li {
     font-size: 1.5em;
-    display: inline-block;
+    display: block;
     margin-bottom: 3em;
   }
 
@@ -2115,7 +2115,7 @@
 
   #gdp_takeaway li {
     font-size: 1.5em;
-    display: inline-block;
+    display: block;
     margin-bottom: 3em;
   }
 
@@ -2182,7 +2182,7 @@
 
   #inflation_takeaway li {
     font-size: 1.5em;
-    display: inline-block;
+    display: block;
     margin-bottom: 3em;
   }
 
