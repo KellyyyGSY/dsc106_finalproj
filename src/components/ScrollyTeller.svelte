@@ -8,7 +8,7 @@
   import Graph from "./Graph.svelte";
   import Scroller from "@sveltejs/svelte-scroller";
   import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
-
+  
   let count, index, offset, progress;
   let width, height;
   let data, gdpData, rGDPData, cpindexData, cpiData;
@@ -554,7 +554,119 @@
     yearIndex = +event.target.value;
     selectedYear = allowedYears[yearIndex];
     updatePlot(); // Call updatePlot to redraw the plot with the new year
+    updateExplanation(selectedYear);
   }
+
+  function updateExplanation(year) {
+    let explanationText = '';
+    if (year == 2000) {
+      explanationText += "• 2000: The U.S. economy was at the tail end of the '90s boom. The GDP growth rate was strong early in the year but began to falter as the bubble burst.\n\n";
+      explanationText += "• 2000 annual GDP growth rate: 4.1%.\n";
+    }
+
+    if (year == 2001) {
+      explanationText += "• 2001: The economy entered a recession in March 2001, which was compounded by the September 11 terrorist attacks. The recession was relatively mild, with GDP declining in the third quarter and recovering in the fourth. The Federal Reserve responded with aggressive interest rate cuts.\n\n";
+      explanationText += "• 2001 annual GDP growth rate: 1.0%.\n";
+    }
+
+    if (year == 2002) {
+      explanationText += "• 2002: Following the recession, the economy began to recover slowly, in part due to continued low interest rates and the beginning of significant government spending.\n\n";
+      explanationText += "• 2002 annual GDP growth rate: 1.7%.\n";
+    }
+
+    if (year >= 2003 && year <= 2006) {
+      explanationText += "• 2003 - 2006 (Pre-Crisis Stability): The economy gained momentum, with GDP growth rates picking up, helped by tax cuts, increased defense spending, and a housing boom.\n\n";
+      if (year >= 2003) {
+        explanationText += "• 2003 annual GDP growth rate: 2.9%.\n";
+      }
+      if (year >= 2004) {
+        explanationText += "• 2004 annual GDP growth rate: 3.8%.\n";
+      }
+      if (year >= 2005) {
+        explanationText += "• 2005 annual GDP growth rate: 3.5%.\n";
+      }
+      if (year >= 2006) {
+        explanationText += "• 2006 annual GDP growth rate: 2.9%.\n";
+      }
+    }
+
+    if (year >= 2007 && year <= 2009) {
+      if (year >= 2007) {
+        explanationText += '• 2007 (Onset of Crisis): With the onset of the financial crisis, GDP growth began to slow down, marking the beginning of economic uncertainty.\n'; // Add bullet point for 2007
+        explanationText += "• 2007 annual GDP growth rate: 1.9%.\n\n";
+      }
+      if (year >= 2008) {
+        explanationText += '• 2008 (Deepening Crisis): The crisis deepened, with GDP levels falling sharply as financial markets tumbled, credit froze up, and consumer spending and investment declined. Governments and central banks responded with unprecedented fiscal and monetary stimulus measures to stabilize and boost the economy.\n'; // Add bullet point for 2008
+        explanationText += "• 2008 annual GDP growth rate: -0.1%.\n\n";
+      }
+      if (year >= 2009) {
+        explanationText += '• 2009 (Recession): Although the financial markets began to recover in 2009, the real economy lagged, with GDP growth remaining negative or sluggish in many countries, indicating the economy was in recession.\n'; // Add bullet point for 2009
+        explanationText += '• Beginning of Recovery: Towards the end of 2009, signs of recovery emerged, with GDP levels stabilizing and beginning to grow again, although the pace of recovery was uneven across different regions.\n';
+        explanationText += "• 2009 annual GDP growth rate: -2.5%.\n\n";
+      }
+    }
+
+    if (year >= 2010 && year <= 2011) {
+      explanationText += "• 2010 - 2011: The U.S. economy started to recover from the Great Recession. Stimulus measures and monetary policy were starting to have an effect. The economy was beginning to stabilize.\n\n";
+      if (year >= 2010) {
+        explanationText += "• 2010 annual GDP growth rate: 2.6%.\n";
+      }
+      if (year >= 2011) {
+        explanationText += "• 2004 annual GDP growth rate: 1.6%.\n";
+      }
+    }
+
+    if (year >= 2012 && year <= 2019) {
+      explanationText += "• 2012 - 2019: The economy kept improving slowly and remained steady.\n\n";
+      if (year >= 2012) {
+        explanationText += "• 2012 annual GDP growth rate: 2.2%.\n";
+      }
+      if (year >= 2013) {
+        explanationText += "• 2013 annual GDP growth rate: 1.8%.\n";
+      }
+      if (year >= 2014) {
+        explanationText += "• 2014 annual GDP growth rate: 2.5%.\n";
+      }
+      if (year >= 2015) {
+        explanationText += "• 2015 annual GDP growth rate: 2.9%.\n";
+      }
+      if (year >= 2016) {
+        explanationText += "• 2016 annual GDP growth rate: 1.6%.\n";
+      }
+      if (year >= 2017) {
+        explanationText += "• 2017 annual GDP growth rate: 2.4%.\n";
+      }
+      if (year >= 2018) {
+        explanationText += "• 2018 annual GDP growth rate: 2.9%.\n";
+      }
+      if (year >= 2019) {
+        explanationText += "• 2019 annual GDP growth rate: 2.3%.\n";
+      }
+    }
+
+    if (year >= 2020 && year <= 2023) {
+      if (year >= 2020) {
+        explanationText += '• 2020 (Pandemic): The U.S. GDP contracted sharply due to economic shutdowns from the COVID-19 pandemic, despite a significant rebound in the second half of the year following stimulus measures.\n';
+        explanationText += "• 2020 annual GDP growth rate: -2.8%.\n\n";
+      }
+      if (year >= 2021) {
+        explanationText += '• 2021 (Pandemic): With vaccine distribution and further stimulus, the economy bounced back, as consumer spending and business activity resumed.\n';
+        explanationText += "• 2021 annual GDP growth rate: 5.9%.\n\n";
+      }
+      if (year >= 2022) {
+        explanationText += '• 2022 (Post-Pandemic): Growth continued but faced headwinds from supply chain disruptions, inflationary pressures, and shifts in monetary policy, leading to a more moderate and uneven expansion.\n';
+        explanationText += "• 2022 annual GDP growth rate: 1.9%.\n\n";
+      }
+      if (year >= 2023) {
+        explanationText += '• 2023 (Post-Pandemic): The outlook remained cautious with moderate growth as the economy adjusted to post-pandemic conditions, inflation, and changes in fiscal and monetary policies. \n';
+        explanationText += "• 2023 annual GDP growth rate: 1.4%.\n\n";
+      }
+    }
+
+    // Set the explanation text in the HTML
+    document.getElementById('explanation').innerHTML = explanationText;
+  }
+
 
   function updatePlot() {
     // Filter gdpData based on selectedYear
@@ -972,8 +1084,8 @@
     // Add X-axis label
     svg.append("text")
       .attr("text-anchor", "end")
-      .attr("x", plotWidth / 2) // Center the text
-      .attr("y", svgHeight - margin.bottom / 4) // Position below the X-axis
+      .attr("x", plotWidth) // Center the text
+      .attr("y", svgHeight / 2) // Position below the X-axis
       .text("Year")
       .attr("fill", "white");
 
@@ -1466,28 +1578,28 @@
     </section>
 
     <section id="bond_takeaway">
-      <h2> Quick Tips </h2>
+      <h2 style="margin-bottom: 2em;"> Quick Tips </h2>
       <ul>
         <li>
           <label>
             <input type="checkbox">
-            bonds price and bonds yield have reverse relationship (if you have to pay higher price to buy, less you earned)
+            Bonds price and bonds yield have an inverse relationship (if you have to pay a higher price to buy, the less you earn).
           </label>
         </li>
         <li>
           <label>
             <input type="checkbox">
-            People buy bonds when they are panic, more people buy, price will go up, yield will go down.
+            People buy bonds when they are panic; the more people buy, the price will go up, yield will go down.
           </label>
         </li>
         <li>
           <label>
             <input type="checkbox">
-            People will also buy bonds when they believe their money preserve valu (low inflation)
+            People will also buy bonds when they believe their money preserves value (low inflation).
           </label>
         </li>
       </ul>
-    </section>
+    </section>   
 
     <section id = "bondviz">
       <h2> United States 10-Year Bond Yield </h2>
@@ -1524,6 +1636,36 @@
       <li style="margin-top: 50px;"><a href="#zero" style="color: #42393B;">Back to main menu</a>
     </section>
 
+    <section id="gdp_takeaway">
+      <h2 style="margin-bottom: 2em;"> Quick Tips </h2>
+      <ul>
+        <li>
+          <label>
+            <input type="checkbox">
+            GDP is a broad measure of economic activity, and growth rates reflect the economy's health. 
+          </label>
+        </li>
+        <li>
+          <label>
+            <input type="checkbox">
+            A rising GDP typically indicates a growing economy, while declining GDP suggests contraction.
+          </label>
+        </li>
+        <li>
+          <label>
+            <input type="checkbox">
+            Moderate GDP growth is associated with healthy inflation levels, indicating robust economic activity. 
+          </label>
+        </li>
+        <li>
+          <label>
+            <input type="checkbox">
+            Rising GDP often leads to higher bond yields, which inversely affects bond prices.
+          </label>
+        </li>
+      </ul>
+    </section> 
+
     <section id = "gdpoverview">
       <h2>GDP Overview from 2000 to 2023</h2>
       <div id="gdp-line-plot"></div> <!-- Container for the GDP line plot -->
@@ -1553,6 +1695,7 @@
         <div id="gdp-quarter" style="flex: 1;"></div>
         <div id="quartergrowth" style="flex: 1;"></div>
       </div>
+      <div id="explanation" style="text-align: left; margin-top: 10px;"></div>
     </section>
   
     <section id = "inflation">
@@ -1564,7 +1707,7 @@
     </section>
 
     <section id = "inflation_takeaway">
-      <h2> Quick Tips </h2>
+      <h2 style="margin-bottom: 2em;"> Quick Tips </h2>
       <ul>
         <li>
           <label>
@@ -1707,6 +1850,13 @@
     /* background-color: rgba(255, 255, 255, 0.7); Adjust the opacity as needed */
     display: inline-block; /* Or as per your layout needs */
     padding: 10px; /* Adds some space around the text */
+  }
+
+  p {
+    font-family: "Gill Sans", sans-serif;
+    font-size: 1.2em; /* Adjust the font size here */
+    padding: 10px; /* Adds some space around the text */
+    display: inline-block;
   }
 
   p.style1{
@@ -1947,10 +2097,29 @@
   }
 
   #bond_takeaway li {
-    margin-bottom: 0.5em;
+    font-size: 1.5em;
+    display: inline-block;
+    margin-bottom: 3em;
   }
 
   #bond_takeaway input[type="checkbox"] {
+    margin-right: 0.5em;
+  }
+
+  #gdp_takeaway ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    text-align: left; 
+  }
+
+  #gdp_takeaway li {
+    font-size: 1.5em;
+    display: inline-block;
+    margin-bottom: 3em;
+  }
+
+  #gdp_takeaway input[type="checkbox"] {
     margin-right: 0.5em;
   }
 
@@ -1988,6 +2157,15 @@
     margin: 0 10px; /* Spacing between graph containers */
   }
 
+  #explanation {
+    text-align: left;
+    padding-left: 0; /* Adjust padding as needed */
+    padding: 0 15px; 
+    margin-top: 10px;
+    margin-left: 0; /* Adjust margin as needed */
+    white-space: pre-line; /* This will ensure that the newline \n is respected */
+  }
+
   #inflation {
       background-color: #f0f0f0; /* Change frame color */
   }
@@ -2003,7 +2181,9 @@
   }
 
   #inflation_takeaway li {
-    margin-bottom: 0.5em;
+    font-size: 1.5em;
+    display: inline-block;
+    margin-bottom: 3em;
   }
 
   #inflation_takeaway input[type="checkbox"] {
