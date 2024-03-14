@@ -2032,7 +2032,7 @@
       background-position: center; /* Center the background image */
       opacity: 0.5; /* Adjust opacity as needed */
       z-index: -1; /* Ensures the background is behind the content */
-      animation: switchBackground 40s infinite; /* Apply the animation */
+      animation: switchBackground 30s infinite; /* Apply the animation */
   }
 
   /* Make sure the content inside #custom-background-section has a higher z-index if needed */
@@ -2083,7 +2083,7 @@
   }
 
   #bond {
-      background-color: #f0f0f0; /* Change frame color */
+      background-color: #f5f4d3; /* Change frame color */
   }
   #bond {
       color: #000; /* Change text color */
@@ -2124,7 +2124,7 @@
   }
 
   #gdp {
-      background-color: #f0f0f0; /* Change frame color */
+      background-color: #f5f4d3; /* Change frame color */
   }
   #gdp {
       color: #000; /* Change text color */
@@ -2167,7 +2167,7 @@
   }
 
   #inflation {
-      background-color: #f0f0f0; /* Change frame color */
+      background-color: #f5f4d3; /* Change frame color */
   }
   #inflation {
       color: #000; /* Change text color */
@@ -2197,12 +2197,13 @@
   .frame {
     display: inline-block; /* Ensure the frame doesn't stretch to full width */
     padding: 30px; /* Adjust padding as needed */
+    padding-top: 20px; /* Adjust top padding to change distance from top */
     background-color: white; /* White background */
     border: 2px solid black; /* Black border */
     border-radius: 10px; /* Rounded corners */
     margin-top: 150px; /* Adjust margin as needed */
     width: 600px; /* Adjust width as needed */
-    height: 150px; /* Adjust height as needed */
+    height: 190px; /* Adjust height as needed */
     text-align: left; /* Center-align the text content within the frame */
   }
 
@@ -2213,12 +2214,13 @@
   .bond_frame {
     display: inline-block; /* Ensure the frame doesn't stretch to full width */
     padding: 30px; /* Adjust padding as needed */
+    padding-top: 15px; /* Adjust top padding to change distance from top */
     background-color: white; /* White background */
     border: 2px solid black; /* Black border */
     border-radius: 10px; /* Rounded corners */
-    margin-top: 150px; /* Adjust margin as needed */
+    margin-top: 110px; /* Adjust margin as needed */
     width: 600px; /* Adjust width as needed */
-    height: 190px; /* Adjust height as needed */
+    height: 270px; /* Adjust height as needed */
     text-align: left; /* Center-align the text content within the frame */
   }
 

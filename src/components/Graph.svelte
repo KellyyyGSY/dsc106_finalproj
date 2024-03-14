@@ -26,7 +26,7 @@
   });
 
   afterUpdate(() => {
-    if (index === 26) {
+    if (index === 28) {
       drawAnimatedLine();
     } else {
       if (animatedLineSvg) animatedLineSvg.remove();
@@ -38,7 +38,7 @@
       if (bondSvg) bondSvg.remove();
     }
 
-    if (index >= 19 && index <= 23) {
+    if (index >= 21 && index <= 25) {
       drawCPIPCBG();
     } else {
       if (cpiSvg) cpiSvg.remove();
@@ -94,9 +94,9 @@
   }
 
   function drawLinePlot() {
-    const margin = { top: 50, right: 100, bottom: 200, left: 140 };
-    const width = 1300 - margin.left - margin.right;
-    const height = 700 - margin.top - margin.bottom;
+    const margin = { top: 50, right: 70, bottom: 200, left: 70 };
+    const width = 1350 - margin.left - margin.right;
+    const height = 750 - margin.top - margin.bottom;
 
     // Filter data based on the range [2016, 2024]
     const filteredData = data.filter(d => new Date(d.Date) >= new Date('2018-01-01') && new Date(d.Date) <= new Date('2024-12-31'));
@@ -149,8 +149,8 @@
         .attr("class", "y label")
         .attr("text-anchor", "end")
         .attr("fill", "white")
-        .attr("x", -margin.left - 80)
-        .attr("y", -margin.left + 80) // Adjusted positioning
+        .attr("x", -margin.left - 150)
+        .attr("y", -margin.left + 20) // Adjusted positioning
         .attr("dy", ".75em")
         .attr("transform", "rotate(-90)")
         .text("Price");
