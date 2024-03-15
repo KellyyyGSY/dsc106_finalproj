@@ -557,9 +557,43 @@
       .attr("x", 10)
       .attr("dy", "1.2em");
 
+    // Annotation for GDP in current dollars
+    svg.append("text")
+      .attr("x", plotWidth + 25) // Position to the right of the plot
+      .attr("y", 20) // Adjust this value as needed
+      .text("GDP in current dollars")
+      .attr("fill", "steelblue") // Match the line color
+      .attr("font-size", "12px");
+
+    // Line next to annotation for GDP in current dollars
+    svg.append("line")
+      .attr("x1", plotWidth + 5)
+      .attr("y1", 15) // Adjust this value as needed to align with text
+      .attr("x2", plotWidth + 18) // Short horizontal line
+      .attr("y2", 15) // Same as y1 to keep it horizontal
+      .attr("stroke", "steelblue")
+      .attr("stroke-width", 2);
+
+    // Annotation for GDP in chained 2017 dollars
+    svg.append("text")
+      .attr("x", plotWidth + 25) // Position to the right of the plot
+      .attr("y", 40) // Adjust this value as needed, place below the first annotation
+      .text("GDP in chained 2017 dollars")
+      .attr("fill", "white") // Match the line color
+      .attr("font-size", "12px");
+
+    // Line next to annotation for GDP in chained 2017 dollars
+    svg.append("line")
+      .attr("x1", plotWidth + 5)
+      .attr("y1", 35) // Adjust this value as needed to align with text
+      .attr("x2", plotWidth + 18) // Short horizontal line
+      .attr("y2", 35) // Same as y1 to keep it horizontal
+      .attr("stroke", "white")
+      .attr("stroke-width", 2);
   }
 
-  // GDP by quarter
+
+// GDP by quarter
   function updateYear(event) {
     yearIndex = +event.target.value;
     selectedYear = allowedYears[yearIndex];
@@ -755,6 +789,23 @@
     svg.append("g")
       .call(yAxis);
 
+    // Add X-axis label
+    svg.append("text")
+      .attr("text-anchor", "end")
+      .attr("x", plotWidth / 2) // Center the text
+      .attr("y", plotHeight + margin.bottom / 2) // Position below the X-axis
+      .text("Year")
+      .attr("fill", "white");
+
+    // Add Y-axis label
+    svg.append("text")
+      .attr("text-anchor", "end")
+      .attr("transform", "rotate(-90)") // Rotate the text for vertical alignment
+      .attr("y", -margin.left / 3) // Position left of the Y-axis
+      .attr("x", -plotHeight / 4) // Center the text vertically
+      .text("Billion Dollars")
+      .attr("fill", "white");
+
     // Area generator for GDP in current dollars
     const areaCurrent = d3.area()
       .x(d => xScale(d.date))
@@ -927,9 +978,44 @@
       .attr("class", "gdpChained")
       .attr("x", 10)
       .attr("dy", "1.2em");
+
+    // Annotation for GDP in current dollars
+    svg.append("text")
+      .attr("x", plotWidth) // Position to the right of the plot
+      .attr("y", 20) // Adjust this value as needed
+      .text("GDP in current dollars")
+      .attr("fill", "steelblue") // Match the line color
+      .attr("font-size", "12px");
+
+    // Line next to annotation for GDP in current dollars
+    svg.append("line")
+      .attr("x1", plotWidth - 7)
+      .attr("y1", 15) // Adjust this value as needed to align with text
+      .attr("x2", plotWidth - 2) // Short horizontal line
+      .attr("y2", 15) // Same as y1 to keep it horizontal
+      .attr("stroke", "steelblue")
+      .attr("stroke-width", 2);
+
+    // Annotation for GDP in chained 2017 dollars
+    svg.append("text")
+      .attr("x", plotWidth) // Position to the right of the plot
+      .attr("y", 40) // Adjust this value as needed, place below the first annotation
+      .text("GDP in chained 2017 dollars")
+      .attr("fill", "white") // Match the line color
+      .attr("font-size", "12px");
+
+    // Line next to annotation for GDP in chained 2017 dollars
+    svg.append("line")
+      .attr("x1", plotWidth - 7)
+      .attr("y1", 35) // Adjust this value as needed to align with text
+      .attr("x2", plotWidth - 2) // Short horizontal line
+      .attr("y2", 35) // Same as y1 to keep it horizontal
+      .attr("stroke", "white")
+      .attr("stroke-width", 2);
   }
 
-  // Growth overview
+
+// Growth overview
   function drawBarChart() {
     const margin = { top: 0, right: 140, bottom: 90, left: 80 };
     const svgWidth = 1200;
@@ -1044,7 +1130,7 @@
 
     const margin = { top: 0, right: 140, bottom: 90, left: 80 };
     const svgWidth = 750;
-    const svgHeight = 500;
+    const svgHeight = 300;
     const plotWidth = svgWidth - margin.left - margin.right;
     const plotHeight = svgHeight - margin.top - margin.bottom;
 
@@ -1485,11 +1571,9 @@
 
 </script>
 
+
+
 <ProgressBar progress={progress} />
-
-
-
-
 <Scroller
   top={0.0}
   bottom={1}
@@ -1685,10 +1769,13 @@
       </ul>
     </section> 
 
-    <section id = "gdpoverview">
+    <section id="gdpoverview">
       <h2>GDP Overview from 2000 to 2023</h2>
       <div id="gdp-line-plot"></div> <!-- Container for the GDP line plot -->
+      <p style="font-size: 0.9em; margin-bottom: 10px;">Note: GDP in chained 2017 dollars adjusts for inflation, providing a more accurate measure of real economic growth. The base year of 2017 is used to reflect the economy's structure and prices in a relatively recent period.</p>
     </section>
+  
+  
 
     <section>
       <h2>Real GDP Growth Rate Overview from 2000 to 2023</h2>
@@ -1697,7 +1784,7 @@
 
     <section id="gdpviz" style="display: flex; flex-direction: column; align-items: center;">
       <div class="title-slider-container">
-        <h2>Quarterly GDP</h2>
+        <h2 style="margin-top: 0; padding-top: 10px;">GDP Breakdown by Year</h2>
         <div class="slider-container">
           <input
             type="range"
@@ -1710,11 +1797,18 @@
           <span class="year-label">Year {selectedYear}</span>
         </div>
       </div>
-      <div class="graphs-container" style="display: flex; width: 100%;">
-        <div id="gdp-quarter" style="flex: 1;"></div>
-        <div id="quartergrowth" style="flex: 1;"></div>
+      <div class="content-container">
+        <!-- Container for the vertically stacked graphs -->
+        <div class="graphs-container" style="display: flex; flex-direction: column; margin-right: 20px; justify-content: flex-start;">
+          <div id="gdp-quarter" style="margin-bottom: 20px;"></div> <!-- Graph 1 container -->
+          <div id="quartergrowth"></div> <!-- Graph 2 container -->
+        </div>
+        
+        <!-- Container for the explanation text -->
+        <div id="explanation" style="padding: 0 15px; margin-left: 20px; white-space: pre-line;">
+          <!-- Explanation content goes here -->
+        </div>
       </div>
-      <div id="explanation" style="text-align: left; margin-top: 10px;"></div>
     </section>
   
     <section id = "inflation">
@@ -2164,26 +2258,33 @@
     margin-top: 10px; /* Space below the slider */
   }
 
-  /* Container to hold graphs side by side */
+  /* Flex container for both the graphs and explanation */
+  .content-container {
+    display: flex; /* Use flexbox to lay out children */
+    width: 100%; /* Full width to use the entire available space */
+    margin-top: 30px;
+  }
+
+  /* Container to hold graphs vertically */
   .graphs-container {
-    display: flex; /* Align graph divs horizontally */
-    justify-content: space-around; /* Distribute space around the graph containers */
-    width: 100%; /* Ensure the container takes full width */
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    width: 50%; /* Take up half the width */
+  }
+
+  /* Style for the explanation */
+  #explanation {
+    text-align: left;
+    padding: 0 15px;
+    white-space: pre-line; /* Ensure newline characters are respected */
+    width: 50%; /* Take up the remaining space */
+    margin-top: 100px;
   }
 
   /* Individual graph containers */
   #gdp-quarter, #quartergrowth {
-    flex: 1; /* Allow the graphs to take up an equal amount of space */
-    margin: 0 10px; /* Spacing between graph containers */
-  }
-
-  #explanation {
-    text-align: left;
-    padding-left: 0; /* Adjust padding as needed */
-    padding: 0 15px; 
-    margin-top: 10px;
-    margin-left: 0; /* Adjust margin as needed */
-    white-space: pre-line; /* This will ensure that the newline \n is respected */
+    width: 100%; /* Ensure graphs use the full width of their container */
+    margin-bottom: 20px; /* Add space below each graph */
   }
 
   #inflation {
@@ -2247,5 +2348,6 @@
   .bond_frame p {
     color: black; /* Black text color */
   }
+
 
 </style>
