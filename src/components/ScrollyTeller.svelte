@@ -135,6 +135,8 @@
       },
     });
 
+    initializeGDPQuiz();
+
     const gdpRes = await fetch('Quarterly GDP.csv');
     const gdpCsv = await gdpRes.text();
     gdpData = d3.csvParse(gdpCsv, d => ({
@@ -317,6 +319,28 @@
 
 
 // GDP overview
+  let feedbackVisible = false;
+  let correctAnswers = ['A', 'B', 'C', 'D'];
+  let selectedAnswers = [];
+
+  // Function to handle the click event
+  function checkAnswers() {
+      feedbackVisible = true;
+  }
+
+  // Helper to update selected answers
+  function updateSelectedAnswers(value, checked) {
+      if (checked) {
+          selectedAnswers = [...selectedAnswers, value];
+      } else {
+          selectedAnswers = selectedAnswers.filter((answer) => answer !== value);
+      }
+  }
+
+  // Computed state to determine if the answer is correct
+  $: isCorrect = correctAnswers.length === selectedAnswers.length && correctAnswers.every(answer => selectedAnswers.includes(answer));
+
+
   function drawGDPLinePlot() {
     const margin = { top: 0, right: 180, bottom: 90, left: 160};
     const svgWidth = 1200;
@@ -1716,12 +1740,30 @@
       </div>
     </section>
 
-
-    <section id = "gdp">
-      <h2> What is GDP? </h2>
-      <p> Gross Domestic Product (GDP) is a crucial economic indicator that measures the total value of all goods and services produced within a country over a specific period, typically a quarter or a year. It is used as a comprehensive gauge of a country's overall economic health, reflecting the size and growth rate of its economy. GDP can be calculated using three approaches: the production (or output or value added) approach, the income approach, and the expenditure approach, each offering a different perspective but theoretically arriving at the same total. </p>
-      <p> In the context of this project, GDP serves as a fundamental economic indicator that can significantly influence the dynamics of the 10-Year Treasury Yield. Changes in GDP growth rates can lead to adjustments in monetary policy, which in turn can affect interest rates and thus the Treasury yields. A strong and growing GDP may lead to higher yields, as investors demand more return in a booming economy, whereas a weak or contracting GDP can lead to lower yields, reflecting a move towards safer investments and potential monetary easing by the central bank to stimulate growth. </p>
-      <li style="margin-top: 50px;"><a href="#zero" style="color: #42393B;">Back to main menu</a>
+    <section id="gdp">
+      <h2>What is GDP?</h2>
+      <p>Gross Domestic Product (GDP) is a crucial economic indicator that measures the total value of all goods and services produced within a country over a specific period, typically a quarter or a year.</p>
+      <p>In the context of this project, GDP serves as a fundamental economic indicator that can significantly influence the dynamics of the 10-Year Treasury Yield. Changes in GDP growth rates can lead to adjustments in monetary policy, which in turn can affect interest rates and thus the Treasury yields.</p>
+      <div id="gdp-quiz" style="margin-top: 50px;">
+        <p><strong>Question: What is included in GDP?</strong></p>
+        <ul style="list-style-type:none;">
+            <li><input type="checkbox" id="answerA" value="A" on:change="{(e) => updateSelectedAnswers(e.target.value, e.target.checked)}"> <label for="answerA">Cars</label></li>
+            <li><input type="checkbox" id="answerB" value="B" on:change="{(e) => updateSelectedAnswers(e.target.value, e.target.checked)}"> <label for="answerB">Clothes</label></li>
+            <li><input type="checkbox" id="answerC" value="C" on:change="{(e) => updateSelectedAnswers(e.target.value, e.target.checked)}"> <label for="answerC">A Haircut</label></li>
+            <li><input type="checkbox" id="answerD" value="D" on:change="{(e) => updateSelectedAnswers(e.target.value, e.target.checked)}"> <label for="answerD">A Doctor's Care</label></li>
+        </ul>
+        <div class="feedback-container">
+          <button on:click={checkAnswers} style="margin-top: 20px;">Check Answer</button>
+          <p id="feedback" class={feedbackVisible ? 'feedback-visible' : 'feedback-hidden'}>
+              {#if isCorrect}
+                  Correct! All options (Cars, Clothes, A Haircut, A Doctor's Care) are included in GDP.
+              {:else}
+                  Incorrect. The correct answers are A (Cars), B (Clothes), C (A Haircut), and D (A Doctor's Care).
+              {/if}
+          </p>
+        </div>
+      </div>
+      <li style="margin-top: 50px; background: transparent;"><a href="#zero" style="color: #42393B;">Back to main menu</a>
     </section>
 
     <section id="gdp_takeaway">
@@ -2021,6 +2063,25 @@
     font-size: 35px;
   }
 
+  .feedback-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+  }
+
+  .feedback-hidden {
+      visibility: hidden;
+      height: auto;
+      opacity: 0;
+      transition: opacity 0.5s;
+  }
+
+  .feedback-visible {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity 0.5s;
+  }
+  
   #zero {
     position: relative; /* Needed for the absolute positioning of the pseudo-element */
     height: 700px; /* Adjust based on your needs */
