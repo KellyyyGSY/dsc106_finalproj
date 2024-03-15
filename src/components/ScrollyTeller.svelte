@@ -8,10 +8,6 @@
   import Graph from "./Graph.svelte";
   import Scroller from "@sveltejs/svelte-scroller";
   import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
-
-  import ProgressBar from './ProgressBar.svelte';
-  import { createEventDispatcher } from 'svelte';
-  const dispatch = createEventDispatcher();
   
   let count, index, offset, progress;
   let width, height;
@@ -22,14 +18,6 @@
   let filteredGDP = [];
   let filteredGrow = [];
   let yearIndex = allowedYears.indexOf(selectedYear);
-
-  const handleUpdate = (event) => {
-    count = event.detail.count;
-    index = event.detail.index;
-    offset = event.detail.offset;
-    progress = event.detail.progress;
-  };
-  dispatch('update', { count, index, offset, progress });
 
   const messages_bonds = [
   { date: "2008-10-01", Yield: 3.97, message: "Point A reached" },
@@ -1571,9 +1559,6 @@
 
 </script>
 
-
-
-<ProgressBar progress={progress} />
 <Scroller
   top={0.0}
   bottom={1}
