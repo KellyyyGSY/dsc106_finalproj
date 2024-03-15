@@ -27,7 +27,7 @@
   });
 
   afterUpdate(() => {
-    if (index === 28) {
+    if (index === 31) {
       drawAnimatedLine();
     } else {
       if (animatedLineSvg) animatedLineSvg.remove();
@@ -45,7 +45,7 @@
       if (bondSvg2) bondSvg2.remove();
     }
 
-    if (index >= 25 && index <= 29) {
+    if (index >= 23 && index <= 28) {
       drawCPIPCBG();
     } else {
       if (cpiSvg) cpiSvg.remove();

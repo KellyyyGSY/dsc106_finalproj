@@ -8,6 +8,10 @@
   import Graph from "./Graph.svelte";
   import Scroller from "@sveltejs/svelte-scroller";
   import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
+
+  import ProgressBar from './ProgressBar.svelte';
+  import { createEventDispatcher } from 'svelte';
+  const dispatch = createEventDispatcher();
   
   let count, index, offset, progress;
   let width, height;
@@ -18,6 +22,14 @@
   let filteredGDP = [];
   let filteredGrow = [];
   let yearIndex = allowedYears.indexOf(selectedYear);
+
+  const handleUpdate = (event) => {
+    count = event.detail.count;
+    index = event.detail.index;
+    offset = event.detail.offset;
+    progress = event.detail.progress;
+  };
+  dispatch('update', { count, index, offset, progress });
 
   const messages_bonds = [
   { date: "2008-10-01", Yield: 3.97, message: "Point A reached" },
@@ -547,7 +559,7 @@
 
   }
 
-// GDP by quarter
+  // GDP by quarter
   function updateYear(event) {
     yearIndex = +event.target.value;
     selectedYear = allowedYears[yearIndex];
@@ -915,11 +927,9 @@
       .attr("class", "gdpChained")
       .attr("x", 10)
       .attr("dy", "1.2em");
-
   }
 
-
-// Growth overview
+  // Growth overview
   function drawBarChart() {
     const margin = { top: 0, right: 140, bottom: 90, left: 80 };
     const svgWidth = 1200;
@@ -1474,6 +1484,8 @@
   }
 
 </script>
+
+<ProgressBar progress={progress} />
 
 
 
@@ -2235,6 +2247,5 @@
   .bond_frame p {
     color: black; /* Black text color */
   }
-
 
 </style>
