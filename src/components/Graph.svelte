@@ -10,6 +10,7 @@
   let data, cpiData;
   let animatedLineSvg;
   let bondSvg;
+  let bondSvg2;
   let cpiSvg;
 
   onMount(async () => {
@@ -32,13 +33,19 @@
       if (animatedLineSvg) animatedLineSvg.remove();
     }
 
-    if (index >= 7 && index <= 10) {
+    if (index >= 6 && index <= 9) {
       drawLinePlot();
     } else {
       if (bondSvg) bondSvg.remove();
     }
 
-    if (index >= 21 && index <= 25) {
+    if (index >= 10 && index <= 14) {
+      drawLinePlot2();
+    } else {
+      if (bondSvg2) bondSvg2.remove();
+    }
+
+    if (index >= 25 && index <= 29) {
       drawCPIPCBG();
     } else {
       if (cpiSvg) cpiSvg.remove();
@@ -46,9 +53,9 @@
   });
 
   function drawAnimatedLine() {
-    const margin = { top: 80, right: 0, bottom: 0, left: 0 };
-    const svgWidth = 1350 - margin.left - margin.right;
-    const svgHeight = 550;
+    const margin = { top: 20, right: 0, bottom: 0, left: 0 };
+    const svgWidth = window.innerWidth;
+    const svgHeight = window.innerHeight * 0.95;
 
     // Remove existing svg if exists
     if (animatedLineSvg) animatedLineSvg.remove();
@@ -94,9 +101,9 @@
   }
 
   function drawLinePlot() {
-    const margin = { top: 50, right: 70, bottom: 200, left: 70 };
-    const width = 1350 - margin.left - margin.right;
-    const height = 750 - margin.top - margin.bottom;
+    const margin = { top: 100, right: 70, bottom: 100, left: 70 };
+    const width = window.innerWidth - margin.left - margin.right;
+    const height = window.innerHeight - margin.top - margin.bottom;
 
     // Filter data based on the range [2016, 2024]
     const filteredData = data.filter(d => new Date(d.Date) >= new Date('2018-01-01') && new Date(d.Date) <= new Date('2024-12-31'));
@@ -170,7 +177,6 @@
     // Add annotations
     const annotations = [
         { date: new Date("07/01/2020"), price: 2.5, text: "covid-19 pandemic:\n2020 low point" },
-        { date: new Date("01/01/2023"), price: 2.0, text: "post-pandemic:\n2023 economic rebound" }
         // add more if needed
     ];
 
@@ -234,13 +240,151 @@
     }
   }
 
+  function drawLinePlot2() {
+    const margin = { top: 100, right: 70, bottom: 100, left: 70 };
+    const width = window.innerWidth - margin.left - margin.right;
+    const height = window.innerHeight - margin.top - margin.bottom;
+
+    // Filter data based on the range [2016, 2024]
+    const filteredData = data.filter(d => new Date(d.Date) >= new Date('2018-01-01') && new Date(d.Date) <= new Date('2024-12-31'));
+
+    // Remove existing svg if exists
+    if (bondSvg2) bondSvg2.remove();
+
+    bondSvg2 = d3.select(".graph")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    const x = d3.scaleTime()
+        .domain(d3.extent(filteredData, d => new Date(d.Date)))
+        .range([0, width]);
+
+    const y = d3.scaleLinear()
+        .domain([0, d3.max(filteredData, d => d.Price)])
+        .range([height, 0]);
+
+    const xAxis = d3.axisBottom(x);
+    const yAxis = d3.axisLeft(y);
+
+    bondSvg2.append("g")
+        .attr("class", "x-axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+    bondSvg2.append("g")
+        .attr("class", "y-axis")
+        .call(yAxis);
+
+    bondSvg2.selectAll(".x-axis line")
+        .attr("stroke", "#ccc");
+    bondSvg2.selectAll(".y-axis line")
+        .attr("stroke", "#ccc");
+
+    bondSvg2.append("g")
+        .attr("class", "grid")
+        .call(d3.axisLeft(y)
+            .tickSize(-width)
+            .tickFormat("")
+        )
+        .selectAll(".tick line")
+        .attr("stroke", "#ccc");
+
+    bondSvg2.append("text")
+        .attr("class", "y label")
+        .attr("text-anchor", "end")
+        .attr("fill", "white")
+        .attr("x", -margin.left - 150)
+        .attr("y", -margin.left + 20) // Adjusted positioning
+        .attr("dy", ".75em")
+        .attr("transform", "rotate(-90)")
+        .text("Price");
+
+    const lineGenerator = d3.line()
+        .x(d => x(new Date(d.Date)))
+        .y(d => y(d.Price))
+        .curve(d3.curveMonotoneX);
+
+    bondSvg2.append("path")
+        .datum(filteredData)
+        .attr("fill", "none")
+        .attr("stroke", "steelblue")
+        .attr("stroke-width", 1.5)
+        .attr("d", lineGenerator);
+    
+    // Add annotations
+    const annotations = [
+        { date: new Date("01/01/2023"), price: 2.0, text: "post-pandemic:\n2023 economic rebound" }
+        // add more if needed
+    ];
+
+    // Define arrowhead marker
+    bondSvg2.append("defs").append("marker")
+      .attr("id", "arrowhead")
+      .attr("viewBox", "0 -5 10 10")
+      .attr("refX", 8)
+      .attr("refY", 0)
+      .attr("orient", "auto")
+      .attr("markerWidth", 6)
+      .attr("markerHeight", 6)
+      .append("path")
+      .attr("d", "M0,-5L10,0L0,5")
+      .attr("fill", "white");
+
+    // Add arrows and annotations
+    annotations.forEach(annotation => {
+      const xPos = x(annotation.date);
+      const yPos = y(annotation.price);
+
+      // Add annotation text
+      const lines = annotation.text.split('\n');
+      lines.forEach((line, i) => {
+        bondSvg2.append("text")
+          .attr("x", xPos)
+          .attr("y", yPos + i * 20) // Adjust dy for line spacing
+          .attr("dy", "-0.5em")
+          .text(line)
+          .attr("fill", "white");
+      });
+
+      // Find the closest point on the line to the annotation
+      const closestPoint = findClosestPointOnLine(data, { x: xPos, y: yPos });
+
+      // Add arrow line
+      bondSvg2.append("line")
+        .attr("x1", xPos)
+        .attr("y1", yPos)
+        .attr("x2", closestPoint.x)
+        .attr("y2", closestPoint.y)
+        .attr("stroke", "white")
+        .attr("stroke-width", 1)
+        .attr("marker-end", "url(#arrowhead)");
+    });
+
+    // Function to find the closest point on the line
+    function findClosestPointOnLine(data, point) {
+      let minDistance = Infinity;
+      let closestPoint = null;
+
+      data.forEach(d => {
+        const distance = Math.abs(point.x - x(new Date(d.Date)));
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestPoint = { x: x(new Date(d.Date)), y: y(d.Price) };
+        }
+      });
+
+      return closestPoint;
+    }
+  }
+
 
   function drawCPIPCBG() {
-    const margin = { top: 50, right: 150, bottom: 200, left: 90 };
-    const svgWidth = 1400;
-    const svgHeight = 700;
-    const plotWidth = svgWidth - margin.left - margin.right;
-    const plotHeight = svgHeight - margin.top - margin.bottom;
+    const margin = { top: 100, right: 150, bottom: 100, left: 90 };
+    const plotWidth = window.innerWidth - margin.left - margin.right;
+    const plotHeight = window.innerHeight - margin.top - margin.bottom;
 
     // Remove existing svg if exists
     if (cpiSvg) cpiSvg.remove();
@@ -248,8 +392,8 @@
     // Define the SVG container
     cpiSvg = d3.select(".graph")
       .append("svg")
-      .attr("width", svgWidth)
-      .attr("height", svgHeight)
+      .attr("width", plotWidth + margin.left + margin.right)
+      .attr("height", plotHeight + margin.top + margin.bottom)
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 

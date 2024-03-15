@@ -90,7 +90,7 @@
     gsap.from("#hook2", {
       opacity: 0, // Start from invisible
       duration: 1, // Animation duration of 1 second
-      delay:1,
+      delay:2,
       scrollTrigger: {
         trigger: "#hook1",
         start: 'top 50%', 
@@ -99,12 +99,10 @@
       },
     });
 
-    gsap.from("#hook3 span", {
+    gsap.from("#hook3", {
       opacity: 0, // Start from invisible
-      y: 20, // Start 20px lower than the final position
-      duration: 0.5, // Animation duration of 1 second
-      stagger: 0.05,
-      delay: 2,
+      duration: 1, // Animation duration of 1 second
+      delay:4,
       scrollTrigger: {
         trigger: "#hook1",
         start: 'top 50%', 
@@ -1524,19 +1522,9 @@
 
     <section id = "hook">
       <p class="style1" id="hook1">In a world where fluctuation of numbers and rates gauged the pulse of the economy, the dynamics of the 10-Year Treasury Yield stand out as a critical barometer of economic health and investor sentiment.</p>
+      <p class="style1" id="hook2">But what if the seemingly arcane interplay between GDP growth, and inflation rates could unlock the secrets to predicting treasury yields and crafting savvy investment strategies?</p>
+      <p class="style1" id="hook3">Join us on a journey that transforms complex economic data into a captivating narrative,  where each trend line tells a story of opportunity, risk, and the relentless quest.</p>
 
-      <h3 id='hook2'>But what if the seemingly arcane interplay between GDP growth, and inflation rates could unlock the secrets to predicting treasury yields and crafting savvy investment strategies?</h3>
-
-      <p class="style2" id="hook3">
-        {#each "Join us on a journey that transforms complex economic data into a captivating narrative," .split('').map((char) => char === ' ' ? '\u00A0' : char) as letter}
-        <span>{letter}</span>
-        {/each}
-      </p>
-      <p class='style3' id='hook3'>
-        {#each " where each trend line tells a story of opportunity, risk, and the relentless quest." .split('').map((char) => char === ' ' ? '\u00A0' : char) as letter}
-        <span>{letter}</span>
-        {/each}
-      </p>
     </section>
 
     <section id = 'zero'>
@@ -1563,7 +1551,6 @@
           <li>Enpower you with ability to produce customized quant prediction model</li>
         </div>
       </div>
-      <!-- <p class="style2"> By simplifying complex economic interactions into an intuitive and interactive format, the concept of treasury yield becomes more accessible to a broader audience. Unlike traditional explanations that rely heavily on textual descriptions and static charts, the interactive elements below allow users to explore and understand the dynamic relationship between the 10-Year Treasury Yield, GDP growth, and inflation rates on their own terms. This hands-on approach not only enhances comprehension but also engages users in a more meaningful exploration of economic principles. </p> -->
     </section>
 
     <section id = "bond">
@@ -1606,25 +1593,45 @@
       <div id="line-plot"></div> <!-- Container for the bond line plot -->
     </section>
 
-    <section id = 'bond-explain0'></section>
+    
     <section id = 'bond-explain1'> 
       <div class="bond_frame">
-        <p> Inflation Expectations: Think of inflation like the rate at which money loses its value over time. In 2020, people expected money to hold its value better than usual because everyone was spending less. When people think their money will stay valuable, they like investing in government bonds, which pay back with interest over time. Because so many people wanted these bonds, their yields (or the interest you earn from them) went down.</p>
+        <p> Inflation Expectations: Think of inflation like the rate at which money loses its value over time. In 2020, people expected money to hold its value better than usual because everyone was spending less. </p>
       </div>
     </section>
     <section id = 'bond-explain2'> 
       <div class="bond_frame">
-        <p> Economic Activity (GDP): The economy took a big hit in 2020 due to the pandemic. Businesses closed, and many people stopped buying things, leading to a drop in the country's total production and services. During such times, people prefer putting their money into something safe, like government bonds, rather than riskier investments. This rush to buy bonds made their yields lower, as there was less need for the government to offer high interest to attract buyers.</p>
+        <p> When people think their money will stay valuable, they like investing in government bonds, which pay back with interest over time. Because so many people wanted these bonds, their yields (or the interest you earn from them) went down.</p>
       </div>
     </section>
     <section id = 'bond-explain3'> 
       <div class="bond_frame">
-        <p> Inflation Expectations: By 2023, people started to notice prices going up faster than before, which means the money in your pocket doesn't go as far as it used to. This happens when the economy gets too hot, and there's too much money chasing too few goods. When people expect prices to keep rising, they're less keen on bonds that pay fixed interest because the money they get back in the future won't buy as much. So, to attract buyers, the interest rates or yields on these bonds need to go up.</p>
+        <p> Economic Activity (GDP): The economy took a big hit in 2020 due to the pandemic. Businesses closed, and many people stopped buying things, leading to a drop in the country's total production and services. </p>
       </div>
     </section>
     <section id = 'bond-explain4'> 
       <div class="bond_frame">
-        <p> Economic Activity (GDP): The economy bounced back strongly in 2023 after the tough times caused by the pandemic. Businesses reopened, people went back to work, and spending increased. This recovery is good news, but it can also lead to too much money flowing in the economy, contributing to higher inflation. To keep things in balance and ensure the economy doesn't overheat, interest rates on government bonds were raised. This means if you're buying bonds, you can expect to earn more interest than before, reflecting the higher yields seen during this period.</p>
+        <p> During such times, people prefer putting their money into something safe, like government bonds, rather than riskier investments. This rush to buy bonds made their yields lower, as there was less need for the government to offer high interest to attract buyers.</p>
+      </div>
+    </section>
+    <section id = 'bond-explain5'> 
+      <div class="bond_frame">
+        <p> Inflation Expectations: By 2023, people started to notice prices going up faster than before, which means the money in your pocket doesn't go as far as it used to. This happens when the economy gets too hot, and there's too much money chasing too few goods. </p>
+      </div>
+    </section>
+    <section id = 'bond-explain6'> 
+      <div class="bond_frame">
+        <p> When people expect prices to keep rising, they're less keen on bonds that pay fixed interest because the money they get back in the future won't buy as much. So, to attract buyers, the interest rates or yields on these bonds need to go up.</p>
+      </div>
+    </section>
+    <section id = 'bond-explain7'> 
+      <div class="bond_frame">
+        <p> Economic Activity (GDP): The economy bounced back strongly in 2023 after the tough times caused by the pandemic. Businesses reopened, people went back to work, and spending increased. This recovery is good news, but it can also lead to too much money flowing in the economy, contributing to higher inflation. </p>
+      </div>
+    </section>
+    <section id = 'bond-explain8'> 
+      <div class="bond_frame">
+        <p> To keep things in balance and ensure the economy doesn't overheat, interest rates on government bonds were raised. This means if you're buying bonds, you can expect to earn more interest than before, reflecting the higher yields seen during this period.</p>
       </div>
     </section>
 
@@ -1866,31 +1873,6 @@
     display: inline-block;
   }
 
-  p.style2 {
-    font-family: "Gill Sans", sans-serif;
-    font-size: 1em;
-    display: inline-block;
-    margin-top: 80px;
-    padding-left: 80px;
-    padding-right: 80px;
-    font-weight: normal;
-    color: white;
-    text-align: left;
-    margin-bottom: 0px; /* Reduce the bottom margin to decrease space */
-  }
-
-  p.style3 {
-    font-family: "Gill Sans", sans-serif;
-    font-size: 1em;
-    display: inline-block;
-    padding-left: 80px;
-    padding-right: 80px;
-    font-weight: normal;
-    color: white;
-    text-align: left;
-    margin-top: 0px; /* Reduce the top margin to pull closer to the previous paragraph */
-  }
-
   li {
     font-family: "Gill Sans", sans-serif;
     font-size: 1.3em; /* Adjust the font size here */
@@ -2032,7 +2014,7 @@
       background-position: center; /* Center the background image */
       opacity: 0.5; /* Adjust opacity as needed */
       z-index: -1; /* Ensures the background is behind the content */
-      animation: switchBackground 30s infinite; /* Apply the animation */
+      animation: switchBackground 40s infinite; /* Apply the animation */
   }
 
   /* Make sure the content inside #custom-background-section has a higher z-index if needed */
@@ -2068,6 +2050,32 @@
 
   #hook h3 {
     animation: bobbing 3s ease-in-out infinite;
+  }
+
+  
+  #hook1 {
+    position: relative;
+    color: #D3C4BE;
+    font-family: "Gill Sans", sans-serif;
+    font-size: 1.7em; /* Adjust the font size here */
+    padding: 10px; /* Adds some space around the text */
+    padding-top: 12%; /* Adjusted padding for responsive positioning */
+    display: inline-block;
+    text-shadow: 0 0 10px #999999;
+    max-width: 100%;
+    word-wrap: break-word; /* Added to allow word wrapping */
+  } 
+  
+  #hook2 {
+    position: relative;
+    color: #D3C4BE;
+    font-family: "Gill Sans", sans-serif;
+    font-size: 1.7em; /* Adjust the font size here */
+    padding: 10px; /* Adds some space around the text */
+    display: inline-block;
+    text-shadow: 0 0 10px #999999;
+    max-width: 100%;
+    word-wrap: break-word; /* Added to allow word wrapping */
   }
 
   #hook3 {
@@ -2220,7 +2228,7 @@
     border-radius: 10px; /* Rounded corners */
     margin-top: 110px; /* Adjust margin as needed */
     width: 600px; /* Adjust width as needed */
-    height: 270px; /* Adjust height as needed */
+    height: 170px; /* Adjust height as needed */
     text-align: left; /* Center-align the text content within the frame */
   }
 
