@@ -27,7 +27,7 @@
   });
 
   afterUpdate(() => {
-    if (index === 31) {
+    if (index === 30) {
       drawAnimatedLine();
     } else {
       if (animatedLineSvg) animatedLineSvg.remove();
@@ -39,13 +39,13 @@
       if (bondSvg) bondSvg.remove();
     }
 
-    if (index >= 10 && index <= 14) {
+    if (index >= 10 && index <= 13) {
       drawLinePlot2();
     } else {
       if (bondSvg2) bondSvg2.remove();
     }
 
-    if (index >= 23 && index <= 28) {
+    if (index >= 24 && index <= 28) {
       drawCPIPCBG();
     } else {
       if (cpiSvg) cpiSvg.remove();

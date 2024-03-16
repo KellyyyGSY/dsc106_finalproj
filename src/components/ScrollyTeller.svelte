@@ -135,8 +135,6 @@
       },
     });
 
-    initializeGDPQuiz();
-
     const gdpRes = await fetch('Quarterly GDP.csv');
     const gdpCsv = await gdpRes.text();
     gdpData = d3.csvParse(gdpCsv, d => ({
@@ -153,9 +151,7 @@
       growth: +d['Growth']
     }));
     drawBarChart();
-
     drawLinePlot();
-
 
     const path = d3.select(".dataline").node();
     const pathLength = path.getTotalLength();
@@ -193,6 +189,8 @@
       percentageChange: +d["Percent_Change"]
     }));
     drawCPIPCLinePlot();
+
+    initializeGDPQuiz();
   });
 
   function drawLinePlot() {
@@ -1278,6 +1276,28 @@
     }
   }
 
+  // Inflation MCQ
+  let feedbackVisibleCPI = false;
+  let correctAnswersCPI = ['B'];
+  let selectedAnswersCPI = [];
+
+  // Function to handle the click event
+  function checkAnswersCPI() {
+      feedbackVisibleCPI = true;
+  }
+
+  // Helper to update selected answers
+  function updateSelectedAnswersCPI(value, checked) {
+      if (checked) {
+          selectedAnswersCPI = [...selectedAnswersCPI, value];
+      } else {
+          selectedAnswersCPI = selectedAnswersCPI.filter((answer) => answer !== value);
+      }
+  }
+
+  // Computed state to determine if the answer is correct
+  $: isCorrect = correctAnswersCPI.length === selectedAnswersCPI.length && correctAnswersCPI.every(answer => selectedAnswersCPI.includes(answer));
+
 
   function drawCPILinePlot() {
     const margin = { top: 50, right: 150, bottom: 200, left: 90};
@@ -1843,7 +1863,31 @@
       <p>Inflation is a key economic metric that denotes the rate at which the general level of prices for goods and services is rising, and subsequently, how purchasing power is falling. Central banks attempt to limit inflation, and avoid deflation, in order to keep the economy running smoothly. Inflation can be measured through various indices, the most common being the Consumer Price Index (CPI) and the Wholesale Price Index (WPI). CPI measures the average price change over time of a basket of goods and services that a typical household might purchase, while WPI measures the price change of goods sold and traded in bulk by wholesale businesses to other businesses.
       <br><br>In the context of this project, understanding inflation is vital as it directly impacts the dynamics of the 10-Year Treasury Yield. Inflation erodes the real return on investments, including those in government securities such as Treasury bonds. As inflation expectations rise, investors may demand higher yields to compensate for the anticipated decrease in the purchasing power of their future interest payments. Conversely, low inflation rates may lead to lower yields, as the real return on investments becomes more stable, making government securities more attractive. Central banks may adjust monetary policy in response to inflation levels to stabilize the economy, influencing interest rates and thus impacting Treasury yields.
       </p>
-      <li style="margin-top: 50px;"><a href="#zero" style="color: #42393B;">Back to main menu</a>
+      <li style="margin-top: 50px; background: transparent;"><a href="#zero" style="color: #42393B;">Back to main menu</a>
+    </section>
+
+    <section id = "inflation_mcq">
+      <h2 style="margin-bottom: 2em;"> Check your understanding </h2>
+      <div id="inflation-quiz" style="margin-top: 40px;">
+        <p><strong>Question: Which of the following best explains why the consumer price index (CPI) may not accurately measure changes in the cost of living?</strong></p>
+        <ul class="custom-list-style">
+            <li><input type="checkbox" id="answerACPI" value="A" on:change="{(e) => updateSelectedAnswersCPI(e.target.value, e.target.checked)}"> <label for="answerACPI">When real GDP increases, the CPI doesn't change</label></li>
+            <li><input type="checkbox" id="answerBCPI" value="B" on:change="{(e) => updateSelectedAnswersCPI(e.target.value, e.target.checked)}"> <label for="answerBCPI">When prices of some goods go up, consumers buy less of those and more of goods that are cheaper</label></li>
+            <li><input type="checkbox" id="answerCCPI" value="B" on:change="{(e) => updateSelectedAnswersCPI(e.target.value, e.target.checked)}"> <label for="answerCCPI">It doesn't include all prices, such as input costs to firms</label></li>
+            <li><input type="checkbox" id="answerDCPI" value="C" on:change="{(e) => updateSelectedAnswersCPI(e.target.value, e.target.checked)}"> <label for="answerDCPI">It only includes goods purchased every day</label></li>
+            <li><input type="checkbox" id="answerECPI" value="D" on:change="{(e) => updateSelectedAnswersCPI(e.target.value, e.target.checked)}"> <label for="answerECPI">It does not account for changes in consumers' incomes</label></li>
+        </ul>
+        <div class="feedback-container">
+          <button on:click={checkAnswersCPI} style="margin-top: 20px;">Check Answer</button>
+          <p id="feedback" class={feedbackVisibleCPI ? 'feedback-visible' : 'feedback-hidden'}>
+              {#if isCorrect}
+                  Correct! A problem with the CPI as a measure of the cost of living is that there might be "substitution bias." The CPI assumes that consumers always buy the same quantity of every good. But, in reality, if the price of one good increases, people might buy more of a substitute for that instead. This can lead to the CPI overstating an increase in the cost of living.
+              {:else}
+                  Incorrect. The correct answers is B (When prices of some goods go up, consumers buy less of those and more of goods that are cheaper).
+              {/if}
+          </p>
+        </div>
+      </div>
     </section>
 
     <section id = "inflation_takeaway">
@@ -1880,7 +1924,7 @@
       <div id="cpi-pc-line-plot"></div>
     </section>
 
-    <section id = 'cpi-pc-explain0'></section>
+    
     <section id = 'cpi-pc-explain1'> 
       <div class="frame">
         <p> This line graph displays the trend of percentage change of consumer price index in each month from 2000 to 2024. We may observe from the line graph that the trend before 2008 did not fluctate greatly day to day.</p>
@@ -1907,8 +1951,7 @@
       </div>
     </section>
 
-    <section> </section>
-
+  
     <section id = "rela"> 
       <h2> Treasury bond quant model </h2>
       <br>
@@ -2394,6 +2437,15 @@
   .bond_frame p {
     color: black; /* Black text color */
   }
+
+  /* Custom styling for the list items in the "Check your understanding" section */
+  .custom-list-style li {
+    display: inline-block;
+    margin-bottom: 30px; /* Adjust the spacing between list items as desired */
+    margin-right: 10px; /* Adjust the spacing between list items */
+    margin-bottom: 10px; /* Adjust the vertical spacing if needed */
+  }
+
 
 
 </style>
