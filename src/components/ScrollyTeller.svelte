@@ -1860,9 +1860,8 @@
   
     <section id = "inflation">
       <h2>What is Inflation?</h2>
-      <p>Inflation is a key economic metric that denotes the rate at which the general level of prices for goods and services is rising, and subsequently, how purchasing power is falling. Central banks attempt to limit inflation, and avoid deflation, in order to keep the economy running smoothly. Inflation can be measured through various indices, the most common being the Consumer Price Index (CPI) and the Wholesale Price Index (WPI). CPI measures the average price change over time of a basket of goods and services that a typical household might purchase, while WPI measures the price change of goods sold and traded in bulk by wholesale businesses to other businesses.
-      <br><br>In the context of this project, understanding inflation is vital as it directly impacts the dynamics of the 10-Year Treasury Yield. Inflation erodes the real return on investments, including those in government securities such as Treasury bonds. As inflation expectations rise, investors may demand higher yields to compensate for the anticipated decrease in the purchasing power of their future interest payments. Conversely, low inflation rates may lead to lower yields, as the real return on investments becomes more stable, making government securities more attractive. Central banks may adjust monetary policy in response to inflation levels to stabilize the economy, influencing interest rates and thus impacting Treasury yields.
-      </p>
+      <p>Inflation, the rise in prices over time, is managed by central banks to ensure economic stability, commonly measured by the Consumer Price Index (CPI), which tracks the price changes of a standard set of goods and services.</p>
+      <p>Inflation reduces the real return on investments like Treasury bonds, leading investors to seek higher yields as compensation for expected purchasing power declines. Central banks adjust monetary policies to manage inflation, affecting interest rates and consequently Treasury yields.</p>
       <li style="margin-top: 50px; background: transparent;"><a href="#zero" style="color: #42393B;">Back to main menu</a>
     </section>
 
@@ -2367,7 +2366,7 @@
     padding: 0 15px;
     white-space: pre-line; /* Ensure newline characters are respected */
     width: 50%; /* Take up the remaining space */
-    margin-top: 100px;
+    margin-top: 150px;
   }
 
   /* Individual graph containers */
