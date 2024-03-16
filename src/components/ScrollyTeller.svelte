@@ -8,7 +8,8 @@
   import Graph from "./Graph.svelte";
   import Scroller from "@sveltejs/svelte-scroller";
   import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
-  
+  import PageProgress from "svelte-page-progress";
+
   let count, index, offset, progress;
   let width, height;
   let data, gdpData, rGDPData, cpindexData, cpiData;
@@ -18,6 +19,10 @@
   let filteredGDP = [];
   let filteredGrow = [];
   let yearIndex = allowedYears.indexOf(selectedYear);
+
+  let isCorrect;
+
+  let isClient = typeof window !== 'undefined';
 
   const messages_bonds = [
   { date: "2008-10-01", Yield: 3.97, message: "Point A reached" },
@@ -1603,6 +1608,10 @@
 
 </script>
 
+{#if isClient}
+  <div><PageProgress color="grey" height="1vh" /></div>
+{/if}
+
 <Scroller
   top={0.0}
   bottom={1}
@@ -2026,14 +2035,6 @@
     padding-bottom: 1em; /* Adjust bottom padding */
   }
 
-  h3 {
-    font-family: "Gill Sans", sans-serif;
-    font-size: 1.7em; /* Adjust the font size here */
-    /* background-color: rgba(255, 255, 255, 0.7); Adjust the opacity as needed */
-    display: inline-block; /* Or as per your layout needs */
-    padding: 10px; /* Adds some space around the text */
-  }
-
   p {
     font-family: "Gill Sans", sans-serif;
     font-size: 1.2em; /* Adjust the font size here */
@@ -2241,11 +2242,6 @@
                   background-image: url('https://storage.googleapis.com/pic0_dsc106/pic3.jpeg');
               }
           }
-
-  #hook h3 {
-    animation: bobbing 3s ease-in-out infinite;
-  }
-
   
   #hook1 {
     position: relative;
