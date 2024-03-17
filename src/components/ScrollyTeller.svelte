@@ -1633,25 +1633,19 @@
   <script src="https://unpkg.com/scrollreveal"></script>
   <div class="foreground" slot="foreground">
     <section id="custom-background-section">
-      <h1 class="text-reveal">
+      <h1 class="text-reveal" style="margin-top: 0px;">
         Navigating the Dynamics of 10-Year Treasury Yield and Economic Indicators:
-      <div class="title">
+      <div class="title" style="margin-top: 50px;">
         {#each "An Interactive Exploration".split('').map((char) => char === ' ' ? '\u00A0' : char) as letter}
         <span>{letter}</span>
         {/each}
       </div>
       </h1>
-      <p class = 'author'> 
+      <p class = 'author' style="margin-top: 100px;"> 
         {#each "Kelly Gong, Andrew Guo, Yishan Cai".split('').map((char) => char === ' ' ? '\u00A0' : char) as letter}
         <span>{letter}</span>
         {/each}
         </p><br>
-      <a href="https://github.com/KellyyyGSY/dsc106_finalproj/blob/main/README.md"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="center-link">
-        Project Write-up
-      </a>
     </section>
 
     <section id = "hook">
@@ -1879,11 +1873,11 @@
       <div id="inflation-quiz" style="margin-top: 40px;">
         <p><strong>Question: Which of the following best explains why the consumer price index (CPI) may not accurately measure changes in the cost of living?</strong></p>
         <ul class="custom-list-style">
-            <li><input type="checkbox" id="answerACPI" value="A" on:change="{(e) => updateSelectedAnswersCPI(e.target.value, e.target.checked)}"> <label for="answerACPI">When real GDP increases, the CPI doesn't change</label></li>
-            <li><input type="checkbox" id="answerBCPI" value="B" on:change="{(e) => updateSelectedAnswersCPI(e.target.value, e.target.checked)}"> <label for="answerBCPI">When prices of some goods go up, consumers buy less of those and more of goods that are cheaper</label></li>
-            <li><input type="checkbox" id="answerCCPI" value="B" on:change="{(e) => updateSelectedAnswersCPI(e.target.value, e.target.checked)}"> <label for="answerCCPI">It doesn't include all prices, such as input costs to firms</label></li>
-            <li><input type="checkbox" id="answerDCPI" value="C" on:change="{(e) => updateSelectedAnswersCPI(e.target.value, e.target.checked)}"> <label for="answerDCPI">It only includes goods purchased every day</label></li>
-            <li><input type="checkbox" id="answerECPI" value="D" on:change="{(e) => updateSelectedAnswersCPI(e.target.value, e.target.checked)}"> <label for="answerECPI">It does not account for changes in consumers' incomes</label></li>
+            <li><input type="checkbox" id="answerACPI" value="A" on:change="{(e) => updateSelectedAnswersCPI(e.target.value, e.target.checked)}"> <label for="answerACPI">A. When real GDP increases, the CPI doesn't change</label></li>
+            <li><input type="checkbox" id="answerBCPI" value="B" on:change="{(e) => updateSelectedAnswersCPI(e.target.value, e.target.checked)}"> <label for="answerBCPI">B. When prices of some goods go up, consumers buy less of those and more of goods that are cheaper</label></li>
+            <li><input type="checkbox" id="answerCCPI" value="C" on:change="{(e) => updateSelectedAnswersCPI(e.target.value, e.target.checked)}"> <label for="answerCCPI">C. It doesn't include all prices, such as input costs to firms</label></li>
+            <li><input type="checkbox" id="answerDCPI" value="D" on:change="{(e) => updateSelectedAnswersCPI(e.target.value, e.target.checked)}"> <label for="answerDCPI">D. It only includes goods purchased every day</label></li>
+            <li><input type="checkbox" id="answerECPI" value="E" on:change="{(e) => updateSelectedAnswersCPI(e.target.value, e.target.checked)}"> <label for="answerECPI">E. It does not account for changes in consumers' incomes</label></li>
         </ul>
         <div class="feedback-container">
           <button on:click={checkAnswersCPI} style="margin-top: 20px;">Check Answer</button>
@@ -1975,8 +1969,8 @@
     </section>
 
     <section>
-      <h1>Thank you for watching</h1><br>
-      <h1>Complete project coming soon</h1>
+      <h1>The end</h1><br>
+      <h1>Robust model coming soon</h1>
     </section>
     
 
