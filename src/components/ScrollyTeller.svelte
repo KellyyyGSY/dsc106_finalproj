@@ -1689,11 +1689,12 @@
           <button class="button-style" on:click={() => scrollToSection('inflation')}>Inflation Dynamics</button>
           <li>Unpack the causes and effects of inflation on the economy and purchasing power.</li>
         </div>
-        <div class="slider-navigation">
+        <!-- <div class="slider-navigation">
           <button class="button-style" on:click={() => scrollToSection('rela')}>Quant Model</button>
           <li>Enpower you with ability to produce customized quant prediction model</li>
-        </div>
+        </div> -->
       </div>
+      <p> Scroll down to continue</p>
     </section>
 
     <section id = "bond">
@@ -1968,7 +1969,7 @@
       </div>
     </section>
 
-  
+<!--   
     <section id = "rela"> 
       <h2> Treasury bond quant model </h2>
       <br>
@@ -1983,11 +1984,11 @@
       <input type="range" id="lambda-slider" min="0" max="1" step="0.01" value="0.1">
       <br>
       <li style="margin-top: 50px;"><a href="#zero" style="color: #42393B;">Back to main menu</a>
-    </section>
+    </section> -->
 
     <section>
-      <h1>The end</h1><br>
-      <h1>Robust model coming soon</h1>
+      <h1>The End</h1><br>
+      <p>Data Source: World Bank Open Data</p>
     </section>
     
 
