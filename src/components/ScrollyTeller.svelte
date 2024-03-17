@@ -65,8 +65,9 @@
       });
     });
 
-    window.scrollTo(10, 10);
-
+    if (window.location.hash === '') {
+      window.scrollTo(10, 10);
+    }
 
     gsap.from("#zero-title", {
       opacity: 0, // Start from invisible
@@ -1277,9 +1278,23 @@
   function scrollToSection(sectionId) {
     const section = document.getElementById(sectionId);
     if (section) {
-      section.scrollIntoView({ behavior: 'smooth' });
+      const scrollOptions = {
+        behavior: 'smooth',
+        block: 'start' // Start aligns the top of the element with the top of the scrollable ancestor (consider 'center' if you want it in the middle).
+      };
+
+      // Fade in the section if it's not fully opaque.
+      gsap.to(section, { autoAlpha: 1, duration: 0.5 });
+
+      // Use GSAP's scrollTo plugin for a smooth scroll, if available, or fall back to native scrollIntoView.
+      if (gsap.plugins.ScrollTo) {
+        gsap.to(window, { scrollTo: { y: section.offsetTop, autoKill: false }, duration: 1 });
+      } else {
+        section.scrollIntoView(scrollOptions);
+      }
     }
   }
+
 
   // Inflation MCQ
   let feedbackVisibleCPI = false;
@@ -1966,6 +1981,8 @@
       <br>
       <h4>lambda-slider</h4>
       <input type="range" id="lambda-slider" min="0" max="1" step="0.01" value="0.1">
+      <br>
+      <li style="margin-top: 50px;"><a href="#zero" style="color: #42393B;">Back to main menu</a>
     </section>
 
     <section>
